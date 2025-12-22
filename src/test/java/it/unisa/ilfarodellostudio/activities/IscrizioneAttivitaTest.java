@@ -1,7 +1,7 @@
 package it.unisa.ilfarodellostudio.activities;
 
 import it.unisa.ilfarodellostudio.users.Studente;
-import it.unisa.ilfarodellostudio.users.StudenteDAO;
+import it.unisa.ilfarodellostudio.users.StudenteRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,22 +14,22 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
-public class AttivitaServiceTest {
+public class IscrizioneAttivitaTest {
 
     @Autowired
-    private AttivitaService attivitaService;
+    private ActivitiesService activitiesService;
 
     @Autowired
-    private AttivitaDAO attivitaDAO;
+    private AttivitaRepository attivitaRepository;
 
     @Autowired
-    private StudenteDAO studenteDAO;
+    private StudenteRepository studenteRepository;
 
     // Test Case TC_GA_6_1
     @Test
     void testIscrizionePostiMassimi() {
         Attivita attivita = new Attivita("Ripetizione di Algebra", LocalDateTime.now());
-        attivitaDAO.save(attivita);
+        attivitaRepository.save(attivita);
         for (int i=0; i < Attivita.MAX_POSTI ; i++) {
             Studente studente = new Studente();
             studente.setNome("Nome" + i);
@@ -37,10 +37,10 @@ public class AttivitaServiceTest {
             studente.setUsername("Username" + i);
             studente.setPassword("Password" + i);
             studente.setEmail("Email" + i + "@test.com");
-            studenteDAO.save(studente);
+            studenteRepository.save(studente);
             attivita.aggiungiStudente(studente);
         }
-        attivitaDAO.save(attivita);
+        attivitaRepository.save(attivita);
 
         Studente studenteExtra = new Studente();
         studenteExtra.setNome("Mario");
@@ -48,13 +48,13 @@ public class AttivitaServiceTest {
         studenteExtra.setUsername("mariorossi");
         studenteExtra.setEmail("mario@test.com");
         studenteExtra.setPassword("pass");
-        studenteExtra = studenteDAO.save(studenteExtra);
+        studenteExtra = studenteRepository.save(studenteExtra);
 
         Long idAttivita = attivita.getId();
         Long idStudenteExtra = studenteExtra.getId();
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            attivitaService.iscriviStudenteAdAttivita(idStudenteExtra, idAttivita);
+            activitiesService.iscriviStudenteAdAttivita(idStudenteExtra, idAttivita);
         });
 
         String messaggioAtteso = "Impossibile iscriversi: l'attività " + attivita.getNome() + " è già al completo";
