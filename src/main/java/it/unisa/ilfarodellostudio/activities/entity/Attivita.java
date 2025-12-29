@@ -24,8 +24,8 @@ public class Attivita {
     @Column(nullable = false)
     private LocalTime oraInizio;
 
-    @Column(nullable = false)
-    private LocalTime oraFine;
+  //  @Column(nullable = false)
+  //  private LocalTime oraFine;
 
     @ManyToOne
     @JoinColumn(name = "materia_nome", nullable = false)
@@ -74,7 +74,7 @@ public class Attivita {
     public void setOraInizio(LocalTime oraInizio) {
         this.oraInizio = oraInizio;
     }
-
+/*
     public LocalTime getOraFine() {
         return oraFine;
     }
@@ -82,7 +82,7 @@ public class Attivita {
     public void setOraFine(LocalTime oraFine) {
         this.oraFine = oraFine;
     }
-
+*/
     public Materia getMateria() {
         return materia;
     }

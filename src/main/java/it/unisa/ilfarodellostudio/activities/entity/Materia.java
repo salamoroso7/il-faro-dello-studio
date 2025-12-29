@@ -8,9 +8,6 @@ public class Materia {
     @Id
     private String nome;
 
-    @Column(length = 300)
-    private String descrizione;
-
     public Materia() {}
 
     public String getNome() {
@@ -21,11 +18,4 @@ public class Materia {
         this.nome = nome;
     }
 
-    public String getDescrizione() {
-        return descrizione;
-    }
-
-    public void setDescrizione(String descrizione) {
-        this.descrizione = descrizione;
-    }
 }
