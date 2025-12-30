@@ -1,10 +1,15 @@
 package it.unisa.ilfarodellostudio.activities;
 
-import it.unisa.ilfarodellostudio.users.Studente;
-import it.unisa.ilfarodellostudio.users.StudenteRepository;
+import it.unisa.ilfarodellostudio.activities.entity.Attivita;
+import it.unisa.ilfarodellostudio.activities.repository.AttivitaRepository;
+import it.unisa.ilfarodellostudio.users.entity.Studente;
+import it.unisa.ilfarodellostudio.users.repository.StudenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Servizio per la gestione delle operazioni relative alle attività.
@@ -15,9 +20,35 @@ public class ActivitiesService {
 
     @Autowired
     private AttivitaRepository attivitaRepository;
-
+  
     @Autowired
     private StudenteRepository studenteRepository;
+
+    // CREATE
+    public Attivita creaAttivita(Attivita attivita) {
+        return attivitaRepository.save(attivita);
+    }
+
+    // READ ALL
+    public List<Attivita> visualizzaTutteLeAttivita() {
+        return attivitaRepository.findAll();
+    }
+
+    // READ BY ID
+    public Attivita visualizzaAttivita(Long id) {
+        Optional<Attivita> risultato = attivitaRepository.findById(id);
+        return risultato.orElse(null);
+    }
+
+    // UPDATE
+    public Attivita modificaAttivita(Attivita attivita) {
+        return attivitaRepository.save(attivita);
+    }
+
+    // DELETE
+    public void eliminaAttivita(Long id) {
+        attivitaRepository.deleteById(id);
+    }
 
     /**
      * Esegue l'iscrizione di uno studente a una determinata attività.

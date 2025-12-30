@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accedi - Il Faro dello Studio</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      overflow: hidden;
+      width: 100%;
+      max-width: 400px;
+    }
+    .card-header {
+      background-color: #0d6efd;
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+      border: none;
+    }
+    .btn-primary {
+      padding: 10px;
+      font-weight: bold;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="d-flex justify-content-center">
+    <div class="card login-card">
+      <div class="card-header">
+        <i class="fas fa-book-open fa-3x mb-3"></i>
+        <h4 class="mb-0 fw-bold">Il Faro dello Studio</h4>
+        <p class="mb-0 opacity-75">Accesso alla piattaforma</p>
+      </div>
+      <div class="card-body p-4 bg-white">
+
+        <form id="loginForm">
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">EMAIL ISTITUZIONALE</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0"><i class="fas fa-envelope text-muted"></i></span>
+              <input type="email" id="emailInput" class="form-control border-start-0 bg-light" placeholder="nome@email.it" required>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label text-muted small fw-bold">PASSWORD</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0"><i class="fas fa-lock text-muted"></i></span>
+              <input type="password" class="form-control border-start-0 bg-light" placeholder="••••••••" required>
+            </div>
+          </div>
+
+          <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-primary shadow-sm">ACCEDI</button>
+          </div>
+
+          <div class="text-center">
+            <a href="index.html" class="text-decoration-none small text-muted">Torna alla Home</a>
+            <span class="mx-2 text-muted">|</span>
+            <a href="registrazione.html" class="text-decoration-none small fw-bold">Crea un account</a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // SCRIPT DI SIMULAZIONE REINDIRIZZAMENTO
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('emailInput').value.toLowerCase();
+
+    // Logica fittizia per indirizzare alle diverse dashboard in base all'email
+    if (email.includes('admin')) {
+      window.location.href = 'dashboard_admin.html';
+    } else if (email.includes('docente') || email.includes('prof')) {
+      window.location.href = 'dashboard_docente.html';
+    } else if (email.includes('famiglia') || email.includes('genitore')) {
+      window.location.href = 'dashboard_famiglia.html';
+    } else {
+      // Default: Studente
+      window.location.href = 'dashboard.html'; // Sarebbe dashboard_studente
+    }
+  });
+</script>
+
+</body>
+</html>
