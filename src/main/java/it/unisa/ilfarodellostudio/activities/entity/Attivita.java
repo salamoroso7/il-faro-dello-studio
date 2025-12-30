@@ -1,12 +1,17 @@
 package it.unisa.ilfarodellostudio.activities.entity;
 
+import it.unisa.ilfarodellostudio.users.entity.Studente;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "attivita")
 public class Attivita {
+
+    public static final int MAX_POSTI = 25;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,15 +29,31 @@ public class Attivita {
     @Column(nullable = false)
     private LocalTime oraInizio;
 
-  //  @Column(nullable = false)
-  //  private LocalTime oraFine;
-
     @ManyToOne
     @JoinColumn(name = "materia_nome", nullable = false)
     private Materia materia;
 
+    @ManyToMany
+    @JoinTable(
+            name = "iscrizione_attivita", // Nome della tabella di giunzione
+            joinColumns = @JoinColumn(name = "id_attivita"), // FK verso Attivita
+            inverseJoinColumns = @JoinColumn(name = "email_studente") // FK verso Studente
+    )
+    private Set<Studente> iscritti = new HashSet<>();
+
     // === COSTRUTTORI ===
     public Attivita() {}
+
+    // Helper method per mantenere la sincronizzazione bidirezionale
+    public void aggiungiStudente(Studente studente) {
+        this.iscritti.add(studente);
+        studente.getAttivita().add(this);
+    }
+
+    public void rimuoviStudente(Studente studente) {
+        this.iscritti.remove(studente);
+        studente.getAttivita().remove(this);
+    }
 
     // === GETTER E SETTER ===
     public Long getIdAttivita() {
@@ -74,21 +95,21 @@ public class Attivita {
     public void setOraInizio(LocalTime oraInizio) {
         this.oraInizio = oraInizio;
     }
-/*
-    public LocalTime getOraFine() {
-        return oraFine;
-    }
 
-    public void setOraFine(LocalTime oraFine) {
-        this.oraFine = oraFine;
-    }
-*/
     public Materia getMateria() {
         return materia;
     }
 
     public void setMateria(Materia materia) {
         this.materia = materia;
+    }
+
+    public Set<Studente> getIscritti() {
+        return iscritti;
+    }
+
+    public void setIscritti(Set<Studente> iscritti) {
+        this.iscritti = iscritti;
     }
 }
 

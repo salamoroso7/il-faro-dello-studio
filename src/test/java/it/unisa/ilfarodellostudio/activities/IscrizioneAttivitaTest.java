@@ -1,13 +1,18 @@
 package it.unisa.ilfarodellostudio.activities;
 
-import it.unisa.ilfarodellostudio.users.Studente;
-import it.unisa.ilfarodellostudio.users.StudenteRepository;
+import it.unisa.ilfarodellostudio.activities.entity.Attivita;
+import it.unisa.ilfarodellostudio.activities.entity.Materia;
+import it.unisa.ilfarodellostudio.activities.repository.AttivitaRepository;
+import it.unisa.ilfarodellostudio.activities.repository.MateriaRepository;
+import it.unisa.ilfarodellostudio.users.entity.Studente;
+import it.unisa.ilfarodellostudio.users.repository.StudenteRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -25,11 +30,23 @@ public class IscrizioneAttivitaTest {
     @Autowired
     private StudenteRepository studenteRepository;
 
+    @Autowired
+    private MateriaRepository materiaRepository;
+
     // Test Case TC_GA_6_1
     @Test
     void testIscrizionePostiMassimi() {
-        Attivita attivita = new Attivita("Ripetizione di Algebra", LocalDateTime.now());
+        Materia materia = new Materia();
+        materia.setNome("Matematica");
+        materiaRepository.save(materia);
+
+        Attivita attivita = new Attivita();
+        attivita.setTitolo("Ripetizione di Algebra");
+        attivita.setData(LocalDate.of(2026, 1, 15));
+        attivita.setOraInizio(LocalTime.of(16, 0));
+        attivita.setMateria(materia);
         attivitaRepository.save(attivita);
+
         for (int i=0; i < Attivita.MAX_POSTI ; i++) {
             Studente studente = new Studente();
             studente.setNome("Nome" + i);
@@ -50,14 +67,14 @@ public class IscrizioneAttivitaTest {
         studenteExtra.setPassword("pass");
         studenteExtra = studenteRepository.save(studenteExtra);
 
-        Long idAttivita = attivita.getId();
-        Long idStudenteExtra = studenteExtra.getId();
+        Long idAttivita = attivita.getIdAttivita();
+        String emailStudenteExtra = studenteExtra.getEmail();
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            activitiesService.iscriviStudenteAdAttivita(idStudenteExtra, idAttivita);
+            activitiesService.iscriviStudenteAdAttivita(emailStudenteExtra, idAttivita);
         });
 
-        String messaggioAtteso = "Impossibile iscriversi: l'attività " + attivita.getNome() + " è già al completo";
+        String messaggioAtteso = "Impossibile iscriversi: l'attività " + attivita.getTitolo() + " è già al completo";
         assertEquals(messaggioAtteso, exception.getMessage());
     }
 }

@@ -58,23 +58,23 @@ public class ActivitiesService {
      * dell'account Famiglia associato.
      * </p>
      *
-     * @param idStudente l'identificativo univoco dello studente da iscrivere
+     * @param emailStudente l'identificativo univoco dello studente da iscrivere
      * @param idAttivita l'identificativo univoco dell'attività a cui iscriversi
      * @throws RuntimeException se lo studente o l'attività non vengono trovati,
      * o se il numero massimo di posti è stato raggiunto.
      */
     @Transactional
-    public void iscriviStudenteAdAttivita(Long idStudente, Long idAttivita) {
+    public void iscriviStudenteAdAttivita(String emailStudente, Long idAttivita) {
 
-        Studente studente = studenteRepository.findById(idStudente)
-                .orElseThrow(() -> new RuntimeException("Studente " + idStudente + " non trovato"));
+        Studente studente = studenteRepository.findById(emailStudente)
+                .orElseThrow(() -> new RuntimeException("Studente " + emailStudente + " non trovato"));
 
         Attivita attivita = attivitaRepository.findById(idAttivita)
                 .orElseThrow(() -> new RuntimeException("Attività " + idAttivita + " non trovata"));
 
         // Controllo posti
-        if(attivita.getStudenti().size() >= Attivita.MAX_POSTI) {
-            throw new RuntimeException("Impossibile iscriversi: l'attività " + attivita.getNome() + " è già al completo");
+        if(attivita.getIscritti().size() >= Attivita.MAX_POSTI) {
+            throw new RuntimeException("Impossibile iscriversi: l'attività " + attivita.getTitolo() + " è già al completo");
         }
 
         // Controllo pagamenti famiglia
