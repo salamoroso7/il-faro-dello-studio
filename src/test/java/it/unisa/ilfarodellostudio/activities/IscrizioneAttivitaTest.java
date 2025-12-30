@@ -4,7 +4,9 @@ import it.unisa.ilfarodellostudio.activities.entity.Attivita;
 import it.unisa.ilfarodellostudio.activities.entity.Materia;
 import it.unisa.ilfarodellostudio.activities.repository.AttivitaRepository;
 import it.unisa.ilfarodellostudio.activities.repository.MateriaRepository;
+import it.unisa.ilfarodellostudio.users.entity.Famiglia;
 import it.unisa.ilfarodellostudio.users.entity.Studente;
+import it.unisa.ilfarodellostudio.users.repository.FamigliaRepository;
 import it.unisa.ilfarodellostudio.users.repository.StudenteRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,9 @@ public class IscrizioneAttivitaTest {
     private StudenteRepository studenteRepository;
 
     @Autowired
+    private FamigliaRepository famigliaRepository;
+
+    @Autowired
     private MateriaRepository materiaRepository;
 
     // Test Case TC_GA_6_1
@@ -39,6 +44,14 @@ public class IscrizioneAttivitaTest {
         Materia materia = new Materia();
         materia.setNome("Matematica");
         materiaRepository.save(materia);
+
+        Famiglia famiglia = new Famiglia();
+        famiglia.setEmail("famiglia@test.com");
+        famiglia.setNome("Famiglia");
+        famiglia.setCognome("Test");
+        famiglia.setUsername("famigliaTest");
+        famiglia.setPassword("password");
+        famigliaRepository.save(famiglia);
 
         Attivita attivita = new Attivita();
         attivita.setTitolo("Ripetizione di Algebra");
@@ -54,6 +67,7 @@ public class IscrizioneAttivitaTest {
             studente.setUsername("Username" + i);
             studente.setPassword("Password" + i);
             studente.setEmail("Email" + i + "@test.com");
+            studente.setFamiglia(famiglia);
             studenteRepository.save(studente);
             attivita.aggiungiStudente(studente);
         }
@@ -65,6 +79,7 @@ public class IscrizioneAttivitaTest {
         studenteExtra.setUsername("mariorossi");
         studenteExtra.setEmail("mario@test.com");
         studenteExtra.setPassword("pass");
+        studenteExtra.setFamiglia(famiglia);
         studenteExtra = studenteRepository.save(studenteExtra);
 
         Long idAttivita = attivita.getIdAttivita();

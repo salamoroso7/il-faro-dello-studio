@@ -3,15 +3,7 @@ package it.unisa.ilfarodellostudio.users.entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Column;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@SuperBuilder
 @MappedSuperclass
 public abstract class UtenteRegistrato {
 
@@ -31,7 +23,16 @@ public abstract class UtenteRegistrato {
     @Column(nullable = false)
     private String password;
 
-    public UtenteRegistrato() {}
+    public UtenteRegistrato() {
+    }
+
+    public UtenteRegistrato(String email, String nome, String cognome, String username, String password) {
+        this.email = email;
+        this.nome = nome;
+        this.cognome = cognome;
+        this.username = username;
+        this.password = password;
+    }
 
     public String getEmail() {
         return email;

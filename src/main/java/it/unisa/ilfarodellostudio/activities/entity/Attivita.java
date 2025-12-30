@@ -1,5 +1,6 @@
 package it.unisa.ilfarodellostudio.activities.entity;
 
+import it.unisa.ilfarodellostudio.users.entity.Docente;
 import it.unisa.ilfarodellostudio.users.entity.Studente;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -32,6 +33,10 @@ public class Attivita {
     @ManyToOne
     @JoinColumn(name = "materia_nome", nullable = false)
     private Materia materia;
+
+    @ManyToOne
+    @JoinColumn(name = "docente_email") // Il nome della colonna nel DB
+    private Docente docente; // <--- DEVE CHIAMARSI 'docente' (case-sensitive)
 
     @ManyToMany
     @JoinTable(
@@ -102,6 +107,14 @@ public class Attivita {
 
     public void setMateria(Materia materia) {
         this.materia = materia;
+    }
+
+    public Docente getDocente() {
+        return docente;
+    }
+
+    public void setDocente(Docente docente) {
+        this.docente = docente;
     }
 
     public Set<Studente> getIscritti() {

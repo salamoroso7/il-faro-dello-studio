@@ -1,136 +1,149 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registrati - Il Faro dello Studio</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <style>
-    body {
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      min-height: 100vh;
-      padding: 40px 0;
-    }
-    .register-card {
-      border: none;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-    .left-panel {
-      background: linear-gradient(180deg, #0d6efd 0%, #0a58ca 100%);
-      color: white;
-      border-radius: 15px 0 0 15px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 40px;
-    }
-    /* Mobile adjustment */
-    @media (max-width: 768px) {
-      .left-panel { border-radius: 15px 15px 0 0; padding: 20px; }
-    }
-  </style>
+	<meta charset="UTF-8">
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<title>Registrati - Il Faro dello Studio</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 40px 0;
+        }
+
+        .register-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .left-panel {
+            background: linear-gradient(180deg, #0d6efd 0%, #0a58ca 100%);
+            color: white;
+            border-radius: 15px 0 0 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* Mobile adjustment */
+        @media (max-width: 768px) {
+            .left-panel {
+                border-radius: 15px 15px 0 0;
+                padding: 20px;
+            }
+        }
+	</style>
 </head>
 <body>
 
 <div class="container">
-  <div class="row justify-content-center">
-    <div class="col-lg-10">
-      <div class="card register-card">
-        <div class="row g-0">
+	<div class="row justify-content-center">
+		<div class="col-lg-10">
+			<div class="card register-card">
+				<div class="row g-0">
 
-          <div class="col-md-5 left-panel">
-            <i class="fas fa-user-plus fa-4x mb-4"></i>
-            <h3 class="fw-bold">Unisciti a Noi</h3>
-            <p class="opacity-75 mb-4">Crea il tuo account per accedere a lezioni, feedback e servizi dedicati.</p>
-            <a href="login.html" class="btn btn-outline-light rounded-pill px-4">Hai già un account? Accedi</a>
-          </div>
+					<div class="col-md-5 left-panel">
+						<i class="fas fa-user-plus fa-4x mb-4"></i>
+						<h3 class="fw-bold">Unisciti a Noi</h3>
+						<p class="opacity-75 mb-4">Crea il tuo account per accedere a lezioni, feedback e servizi
+							dedicati.</p>
+						<a class="btn btn-outline-light rounded-pill px-4" href="login.html">Hai già un account?
+							Accedi</a>
+					</div>
 
-          <div class="col-md-7 bg-white p-5 rounded-end">
-            <h3 class="text-primary fw-bold mb-4">Crea Account</h3>
+					<div class="col-md-7 bg-white p-5 rounded-end">
+						<h3 class="text-primary fw-bold mb-4">Crea Account</h3>
 
-            <form onsubmit="event.preventDefault(); alert('Registrazione completata! Effettua il login.'); window.location.href='login.html';">
-              <div class="row g-3">
+						<form onsubmit="event.preventDefault(); alert('Registrazione completata! Effettua il login.'); window.location.href='login.html';">
+							<div class="row g-3">
 
-                <div class="col-12">
-                  <label class="form-label text-muted small fw-bold">SELEZIONA RUOLO</label>
-                  <select class="form-select bg-light" required id="roleSelect" onchange="toggleFields()">
-                    <option value="" selected disabled>Chi sei?</option>
-                    <option value="studente">Studente</option>
-                    <option value="docente">Docente</option>
-                    <option value="famiglia">Famiglia</option>
-                  </select>
-                </div>
+								<div class="col-12">
+									<label class="form-label text-muted small fw-bold">SELEZIONA RUOLO</label>
+									<select class="form-select bg-light" id="roleSelect" onchange="toggleFields()"
+											required>
+										<option disabled selected value="">Chi sei?</option>
+										<option value="studente">Studente</option>
+										<option value="docente">Docente</option>
+										<option value="famiglia">Famiglia</option>
+									</select>
+								</div>
 
-                <div class="col-md-6">
-                  <label class="form-label text-muted small fw-bold">NOME</label>
-                  <input type="text" class="form-control bg-light" required>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label text-muted small fw-bold">COGNOME</label>
-                  <input type="text" class="form-control bg-light" required>
-                </div>
+								<div class="col-md-6">
+									<label class="form-label text-muted small fw-bold">NOME</label>
+									<input class="form-control bg-light" required type="text">
+								</div>
+								<div class="col-md-6">
+									<label class="form-label text-muted small fw-bold">COGNOME</label>
+									<input class="form-control bg-light" required type="text">
+								</div>
 
-                <div class="col-12">
-                  <label class="form-label text-muted small fw-bold">EMAIL</label>
-                  <input type="email" class="form-control bg-light" placeholder="nome@esempio.it" required>
-                </div>
+								<div class="col-12">
+									<label class="form-label text-muted small fw-bold">EMAIL</label>
+									<input class="form-control bg-light" placeholder="nome@esempio.it" required
+										   type="email">
+								</div>
 
-                <div class="col-12 d-none" id="matricolaField">
-                  <label class="form-label text-muted small fw-bold">MATRICOLA</label>
-                  <input type="text" class="form-control bg-light">
-                </div>
+								<div class="col-12 d-none" id="matricolaField">
+									<label class="form-label text-muted small fw-bold">MATRICOLA</label>
+									<input class="form-control bg-light" type="text">
+								</div>
 
-                <div class="col-md-6">
-                  <label class="form-label text-muted small fw-bold">PASSWORD</label>
-                  <input type="password" class="form-control bg-light" required>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label text-muted small fw-bold">CONFERMA PASSWORD</label>
-                  <input type="password" class="form-control bg-light" required>
-                </div>
+								<div class="col-md-6">
+									<label class="form-label text-muted small fw-bold">PASSWORD</label>
+									<input class="form-control bg-light" required type="password">
+								</div>
+								<div class="col-md-6">
+									<label class="form-label text-muted small fw-bold">CONFERMA PASSWORD</label>
+									<input class="form-control bg-light" required type="password">
+								</div>
 
-                <div class="col-12 mt-4">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" required>
-                    <label class="form-check-label small text-muted">
-                      Accetto i Termini di Servizio e la Privacy Policy
-                    </label>
-                  </div>
-                </div>
+								<div class="col-12 mt-4">
+									<div class="form-check">
+										<input class="form-check-input" required type="checkbox">
+										<label class="form-check-label small text-muted">
+											Accetto i Termini di Servizio e la Privacy Policy
+										</label>
+									</div>
+								</div>
 
-                <div class="col-12 mt-3">
-                  <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">REGISTRATI</button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+								<div class="col-12 mt-3">
+									<button class="btn btn-primary w-100 py-2 fw-bold shadow-sm" type="submit">
+										REGISTRATI
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
 
-      <div class="text-center mt-4">
-        <a href="index.html" class="text-decoration-none text-muted"><i class="fas fa-arrow-left me-2"></i>Torna alla Home Page</a>
-      </div>
+			<div class="text-center mt-4">
+				<a class="text-decoration-none text-muted" th:href="@{/}"><i class="fas fa-arrow-left me-2"></i>Torna
+					alla Home Page</a>
+			</div>
 
-    </div>
-  </div>
+		</div>
+	</div>
 </div>
 
 <script>
-  function toggleFields() {
-    const role = document.getElementById('roleSelect').value;
-    const matricolaField = document.getElementById('matricolaField');
+    function toggleFields() {
+        const role = document.getElementById('roleSelect').value;
+        const matricolaField = document.getElementById('matricolaField');
 
-    // Mostra campo matricola solo se è studente
-    if (role === 'studente') {
-      matricolaField.classList.remove('d-none');
-    } else {
-      matricolaField.classList.add('d-none');
+        // Mostra campo matricola solo se è studente
+        if (role === 'studente') {
+            matricolaField.classList.remove('d-none');
+        } else {
+            matricolaField.classList.add('d-none');
+        }
     }
-  }
 </script>
 
 </body>

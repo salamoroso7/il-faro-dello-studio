@@ -1,20 +1,30 @@
 package it.unisa.ilfarodellostudio.users.entity;
 
+import it.unisa.ilfarodellostudio.activities.entity.Attivita;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "docente")
-@Data
-@EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
-@SuperBuilder
 public class Docente extends UtenteRegistrato {
 
-    // @OneToMany(mappedBy = "docente")
-    // private List<Attivita> attivitaCreate;
+    @OneToMany(mappedBy = "docente", cascade = CascadeType.ALL)
+    private List<Attivita> attivitaCreate = new ArrayList<>();
+
+    public Docente() {
+        super();
+    }
+
+    public List<Attivita> getAttivitaCreate() {
+        return attivitaCreate;
+    }
+
+    public void setAttivitaCreate(List<Attivita> attivitaCreate) {
+        this.attivitaCreate = attivitaCreate;
+    }
 }
