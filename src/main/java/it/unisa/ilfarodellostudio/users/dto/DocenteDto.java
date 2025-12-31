@@ -4,7 +4,6 @@ public class DocenteDto {
     private String nome;
     private String cognome;
     private String email;
-    private String username;
     private String password;
     private String materia;
 
@@ -30,14 +29,6 @@ public class DocenteDto {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {

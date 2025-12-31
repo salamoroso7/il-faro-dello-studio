@@ -13,7 +13,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Controller
-@RequestMapping("/attivita")
 public class ActivitiesController {
 
     @Autowired
@@ -22,13 +21,18 @@ public class ActivitiesController {
     @Autowired
     private MateriaRepository materiaRepository; // Serve per gestire le materie!
 
-    /* =======================
-       FORM CREAZIONE
-       ======================= */
-    @GetMapping("/crea")
-    public String mostraFormCreazione() {
-        // Assicurati che il file src/main/resources/templates/crea-attivita.html esista!
-        return "crea-attivita";
+    // Rotta per visualizzare "Le mie Attività"
+    @GetMapping("/docente/gestione-attivita")
+    public String gestioneAttivita() {
+        // Punta a templates/docente/gestione-attivita.html
+        return "docente/gestione-attivita";
+    }
+
+    // Rotta per visualizzare il form "Crea Nuova"
+    @GetMapping("/docente/crea-attivita")
+    public String creaNuovaAttivita() {
+        // Punta a templates/docente/crea-attivita.html
+        return "docente/crea-attivita";
     }
 
     /* =======================

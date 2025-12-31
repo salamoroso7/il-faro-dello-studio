@@ -10,6 +10,8 @@
         body { background-color: #f8f9fa; }
         .sidebar { background: linear-gradient(180deg, #0d6efd 0%, #0a58ca 100%); color: white; min-height: 100vh; }
         .sidebar .nav-link { color: rgba(255,255,255,0.85); padding: 15px 20px; margin: 0 10px; border-radius: 5px; transition: all 0.3s; }
+        .sidebar .nav-link-btn { background: none; border: none; width: 100%; text-align: left; cursor: pointer; display: flex; align-items: center; }
+        .sidebar .nav-link-btn:focus { outline: none; }
         .sidebar .nav-link:hover { background-color: rgba(255,255,255,0.2); color: white; transform: translateX(5px); }
         .sidebar .nav-link.active { background-color: white; color: #0d6efd; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
     </style>
@@ -23,14 +25,44 @@
                 <span class="fs-6">Il Faro - Famiglia</span>
             </div>
             <ul class="nav flex-column">
-                <li class="nav-item mb-1"><a class="nav-link active" href="#"><i class="fas fa-home me-2"></i> Riepilogo</a></li>
-                <li class="nav-item mb-1"><a class="nav-link" href="lista_pagamenti.html"><i class="fas fa-credit-card me-2"></i> Pagamenti</a></li>
-                <li class="nav-item mt-5 pt-5 border-top border-light"><a class="nav-link text-white" href="index.html" style="opacity: 0.9;"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                <li class="nav-item mb-1">
+                    <form th:action="@{/famiglia/dashboard-famiglia}" method="get" class="m-0">
+                        <button type="submit" class="nav-link nav-link-btn">
+                            <i class="fas fa-home me-2"></i> Riepilogo
+                        </button>
+                    </form>
+                </li>
+
+                <li class="nav-item mb-1">
+                    <form th:action="@{/famiglia/registrazione-studente}" method="get" class="m-0">
+                        <button type="submit" class="nav-link nav-link-btn">
+                            <i class="fas fa-user-plus me-2"></i> Registra studente
+                        </button>
+                    </form>
+                </li>
+
+                <li class="nav-item mb-1">
+                    <form th:action="@{/famiglia/lista-pagamenti}" method="post" class="m-0">
+                        <button type="submit" class="nav-link nav-link-btn">
+                            <i class="fas fa-credit-card me-2"></i> Pagamenti
+                        </button>
+                    </form>
+                </li>
+
+                <li class="nav-item mb-1">
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <button type="submit" class="nav-link nav-link-btn">
+                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                        </button>
+                    </form>
+                </li>
             </ul>
         </nav>
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-            <h2 class="text-primary fw-bold mb-4">Benvenuto, Genitore</h2>
+            <h2 class="text-primary fw-bold mb-4">
+                Benvenuto, <span th:text="${famiglia?.nome ?: 'Ospite'}"></span>
+            </h2>
 
             <div class="alert alert-warning border-start border-warning border-4" role="alert">
                 <i class="fas fa-exclamation-triangle me-2"></i>

@@ -61,7 +61,7 @@ public class AuthService implements UserDetailsService {
 
         // Costruisce l'oggetto User di Spring Security mappando i dati della nostra entità
         return User.builder()
-                .username(u.getUsername()) // Utilizzato come identificativo principale della sessione
+                .username(u.getEmail()) // Utilizzato come identificativo principale della sessione
                 .password(u.getPassword()) // La password (già criptata) per il confronto
                 .roles(getRuolo(u))        // Il ruolo dinamico (DOCENTE, STUDENTE o FAMIGLIA)
                 .build();
@@ -71,20 +71,20 @@ public class AuthService implements UserDetailsService {
      * Esegue una ricerca polimorfica dello username all'interno delle repository dei docenti,
      * delle famiglie e degli studenti.
      *
-     * @param id Lo username da ricercare.
+     * @param email L'email da ricercare.
      * @return Un {@link Optional} contenente l'utente trovato, oppure vuoto se non trovato.
      */
-    private Optional<? extends UtenteRegistrato> cercaInTutteLeRepo(String id) {
+    private Optional<? extends UtenteRegistrato> cercaInTutteLeRepo(String email) {
         // 1. Priorità di ricerca: Docente
-        Optional<Docente> d = docenteRepository.findByUsername(id);
+        Optional<Docente> d = docenteRepository.findByEmail(email);
         if (d.isPresent()) return d;
 
         // 2. Seconda scelta: Famiglia
-        Optional<Famiglia> f = famigliaRepository.findByUsername(id);
+        Optional<Famiglia> f = famigliaRepository.findByEmail(email);
         if (f.isPresent()) return f;
 
         // 3. Terza scelta: Studente (username generato automaticamente)
-        return studenteRepository.findByUsername(id);
+        return studenteRepository.findByEmail(email);
     }
 
     /**

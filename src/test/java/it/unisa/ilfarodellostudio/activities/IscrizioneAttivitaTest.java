@@ -49,7 +49,6 @@ public class IscrizioneAttivitaTest {
         famiglia.setEmail("famiglia@test.com");
         famiglia.setNome("Famiglia");
         famiglia.setCognome("Test");
-        famiglia.setUsername("famigliaTest");
         famiglia.setPassword("password");
         famigliaRepository.save(famiglia);
 
@@ -64,7 +63,6 @@ public class IscrizioneAttivitaTest {
             Studente studente = new Studente();
             studente.setNome("Nome" + i);
             studente.setCognome("Cognome" + i);
-            studente.setUsername("Username" + i);
             studente.setPassword("Password" + i);
             studente.setEmail("Email" + i + "@test.com");
             studente.setFamiglia(famiglia);
@@ -76,7 +74,6 @@ public class IscrizioneAttivitaTest {
         Studente studenteExtra = new Studente();
         studenteExtra.setNome("Mario");
         studenteExtra.setCognome("Rossi");
-        studenteExtra.setUsername("mariorossi");
         studenteExtra.setEmail("mario@test.com");
         studenteExtra.setPassword("pass");
         studenteExtra.setFamiglia(famiglia);

@@ -17,21 +17,21 @@ public abstract class UtenteRegistrato {
     @Column(nullable = false, length = 40)
     private String cognome;
 
-    @Column(nullable = false, length = 40, unique = true)
-    private String username;
-
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private boolean isAttivo;
 
     public UtenteRegistrato() {
     }
 
-    public UtenteRegistrato(String email, String nome, String cognome, String username, String password) {
+    public UtenteRegistrato(String email, String nome, String cognome, String password, boolean isAttivo) {
         this.email = email;
         this.nome = nome;
         this.cognome = cognome;
-        this.username = username;
         this.password = password;
+        this.isAttivo = isAttivo;
     }
 
     public String getEmail() {
@@ -58,19 +58,19 @@ public abstract class UtenteRegistrato {
         this.cognome = cognome;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isAttivo() {
+        return isAttivo;
+    }
+
+    public void setAttivo(boolean attivo) {
+        isAttivo = attivo;
     }
 }

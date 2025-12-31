@@ -43,10 +43,16 @@ public class UsersController {
             @RequestParam String cognome,
             @RequestParam String email,
             @RequestParam String password,
+            @RequestParam String conferma_password,
             @RequestParam(required = false) String materia, // Solo per Docenti
             Model model) {
 
         try {
+
+            if (!password.equals(conferma_password)) {
+                throw new IllegalArgumentException("Le password non coincidono");
+            }
+
             switch (ruolo.toLowerCase()) {
                 case "docente":
                     DocenteDto docenteDto = new DocenteDto();
@@ -55,7 +61,6 @@ public class UsersController {
                     docenteDto.setEmail(email);
                     docenteDto.setPassword(password);
                     docenteDto.setMateria(materia);
-                    // docenteDto.setUsername(email); // Se necessario
 
                     usersService.registraDocente(docenteDto);
                     break;
@@ -84,19 +89,21 @@ public class UsersController {
         } catch (Exception e) {
             // Errore: ricarica la pagina mostrando l'errore
             model.addAttribute("error", "Errore durante la registrazione: " + e.getMessage());
+            model.addAttribute("ruolo", ruolo);
+            model.addAttribute("nome", nome);
+            model.addAttribute("cognome", cognome);
+            model.addAttribute("email", email);
+            if (ruolo.equalsIgnoreCase("docente")) {
+                model.addAttribute("materia", materia);
+            }
             return "registrazione";
         }
     }
 
-    /* =========================================================================
-       2. CREAZIONE STUDENTE (Area Riservata Famiglia)
-       Usa la pagina 'crea_studente.html' accessibile solo dopo il login.
-       ========================================================================= */
-
-    @GetMapping("/users/crea-studente")
+    @GetMapping("/famiglia/registrazione-studente")
     public String showStudenteForm(Model model) {
         model.addAttribute("studenteDto", new StudenteDto());
-        return "crea_studente"; // Corrisponde al file crea_studente.html
+        return "famiglia/registrazione-studente";
     }
 
     @PostMapping("/users/crea-studente")
@@ -117,4 +124,5 @@ public class UsersController {
             return "crea_studente";
         }
     }
+
 }
