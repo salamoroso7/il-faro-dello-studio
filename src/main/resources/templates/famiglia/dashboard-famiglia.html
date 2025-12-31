@@ -33,7 +33,15 @@
                     </form>
                 </li>
 
-                <li class="nav-item mt-5 pt-5 border-top border-light">
+                <li class="nav-item mb-1">
+                    <form th:action="@{/famiglia/registrazione-studente}" method="get" class="m-0">
+                        <button type="submit" class="nav-link nav-link-btn">
+                            <i class="fas fa-user-plus me-2"></i> Registra studente
+                        </button>
+                    </form>
+                </li>
+
+                <li class="nav-item mb-1">
                     <form th:action="@{/famiglia/lista-pagamenti}" method="post" class="m-0">
                         <button type="submit" class="nav-link nav-link-btn">
                             <i class="fas fa-credit-card me-2"></i> Pagamenti
@@ -41,7 +49,7 @@
                     </form>
                 </li>
 
-                <li class="nav-item mt-5 pt-5 border-top border-light">
+                <li class="nav-item mb-1">
                     <form th:action="@{/logout}" method="post" class="m-0">
                         <button type="submit" class="nav-link nav-link-btn">
                             <i class="fas fa-sign-out-alt me-2"></i> Logout

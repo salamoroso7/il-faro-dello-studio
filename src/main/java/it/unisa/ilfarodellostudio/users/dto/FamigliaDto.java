@@ -4,7 +4,6 @@ public class FamigliaDto {
     private String nome;
     private String cognome;
     private String email;
-    private String username;
     private String password;
 
     public String getNome() {
@@ -29,14 +28,6 @@ public class FamigliaDto {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {

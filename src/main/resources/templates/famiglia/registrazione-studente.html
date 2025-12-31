@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
-	<title>Registrati - Il Faro dello Studio</title>
+	<title>Registra studente - Il Faro dello Studio</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 	<style>
@@ -50,11 +50,9 @@
 
 					<div class="col-md-5 left-panel">
 						<i class="fas fa-user-plus fa-4x mb-4"></i>
-						<h3 class="fw-bold">Unisciti a Noi</h3>
-						<p class="opacity-75 mb-4">Crea il tuo account per accedere a lezioni, feedback e servizi
+						<h3 class="fw-bold">Iscrivi uno studente alla piattaforma</h3>
+						<p class="opacity-75 mb-4">Iscrivi uno studente alla piattaforma per accedere alle varie attività
 							dedicati.</p>
-						<a class="btn btn-outline-light rounded-pill px-4" href="login.html">Hai già un account?
-							Accedi</a>
 					</div>
 
 					<div class="col-md-7 bg-white p-5 rounded-end">
@@ -70,16 +68,6 @@
 									</div>
 								</div>
 
-								<div class="col-12">
-									<label class="form-label text-muted small fw-bold">SELEZIONA RUOLO</label>
-									<select name="ruolo" class="form-select bg-light" id="roleSelect" onchange="toggleFields()"
-											required>
-										<option disabled th:selected="${ruolo == null}" value="">Chi sei?</option>
-										<option value="docente" th:selected="${ruolo == 'docente'}">Docente</option>
-										<option value="famiglia" th:selected="${ruolo == 'famiglia'}">Famiglia</option>
-									</select>
-								</div>
-
 								<div class="col-md-6">
 									<label class="form-label text-muted small fw-bold">NOME</label>
 									<input name="nome" th:value="${nome}" class="form-control bg-light" required type="text">
@@ -91,38 +79,19 @@
 								</div>
 
 								<div class="col-12">
-									<label class="form-label text-muted small fw-bold">EMAIL</label>
-									<input name="email" th:value="${email}" class="form-control bg-light" placeholder="nome@esempio.it" required
+									<label class="form-label text-muted small fw-bold">CODICE FISCALE</label>
+									<input name="codice-fiscale" th:value="${codiceFiscale}" class="form-control bg-light" required
 										   type="email">
 								</div>
 
 								<div class="col-12 d-none" id="materiaField">
-									<label class="form-label text-muted small fw-bold">MATERIA</label>
-									<input name="materia" th:value="${materia}" class="form-control bg-light" type="text">
-								</div>
-
-								<div class="col-md-6">
-									<label class="form-label text-muted small fw-bold">PASSWORD</label>
-									<input name="password" class="form-control bg-light" required type="password">
-								</div>
-
-								<div class="col-md-6">
-									<label class="form-label text-muted small fw-bold">CONFERMA PASSWORD</label>
-									<input name="conferma_password" class="form-control bg-light" required type="password">
-								</div>
-
-								<div class="col-12 mt-4">
-									<div class="form-check">
-										<input class="form-check-input" required type="checkbox">
-										<label class="form-check-label small text-muted">
-											Accetto i Termini di Servizio e la Privacy Policy
-										</label>
-									</div>
+									<label class="form-label text-muted small fw-bold">DATA DI NASCITA</label>
+									<input name="data-nascita" th:value="${dataNascita}" class="form-control bg-light" type="date">
 								</div>
 
 								<div class="col-12 mt-3">
 									<button class="btn btn-primary w-100 py-2 fw-bold shadow-sm" type="submit">
-										REGISTRATI
+										REGISTRA
 									</button>
 								</div>
 							</div>
@@ -132,27 +101,15 @@
 			</div>
 
 			<div class="text-center mt-4">
-				<a class="text-decoration-none text-muted" th:href="@{/}"><i class="fas fa-arrow-left me-2"></i>Torna
-					alla Home Page</a>
+				<form th:action="@{/famiglia/dashboard-famiglia}" method="get" class="m-0">
+					<button type="submit" class="nav-link nav-link-btn">
+						<i class="fas fa-home me-2"></i> Torna alla dashboard
+					</button>
+				</form>
 			</div>
 
 		</div>
 	</div>
 </div>
-
-<script>
-    function toggleFields() {
-        const role = document.getElementById('roleSelect').value;
-        const materiaField = document.getElementById('materiaField');
-
-        // Mostra campo matricola solo se è studente
-        if (role === 'docente') {
-            materiaField.classList.remove('d-none');
-        } else {
-            materiaField.classList.add('d-none');
-        }
-    }
-</script>
-
 </body>
 </html>

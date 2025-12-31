@@ -49,7 +49,6 @@ public class UsersService {
         docente.setNome(dto.getNome());
         docente.setCognome(dto.getCognome());
         docente.setEmail(dto.getEmail());
-        docente.setUsername(dto.getUsername());
         docente.setPassword(passwordEncoder.encode(dto.getPassword()));
 
         docenteRepository.save(docente);
@@ -69,7 +68,6 @@ public class UsersService {
         famiglia.setNome(dto.getNome());
         famiglia.setCognome(dto.getCognome());
         famiglia.setEmail(dto.getEmail());
-        famiglia.setUsername(dto.getUsername());
         famiglia.setPassword(passwordEncoder.encode(dto.getPassword()));
 
         famigliaRepository.save(famiglia);
@@ -77,11 +75,10 @@ public class UsersService {
 
     /**
      * Esegue la registrazione dello studente effettuata dalla famiglia.
-     * Genera automaticamente Username e Password (poiché assenti nel StudenteDto).
+     * Genera automaticamente Email e Password (poiché assenti nel StudenteDto).
      */
     @Transactional
     public String creaStudente(StudenteDto dto, String emailFamiglia) {
-        // Genera username univoco (es. matricola)
         String generatedUsername = generaUsername();
 
         // Genera una password provvisoria (es. basata sul nome o random)
@@ -99,8 +96,9 @@ public class UsersService {
         studente.setNome(dto.getNome());
         studente.setCognome(dto.getCognome());
         studente.setEmail(generatedEmail);
-        studente.setUsername(generatedUsername);
         studente.setPassword(passwordEncoder.encode(rawPassword));
+        studente.setCodiceFiscale(dto.getCodiceFiscale());
+        studente.setDataNascita(dto.getDataNascita());
         studente.setFamiglia(famiglia);
 
         famiglia.getStudenti().add(studente);

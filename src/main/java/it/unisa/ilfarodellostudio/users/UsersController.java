@@ -42,7 +42,6 @@ public class UsersController {
             @RequestParam String nome,
             @RequestParam String cognome,
             @RequestParam String email,
-            @RequestParam String username,
             @RequestParam String password,
             @RequestParam String conferma_password,
             @RequestParam(required = false) String materia, // Solo per Docenti
@@ -60,7 +59,6 @@ public class UsersController {
                     docenteDto.setNome(nome);
                     docenteDto.setCognome(cognome);
                     docenteDto.setEmail(email);
-                    docenteDto.setUsername(username);
                     docenteDto.setPassword(password);
                     docenteDto.setMateria(materia);
 
@@ -72,7 +70,6 @@ public class UsersController {
                     famigliaDto.setNome(nome);
                     famigliaDto.setCognome(cognome);
                     famigliaDto.setEmail(email);
-                    famigliaDto.setUsername(username);
                     famigliaDto.setPassword(password);
 
                     usersService.registraFamiglia(famigliaDto);
@@ -96,7 +93,6 @@ public class UsersController {
             model.addAttribute("nome", nome);
             model.addAttribute("cognome", cognome);
             model.addAttribute("email", email);
-            model.addAttribute("username", username);
             if (ruolo.equalsIgnoreCase("docente")) {
                 model.addAttribute("materia", materia);
             }
@@ -104,15 +100,10 @@ public class UsersController {
         }
     }
 
-    /* =========================================================================
-       2. CREAZIONE STUDENTE (Area Riservata Famiglia)
-       Usa la pagina 'crea_studente.html' accessibile solo dopo il login.
-       ========================================================================= */
-
-    @GetMapping("/users/crea-studente")
+    @GetMapping("/famiglia/registrazione-studente")
     public String showStudenteForm(Model model) {
         model.addAttribute("studenteDto", new StudenteDto());
-        return "crea_studente"; // Corrisponde al file crea_studente.html
+        return "famiglia/registrazione-studente";
     }
 
     @PostMapping("/users/crea-studente")
