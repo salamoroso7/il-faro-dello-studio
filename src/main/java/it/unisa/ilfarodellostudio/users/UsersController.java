@@ -42,20 +42,27 @@ public class UsersController {
             @RequestParam String nome,
             @RequestParam String cognome,
             @RequestParam String email,
+            @RequestParam String username,
             @RequestParam String password,
+            @RequestParam String conferma_password,
             @RequestParam(required = false) String materia, // Solo per Docenti
             Model model) {
 
         try {
+
+            if (!password.equals(conferma_password)) {
+                throw new IllegalArgumentException("Le password non coincidono");
+            }
+
             switch (ruolo.toLowerCase()) {
                 case "docente":
                     DocenteDto docenteDto = new DocenteDto();
                     docenteDto.setNome(nome);
                     docenteDto.setCognome(cognome);
                     docenteDto.setEmail(email);
+                    docenteDto.setUsername(username);
                     docenteDto.setPassword(password);
                     docenteDto.setMateria(materia);
-                    // docenteDto.setUsername(email); // Se necessario
 
                     usersService.registraDocente(docenteDto);
                     break;
@@ -65,6 +72,7 @@ public class UsersController {
                     famigliaDto.setNome(nome);
                     famigliaDto.setCognome(cognome);
                     famigliaDto.setEmail(email);
+                    famigliaDto.setUsername(username);
                     famigliaDto.setPassword(password);
 
                     usersService.registraFamiglia(famigliaDto);
@@ -84,6 +92,14 @@ public class UsersController {
         } catch (Exception e) {
             // Errore: ricarica la pagina mostrando l'errore
             model.addAttribute("error", "Errore durante la registrazione: " + e.getMessage());
+            model.addAttribute("ruolo", ruolo);
+            model.addAttribute("nome", nome);
+            model.addAttribute("cognome", cognome);
+            model.addAttribute("email", email);
+            model.addAttribute("username", username);
+            if (ruolo.equalsIgnoreCase("docente")) {
+                model.addAttribute("materia", materia);
+            }
             return "registrazione";
         }
     }
@@ -117,4 +133,5 @@ public class UsersController {
             return "crea_studente";
         }
     }
+
 }

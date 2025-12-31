@@ -51,13 +51,21 @@
 			</div>
 			<div class="card-body p-4 bg-white">
 
-				<form id="loginForm">
+				<div th:if="${param.error}" class="alert alert-danger">
+					Username o Password errati.
+				</div>
+
+				<div th:if="${param.success}" class="alert alert-success">
+					Registrazione completata! Effettua l'accesso.
+				</div>
+
+				<form th:action="@{/login}" method="post">
 					<div class="mb-3">
-						<label class="form-label text-muted small fw-bold">EMAIL ISTITUZIONALE</label>
+						<label class="form-label text-muted small fw-bold">EMAIL</label>
 						<div class="input-group">
 							<span class="input-group-text bg-light border-end-0"><i
 									class="fas fa-envelope text-muted"></i></span>
-							<input class="form-control border-start-0 bg-light" id="emailInput" placeholder="nome@email.it"
+							<input name="username" class="form-control border-start-0 bg-light" id="emailInput" placeholder="nome@email.it"
 								   required type="email">
 						</div>
 					</div>
@@ -66,7 +74,7 @@
 						<label class="form-label text-muted small fw-bold">PASSWORD</label>
 						<div class="input-group">
 							<span class="input-group-text bg-light border-end-0"><i class="fas fa-lock text-muted"></i></span>
-							<input class="form-control border-start-0 bg-light" placeholder="••••••••" required
+							<input name="password" class="form-control border-start-0 bg-light" placeholder="••••••••" required
 								   type="password">
 						</div>
 					</div>
@@ -80,6 +88,7 @@
 						<span class="mx-2 text-muted">|</span>
 						<a class="text-decoration-none small fw-bold" th:href="@{/register}">Crea un account</a>
 					</div>
+
 				</form>
 
 			</div>
@@ -87,6 +96,7 @@
 	</div>
 </div>
 
+<!--
 <script>
     // SCRIPT DI SIMULAZIONE REINDIRIZZAMENTO
     document.getElementById('loginForm').addEventListener('submit', function (e) {
@@ -106,6 +116,7 @@
         }
     });
 </script>
+-->
 
 </body>
 </html>

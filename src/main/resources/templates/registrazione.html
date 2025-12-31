@@ -60,47 +60,60 @@
 					<div class="col-md-7 bg-white p-5 rounded-end">
 						<h3 class="text-primary fw-bold mb-4">Crea Account</h3>
 
-						<form onsubmit="event.preventDefault(); alert('Registrazione completata! Effettua il login.'); window.location.href='login.html';">
+						<form th:action="@{/register}" method="post">
 							<div class="row g-3">
+
+								<div th:if="${error}" class="col-12">
+									<div class="alert alert-danger alert-dismissible fade show" role="alert">
+										<span th:text="${error}">Errore generico</span>
+										<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+									</div>
+								</div>
 
 								<div class="col-12">
 									<label class="form-label text-muted small fw-bold">SELEZIONA RUOLO</label>
-									<select class="form-select bg-light" id="roleSelect" onchange="toggleFields()"
+									<select name="ruolo" class="form-select bg-light" id="roleSelect" onchange="toggleFields()"
 											required>
-										<option disabled selected value="">Chi sei?</option>
-										<option value="studente">Studente</option>
-										<option value="docente">Docente</option>
-										<option value="famiglia">Famiglia</option>
+										<option disabled th:selected="${ruolo == null}" value="">Chi sei?</option>
+										<option value="docente" th:selected="${ruolo == 'docente'}">Docente</option>
+										<option value="famiglia" th:selected="${ruolo == 'famiglia'}">Famiglia</option>
 									</select>
 								</div>
 
 								<div class="col-md-6">
 									<label class="form-label text-muted small fw-bold">NOME</label>
-									<input class="form-control bg-light" required type="text">
+									<input name="nome" th:value="${nome}" class="form-control bg-light" required type="text">
 								</div>
+
 								<div class="col-md-6">
 									<label class="form-label text-muted small fw-bold">COGNOME</label>
-									<input class="form-control bg-light" required type="text">
+									<input name="cognome" th:value="${cognome}" class="form-control bg-light" required type="text">
 								</div>
 
 								<div class="col-12">
 									<label class="form-label text-muted small fw-bold">EMAIL</label>
-									<input class="form-control bg-light" placeholder="nome@esempio.it" required
+									<input name="email" th:value="${email}" class="form-control bg-light" placeholder="nome@esempio.it" required
 										   type="email">
 								</div>
 
-								<div class="col-12 d-none" id="matricolaField">
-									<label class="form-label text-muted small fw-bold">MATRICOLA</label>
-									<input class="form-control bg-light" type="text">
+								<div class="col-12">
+									<label class="form-label text-muted small fw-bold">USERNAME</label>
+									<input name="username" th:value="${username}" class="form-control bg-light" required type="text">
+								</div>
+
+								<div class="col-12 d-none" id="materiaField">
+									<label class="form-label text-muted small fw-bold">MATERIA</label>
+									<input name="materia" th:value="${materia}" class="form-control bg-light" type="text">
 								</div>
 
 								<div class="col-md-6">
 									<label class="form-label text-muted small fw-bold">PASSWORD</label>
-									<input class="form-control bg-light" required type="password">
+									<input name="password" class="form-control bg-light" required type="password">
 								</div>
+
 								<div class="col-md-6">
 									<label class="form-label text-muted small fw-bold">CONFERMA PASSWORD</label>
-									<input class="form-control bg-light" required type="password">
+									<input name="conferma_password" class="form-control bg-light" required type="password">
 								</div>
 
 								<div class="col-12 mt-4">
@@ -135,13 +148,13 @@
 <script>
     function toggleFields() {
         const role = document.getElementById('roleSelect').value;
-        const matricolaField = document.getElementById('matricolaField');
+        const materiaField = document.getElementById('materiaField');
 
         // Mostra campo matricola solo se è studente
-        if (role === 'studente') {
-            matricolaField.classList.remove('d-none');
+        if (role === 'docente') {
+            materiaField.classList.remove('d-none');
         } else {
-            matricolaField.classList.add('d-none');
+            materiaField.classList.add('d-none');
         }
     }
 </script>
