@@ -18,6 +18,10 @@ public class Famiglia extends UtenteRegistrato {
         super();
     }
 
+    public Famiglia(String email, String nome, String cognome, String password, boolean isAttivo) {
+        super(email, nome, cognome, password, isAttivo);
+    }
+
     public List<Studente> getStudenti() {
         return studenti;
     }
