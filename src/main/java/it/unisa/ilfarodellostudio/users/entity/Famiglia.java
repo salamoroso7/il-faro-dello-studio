@@ -1,8 +1,6 @@
 package it.unisa.ilfarodellostudio.users.entity;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +16,8 @@ public class Famiglia extends UtenteRegistrato {
         super();
     }
 
-    public Famiglia(String email, String nome, String cognome, String password, boolean isAttivo) {
-        super(email, nome, cognome, password, isAttivo);
+    public Famiglia(String email, String nome, String cognome, String password) {
+        super(email, nome, cognome, password);
     }
 
     public List<Studente> getStudenti() {
