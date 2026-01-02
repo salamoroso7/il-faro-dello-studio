@@ -27,6 +27,11 @@ public class ActivitiesController {
     @Autowired
     private UsersService usersService;
 
+    @GetMapping("/studente/dettaglio-attivita")
+    public String mostraDettagliAttivita() {
+        return "studente/dettaglio-attivita";
+    }
+
     // Rotta per visualizzare "Le mie Attività"
     @GetMapping("/docente/gestione-attivita")
     public String gestioneAttivita() {

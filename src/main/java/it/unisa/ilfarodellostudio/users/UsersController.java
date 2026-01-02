@@ -5,9 +5,7 @@ import it.unisa.ilfarodellostudio.activities.entity.Materia;
 import it.unisa.ilfarodellostudio.users.dto.DocenteDto;
 import it.unisa.ilfarodellostudio.users.dto.FamigliaDto;
 import it.unisa.ilfarodellostudio.users.dto.StudenteDto;
-import it.unisa.ilfarodellostudio.users.entity.Famiglia;
 import it.unisa.ilfarodellostudio.users.entity.UtenteRegistrato;
-import it.unisa.ilfarodellostudio.users.repository.FamigliaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -112,12 +110,6 @@ public class UsersController {
         }
     }
 
-    @GetMapping("/famiglia/registrazione-studente")
-    public String showStudenteForm(Model model) {
-        model.addAttribute("studenteDto", new StudenteDto());
-        return "famiglia/registrazione-studente";
-    }
-
     @GetMapping("/admin/lista-utenti")
     public String showListaUtenti(Model model) {
         List<UtenteRegistrato> utenti = usersService.getAllUtenti();
@@ -125,23 +117,39 @@ public class UsersController {
         return "admin/lista-utenti";
     }
 
-    @PostMapping("/users/crea-studente")
+    @GetMapping("/famiglia/registrazione-studente")
+    public String showStudenteForm(Model model) {
+        model.addAttribute("studenteDto", new StudenteDto());
+        return "famiglia/registrazione-studente";
+    }
+
+    @PostMapping("/famiglia/registrazione-studente")
     public String createStudente(@ModelAttribute StudenteDto studenteDto, Principal principal, Model model) {
         try {
-            // 1. Recupera l'utente loggato (Famiglia)
             String emailFamiglia = principal.getName();
 
-            // 2. Crea lo studente associandolo alla famiglia
-            String usernameGenerato = usersService.creaStudente(studenteDto, emailFamiglia);
+            // Riceviamo l'oggetto con email e password in chiaro
+            var result = usersService.creaStudente(studenteDto, emailFamiglia);
 
-            model.addAttribute("success", "Studente creato con successo! Username: " + usernameGenerato);
-            model.addAttribute("studenteDto", new StudenteDto()); // Reset del form
-            return "crea_studente";
+            model.addAttribute("success", "Studente creato con successo!");
+            model.addAttribute("emailGenerata", result.email());
+            model.addAttribute("passwordGenerata", result.password());
+
+            // Puliamo il DTO per svuotare i campi del form dopo il successo
+            model.addAttribute("studenteDto", new StudenteDto());
+
+            return "famiglia/registrazione-studente"; // Ritorna alla stessa pagina per mostrare il box successo
 
         } catch (Exception e) {
-            model.addAttribute("error", "Errore creazione studente: " + e.getMessage());
-            return "crea_studente";
+            model.addAttribute("error", "Errore: " + e.getMessage());
+            model.addAttribute("studenteDto", studenteDto); // Mantiene i dati inseriti nel form
+            return "famiglia/registrazione-studente";
         }
+    }
+
+    @GetMapping("/studente/calendario-attivita")
+    public String mostraAttivitaStudente() {
+        return "studente/calendario-attivita";
     }
 
 }

@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -114,24 +115,30 @@ public class UsersService {
         famigliaRepository.save(famiglia);
     }
 
+    public record RegistrazioneResult(String email, String password) {}
+
     /**
      * Esegue la registrazione dello studente effettuata dalla famiglia.
      * Genera automaticamente Email e Password (poiché assenti nel StudenteDto).
      */
     @Transactional
-    public String creaStudente(StudenteDto dto, String emailFamiglia) {
-        String generatedUsername = generaUsername();
-
-        // Genera una password provvisoria (es. basata sul nome o random)
-        String rawPassword = "Pass" + new Random().nextInt(10000);
-
-        // L'email è l'ID (@Id) in UtenteRegistrato.
-        // Poiché StudenteDto non ha email, ne generiamo una fittizia o usiamo lo username come email interna
-        // Attenzione: UtenteRegistrato richiede email come ID.
-        String generatedEmail = generatedUsername.toLowerCase() + "@studenti.ilfaro.it";
+    public RegistrazioneResult creaStudente(StudenteDto dto, String emailFamiglia) {
+        // Esempio di validazione nel Service
+        if (dto.getNome().length() > 50) throw new IllegalArgumentException("Il Nome supera i 50 caratteri");
+        if (dto.getCodiceFiscale().length() != 16) throw new IllegalArgumentException("Il Codice Fiscale deve essere di 16 cifre");
+        if (!dto.getDataNascita().isBefore(LocalDate.now())) throw new IllegalArgumentException("La Data di Nascita è futura o odierna");
 
         Famiglia famiglia = famigliaRepository.findById(emailFamiglia)
                 .orElseThrow(() -> new RuntimeException("Famiglia non trovata o sessione scaduta."));
+
+        String generatedUsername = generaUsername(dto.getCognome());
+        String generatedEmail = generatedUsername.toLowerCase() + "@studenti.ilfaro.it";
+
+        if (studenteRepository.existsById(generatedEmail)) {
+            generatedEmail = generatedUsername.toLowerCase() + new Random().nextInt(100) + "@studenti.ilfaro.it";
+        }
+
+        String rawPassword = "Pass" + new Random().nextInt(10000);
 
         Studente studente = new Studente();
         studente.setNome(dto.getNome());
@@ -142,18 +149,18 @@ public class UsersService {
         studente.setDataNascita(dto.getDataNascita());
         studente.setFamiglia(famiglia);
 
-        famiglia.getStudenti().add(studente);
+        studenteRepository.save(studente);
 
         studenteRepository.save(studente);
 
-        return generatedUsername;
+        return new RegistrazioneResult(generatedEmail, rawPassword);
     }
 
     /**
      * Genera uno username nel formato S-XXXXX
      */
-    private String generaUsername() {
-        return "S-" + (10000 + new Random().nextInt(90000));
+    private String generaUsername(String cognome) {
+        return cognome + (10000 + new Random().nextInt(90000));
     }
 
     // Metodo per disattivare account

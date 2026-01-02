@@ -58,42 +58,55 @@
 					<div class="col-md-7 bg-white p-5 rounded-end">
 						<h3 class="text-primary fw-bold mb-4">Crea Account</h3>
 
-						<form th:action="@{/register}" method="post">
+						<form th:action="@{/famiglia/registrazione-studente}" method="post">
 							<div class="row g-3">
 
 								<div th:if="${error}" class="col-12">
 									<div class="alert alert-danger alert-dismissible fade show" role="alert">
-										<span th:text="${error}">Errore generico</span>
+										<span th:text="${error}"></span>
 										<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+									</div>
+								</div>
+
+								<div th:if="${success}" class="col-12">
+									<div class="alert alert-success">
+										<h5 class="alert-heading"><i class="fas fa-check-circle me-2"></i>Registrazione Completata!</h5>
+										<p th:text="${success}"></p>
+										<hr>
+										<p class="mb-1"><strong>Email:</strong> <span class="badge bg-dark" th:text="${emailGenerata}"></span></p>
+										<p class="mb-0"><strong>Password:</strong> <span class="badge bg-dark" th:text="${passwordGenerata}"></span></p>
+										<div class="mt-2">
+											<small class="text-muted italic">Copia queste credenziali prima di ricaricare la pagina.</small>
+										</div>
 									</div>
 								</div>
 
 								<div class="col-md-6">
 									<label class="form-label text-muted small fw-bold">NOME</label>
-									<input name="nome" th:value="${nome}" class="form-control bg-light" required type="text">
+									<input name="nome" th:value="${studenteDto?.nome}" class="form-control bg-light" required type="text">
 								</div>
 
 								<div class="col-md-6">
 									<label class="form-label text-muted small fw-bold">COGNOME</label>
-									<input name="cognome" th:value="${cognome}" class="form-control bg-light" required type="text">
+									<input name="cognome" th:value="${studenteDto?.cognome}" class="form-control bg-light" required type="text">
 								</div>
 
 								<div class="col-12">
 									<label class="form-label text-muted small fw-bold">CODICE FISCALE</label>
-									<input name="codice-fiscale" th:value="${codiceFiscale}" class="form-control bg-light" required
-										   type="email">
+									<input name="codiceFiscale" th:value="${studenteDto?.codiceFiscale}" class="form-control bg-light" required type="text">
 								</div>
 
-								<div class="col-12 d-none" id="materiaField">
+								<div class="col-12">
 									<label class="form-label text-muted small fw-bold">DATA DI NASCITA</label>
-									<input name="data-nascita" th:value="${dataNascita}" class="form-control bg-light" type="date">
+									<input name="dataNascita" th:value="${studenteDto?.dataNascita}" class="form-control bg-light" required type="date">
 								</div>
 
-								<div class="col-12 mt-3">
+								<div class="col-12 mt-4">
 									<button class="btn btn-primary w-100 py-2 fw-bold shadow-sm" type="submit">
-										REGISTRA
+										<i class="fas fa-save me-2"></i> REGISTRA STUDENTE
 									</button>
 								</div>
+
 							</div>
 						</form>
 					</div>

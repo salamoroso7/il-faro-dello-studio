@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
-	<title>Calendario Attività - Il Faro dello Studio</title>
+	<title>Dettaglio Attività - Il Faro dello Studio</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 	<style>
@@ -51,17 +51,6 @@
             font-weight: bold;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
-
-        .lesson-card {
-            transition: transform 0.2s;
-            border: none;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .lesson-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-        }
 	</style>
 </head>
 <body>
@@ -100,68 +89,50 @@
 		</nav>
 
 		<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-			<h2 class="text-primary fw-bold mb-4">Calendario Attività Disponibili</h2>
 
-			<div class="row mb-4">
-				<div class="col-md-4"><input class="form-control" placeholder="Cerca per materia..." type="text"></div>
-				<div class="col-md-3">
-					<select class="form-select">
-						<option selected>Tutti i Docenti</option>
-						<option>Prof. Gravino</option>
-						<option>Prof. De Lucia</option>
-					</select>
-				</div>
-				<div class="col-md-2">
-					<button class="btn btn-primary w-100">Filtra</button>
-				</div>
-			</div>
-
-			<div class="row g-4">
-				<div class="col-md-6 col-lg-4">
-					<div class="card lesson-card h-100">
-						<div class="card-body">
-							<div class="d-flex justify-content-between align-items-start mb-2">
-								<span class="badge bg-info text-dark">Matematica</span>
-								<span class="badge bg-success">Aperta</span>
-							</div>
-							<h5 class="card-title fw-bold">Analisi Matematica 1</h5>
-							<p class="text-muted small mb-3"><i class="fas fa-user-tie me-1"></i> Prof. Rossi</p>
-							<p class="card-text small">Ripasso sulle derivate e integrali.</p>
-							<div class="d-flex justify-content-between align-items-center mt-4">
-								<small class="text-muted"><i class="far fa-clock"></i> 14:00 - 16:00</small>
-
-								<form class="m-0" method="get" th:action="@{/studente/dettaglio-attivita}">
-									<!--
-									<input type="hidden" name="id" th:value="${attivita.id}">
-									-->
-
-									<button class="btn btn-outline-primary btn-sm" type="submit">
-										Dettagli
-									</button>
-								</form>
-							</div>
-						</div>
+			<div class="card shadow border-0">
+				<div class="card-header bg-primary text-white p-4">
+					<div class="d-flex justify-content-between align-items-center">
+						<h2 class="h3 mb-0">Analisi Matematica 1 - Ripasso</h2>
+						<span class="badge bg-light text-primary fs-6">5 Posti Rimanenti</span>
 					</div>
 				</div>
-				<div class="col-md-6 col-lg-4">
-					<div class="card lesson-card h-100">
-						<div class="card-body">
-							<div class="d-flex justify-content-between align-items-start mb-2">
-								<span class="badge bg-warning text-dark">Informatica</span>
-								<span class="badge bg-danger">Posti Esauriti</span>
-							</div>
-							<h5 class="card-title fw-bold">Java Advanced</h5>
-							<p class="text-muted small mb-3"><i class="fas fa-user-tie me-1"></i> Prof. Gravino</p>
-							<p class="card-text small">Approfondimento su Spring Boot.</p>
-							<div class="d-flex justify-content-between align-items-center mt-4">
-								<small class="text-muted"><i class="far fa-clock"></i> 10:00 - 12:00</small>
-								<button class="btn btn-secondary btn-sm" disabled>Completo</button>
+				<div class="card-body p-4">
+					<div class="row">
+						<div class="col-md-8">
+							<h5 class="text-primary fw-bold">Descrizione</h5>
+							<p>La lezione verterà sui principali teoremi del calcolo differenziale ed esercizi
+								pratici.</p>
+							<h5 class="text-primary fw-bold mt-4">Programma</h5>
+							<ul>
+								<li>Teorema di Rolle</li>
+								<li>Teorema di Lagrange</li>
+								<li>Esercitazione pratica</li>
+							</ul>
+						</div>
+						<div class="col-md-4">
+							<div class="card bg-light border-0">
+								<div class="card-body">
+									<h6 class="fw-bold">Dettagli Logistici</h6>
+									<hr>
+									<p class="mb-2"><i class="fas fa-calendar me-2 text-muted"></i> 15 Gennaio 2026</p>
+									<p class="mb-2"><i class="fas fa-clock me-2 text-muted"></i> 14:00 - 16:00</p>
+									<p class="mb-2"><i class="fas fa-map-marker-alt me-2 text-muted"></i> Aula F2</p>
+									<p class="mb-2"><i class="fas fa-user me-2 text-muted"></i> Prof. Rossi</p>
+									<hr>
+									<div class="d-grid">
+										<button class="btn btn-success btn-lg"
+												onclick="alert('Iscrizione effettuata con successo!')">Iscriviti all'attività
+										</button>
+										<small class="text-muted text-center mt-2">*L'iscrizione richiede pagamenti
+											regolari.</small>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-
 			<footer class="text-center mt-5 text-muted small">
 				&copy; 2025 Il Faro dello Studio
 			</footer>
