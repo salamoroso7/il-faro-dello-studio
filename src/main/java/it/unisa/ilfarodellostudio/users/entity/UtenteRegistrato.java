@@ -21,17 +21,19 @@ public abstract class UtenteRegistrato {
     private String password;
 
     @Column(nullable = false)
-    private boolean isAttivo;
+    private boolean isAttivo = true;
+
+    @Column(nullable = false)
+    private boolean isAdmin = false;
 
     public UtenteRegistrato() {
     }
 
-    public UtenteRegistrato(String email, String nome, String cognome, String password, boolean isAttivo) {
+    public UtenteRegistrato(String email, String nome, String cognome, String password) {
         this.email = email;
         this.nome = nome;
         this.cognome = cognome;
         this.password = password;
-        this.isAttivo = isAttivo;
     }
 
     public String getEmail() {
@@ -72,5 +74,13 @@ public abstract class UtenteRegistrato {
 
     public void setAttivo(boolean attivo) {
         isAttivo = attivo;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
     }
 }
