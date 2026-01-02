@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDate;
@@ -29,8 +30,14 @@ public class ActivitiesController {
 
     // Rotta per visualizzare "Le mie Attività"
     @GetMapping("/docente/gestione-attivita")
-    public String gestioneAttivita() {
-        // Punta a templates/docente/gestione-attivita.html
+    public String gestioneAttivita(Model model, Principal principal) {
+        String emailDocente = principal.getName();
+        Docente docente = usersService.cercaDocente(emailDocente)
+                .orElseThrow(() -> new RuntimeException("Docente non trovato"));
+        
+        // Passiamo la lista delle attività create da questo docente
+        model.addAttribute("attivitaDocente", docente.getAttivitaCreate());
+        
         return "docente/gestione-attivita";
     }
 
@@ -53,13 +60,16 @@ public class ActivitiesController {
     /* =======================
        CREA ATTIVITÀ (POST)
        ======================= */
-    @PostMapping("/crea")
+    @PostMapping("/attivita/crea")
     public String creaAttivita(@RequestParam String nome,
                                @RequestParam String descrizione,
                                @RequestParam String materia, // Riceve la stringa dal form
                                @RequestParam LocalDate data,
-                               @RequestParam LocalTime ora,
-                               Model model) {
+                               @RequestParam LocalTime oraInizio,
+                               @RequestParam LocalTime oraFine,
+                               @RequestParam Integer posti,
+                               Model model, Principal principal,
+                               RedirectAttributes redirectAttributes) {
 
         // 1. Gestione della Materia
         // Cerchiamo se la materia esiste già, altrimenti la creiamo al volo
@@ -74,36 +84,54 @@ public class ActivitiesController {
         attivita.setTitolo(nome); // L'entità usa setTitolo, non setNome
         attivita.setDescrizione(descrizione);
         attivita.setData(data);
-        attivita.setOraInizio(ora);
+        attivita.setOraInizio(oraInizio);
+        attivita.setOraFine(oraFine);
+        attivita.setPosti(posti);
         attivita.setMateria(materiaObj); // Setta l'oggetto Materia
+
+        // 3. Recupera il Docente loggato e associalo all'attività
+        String emailDocente = principal.getName();
+        Docente docente = usersService.cercaDocente(emailDocente)
+                .orElseThrow(() -> new RuntimeException("Docente non trovato"));
+        attivita.setDocente(docente);
 
         activitiesService.creaAttivita(attivita);
 
-        model.addAttribute("success", "Attività creata con successo");
-        return "crea-attivita";
+        redirectAttributes.addFlashAttribute("success", "Attività creata con successo!");
+        return "redirect:/docente/gestione-attivita";
     }
 
     /* =======================
        FORM MODIFICA
        ======================= */
-    @GetMapping("/modifica/{id}")
-    public String mostraFormModifica(@PathVariable Long id, Model model) {
+    @GetMapping("/attivita/modifica/{id}")
+    public String mostraFormModifica(@PathVariable Long id, Model model, Principal principal) {
         Attivita attivita = activitiesService.visualizzaAttivita(id);
+        
+        // Carichiamo anche le materie del docente per la modifica
+        String emailDocente = principal.getName();
+        Docente docente = usersService.cercaDocente(emailDocente)
+                .orElseThrow(() -> new RuntimeException("Docente non trovato"));
+        model.addAttribute("materieDocente", docente.getMaterieInsegnate());
+        
         model.addAttribute("attivita", attivita);
-        return "modifica-attivita";
+        return "docente/modifica-attivita";
     }
 
     /* =======================
      MODIFICA ATTIVITÀ (POST)
      ======================= */
-    @PostMapping("/modifica")
+    @PostMapping("/attivita/modifica")
     public String modificaAttivita(@RequestParam Long id,
                                    @RequestParam String nome,
                                    @RequestParam String descrizione,
                                    @RequestParam String materia, // Riceve il nome della materia
                                    @RequestParam LocalDate data,
-                                   @RequestParam LocalTime ora,
-                                   Model model) {
+                                   @RequestParam LocalTime oraInizio,
+                                   @RequestParam LocalTime oraFine,
+                                   @RequestParam Integer posti,
+                                   Model model, Principal principal,
+                                   RedirectAttributes redirectAttributes) {
 
         // 1. Recupera l'attività esistente
         Attivita attivita = activitiesService.visualizzaAttivita(id);
@@ -121,21 +149,27 @@ public class ActivitiesController {
             attivita.setTitolo(nome); // Mappa 'nome' del form su 'titolo' dell'entità
             attivita.setDescrizione(descrizione);
             attivita.setData(data);
-            attivita.setOraInizio(ora);
+            attivita.setOraInizio(oraInizio);
+            attivita.setOraFine(oraFine);
+            attivita.setPosti(posti);
             attivita.setMateria(materiaObj); // Imposta l'oggetto Materia
 
             // 4. Salva
             activitiesService.modificaAttivita(attivita);
 
-            // Messaggio di successo
-            model.addAttribute("success", "Attività modificata con successo!");
-            model.addAttribute("attivita", attivita); // Ricarica l'oggetto aggiornato nella pagina
+            // Messaggio di successo e reindirizzamento
+            redirectAttributes.addFlashAttribute("success", "Attività modificata con successo!");
+            return "redirect:/docente/gestione-attivita";
+            
         } else {
             model.addAttribute("error", "Errore: Attività non trovata");
+            // Ricarichiamo i dati necessari per il form in caso di errore
+            String emailDocente = principal.getName();
+            Docente docente = usersService.cercaDocente(emailDocente)
+                    .orElseThrow(() -> new RuntimeException("Docente non trovato"));
+            model.addAttribute("materieDocente", docente.getMaterieInsegnate());
+            model.addAttribute("attivita", attivita);
+            return "docente/modifica-attivita";
         }
-
-        // Rimane sulla pagina di modifica
-        return "modifica-attivita";
-        // Oppure se preferisci tornare alla lista (che non hai ancora): return "redirect:/attivita/lista";
     }
 }

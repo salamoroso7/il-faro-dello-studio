@@ -24,8 +24,13 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="text-primary fw-bold">Le mie Attività</h2>
-                    <a href="form_attivita.html" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Nuova
+                    <a th:href="@{/docente/crea-attivita}" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Nuova
                         Lezione</a>
+                </div>
+
+                <div th:if="${success}" class="alert alert-success border-0 shadow-sm mb-4 text-center">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span th:text="${success}"></span>
                 </div>
 
                 <div class="card shadow border-0">
@@ -41,29 +46,24 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="p-3 fw-bold">Ingegneria del Software</td>
-                                    <td>29/12/2025</td>
-                                    <td>25/30</td>
-                                    <td>F2</td>
+                                <tr th:each="a : ${attivitaDocente}">
+                                    <td class="p-3 fw-bold" th:text="${a.titolo}">Ingegneria del Software</td>
+                                    <td th:text="${a.data}">29/12/2025</td>
+                                    <td th:text="${#sets.size(a.iscritti)} + '/' + ${a.posti}">25/30</td>
+                                    <td th:text="${a.materia.nome}">Materia</td>
                                     <td class="text-end p-3">
-                                        <button class="btn btn-sm btn-outline-primary me-1"><i
-                                                class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-outline-danger"><i
-                                                class="fas fa-trash"></i></button>
+                                        <a th:href="@{/attivita/modifica/{id}(id=${a.idAttivita})}"
+                                            class="btn btn-sm btn-outline-primary me-1">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td class="p-3 fw-bold">Java Advanced</td>
-                                    <td>30/12/2025</td>
-                                    <td>30/30</td>
-                                    <td>Lab F</td>
-                                    <td class="text-end p-3">
-                                        <button class="btn btn-sm btn-outline-primary me-1"><i
-                                                class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-outline-danger"><i
-                                                class="fas fa-trash"></i></button>
-                                    </td>
+                                <tr th:if="${#lists.isEmpty(attivitaDocente)}">
+                                    <td colspan="5" class="text-center p-4 text-muted"> Non hai ancora creato nessuna
+                                        attività.</td>
                                 </tr>
                             </tbody>
                         </table>
