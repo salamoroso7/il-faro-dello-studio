@@ -97,8 +97,15 @@
 								</div>
 
 								<div class="col-12 d-none" id="materiaField">
-									<label class="form-label text-muted small fw-bold">MATERIA</label>
-									<input name="materia" th:value="${materia}" class="form-control bg-light" type="text">
+									<label class="form-label text-muted small fw-bold">MATERIE INSEGNATE (Seleziona una o più)</label>
+									<select name="materie" class="form-select bg-light" multiple size="4">
+										<option th:each="m : ${materie}"
+												th:value="${m.nome}"
+												th:text="${m.nome}">
+											Nome Materia
+										</option>
+									</select>
+									<div class="form-text small">Tieni premuto Ctrl (o Cmd) per selezionare più materie.</div>
 								</div>
 
 								<div class="col-md-6">

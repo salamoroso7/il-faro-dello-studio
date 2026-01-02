@@ -1,5 +1,7 @@
 package it.unisa.ilfarodellostudio.users;
 
+import it.unisa.ilfarodellostudio.activities.entity.Materia;
+import it.unisa.ilfarodellostudio.activities.repository.MateriaRepository;
 import it.unisa.ilfarodellostudio.users.dto.DocenteDto;
 import it.unisa.ilfarodellostudio.users.dto.FamigliaDto;
 import it.unisa.ilfarodellostudio.users.dto.StudenteDto;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -34,6 +37,9 @@ public class UsersService {
 
     @Autowired
     private StudenteRepository studenteRepository;
+
+    @Autowired
+    private MateriaRepository materiaRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -57,6 +63,10 @@ public class UsersService {
         return tuttiGliUtenti;
     }
 
+    public Optional<Docente> cercaDocente(String email) {
+        return docenteRepository.findByEmail(email);
+    }
+
     /**
      * Esegue la registrazione del docente.
      * Mappa i dati dal DTO all'Entity Docente e cifra la password.
@@ -72,6 +82,15 @@ public class UsersService {
         docente.setCognome(dto.getCognome());
         docente.setEmail(dto.getEmail());
         docente.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+        // Gestione Multiselect (N-N)
+        if (dto.getMaterie() != null && !dto.getMaterie().isEmpty()) {
+            // Recuperiamo tutte le materie in una volta sola per efficienza
+            List<Materia> materieDb = materiaRepository.findAllById(dto.getMaterie());
+
+            // Aggiungiamo tutte le materie trovate al Set del docente
+            docente.getMaterieInsegnate().addAll(materieDb);
+        }
 
         docenteRepository.save(docente);
     }

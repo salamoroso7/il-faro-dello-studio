@@ -4,11 +4,14 @@ import it.unisa.ilfarodellostudio.activities.ActivitiesService;
 import it.unisa.ilfarodellostudio.activities.entity.Attivita;
 import it.unisa.ilfarodellostudio.activities.entity.Materia;
 import it.unisa.ilfarodellostudio.activities.repository.MateriaRepository;
+import it.unisa.ilfarodellostudio.users.UsersService;
+import it.unisa.ilfarodellostudio.users.entity.Docente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -21,6 +24,9 @@ public class ActivitiesController {
     @Autowired
     private MateriaRepository materiaRepository; // Serve per gestire le materie!
 
+    @Autowired
+    private UsersService usersService;
+
     // Rotta per visualizzare "Le mie Attività"
     @GetMapping("/docente/gestione-attivita")
     public String gestioneAttivita() {
@@ -30,8 +36,17 @@ public class ActivitiesController {
 
     // Rotta per visualizzare il form "Crea Nuova"
     @GetMapping("/docente/crea-attivita")
-    public String creaNuovaAttivita() {
-        // Punta a templates/docente/crea-attivita.html
+    public String creaNuovaAttivita(Model model, Principal principal) {
+        // 1. Recuperiamo l'email del docente loggato
+        String emailDocente = principal.getName();
+
+        // 2. Cerchiamo il docente nel DB
+        Docente docente = usersService.cercaDocente(emailDocente)
+                .orElseThrow(() -> new RuntimeException("Docente non trovato"));
+
+        // 3. Passiamo al modello solo le materie insegnate da lui
+        model.addAttribute("materieDocente", docente.getMaterieInsegnate());
+
         return "docente/crea-attivita";
     }
 

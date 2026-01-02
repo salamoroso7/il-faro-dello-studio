@@ -12,8 +12,6 @@ import java.util.Set;
 @Table(name = "attivita")
 public class Attivita {
 
-    public static final int MAX_POSTI = 25;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idAttivita;
@@ -29,6 +27,12 @@ public class Attivita {
 
     @Column(nullable = false)
     private LocalTime oraInizio;
+
+    @Column(nullable = false)
+    private LocalTime oraFine;
+
+    @Column(nullable = false)
+    private int posti;
 
     @ManyToOne
     @JoinColumn(name = "materia_nome", nullable = false)
@@ -99,6 +103,22 @@ public class Attivita {
 
     public void setOraInizio(LocalTime oraInizio) {
         this.oraInizio = oraInizio;
+    }
+
+    public LocalTime getOraFine() {
+        return oraFine;
+    }
+
+    public void setOraFine(LocalTime oraFine) {
+        this.oraFine = oraFine;
+    }
+
+    public int getPosti() {
+        return posti;
+    }
+
+    public void setPosti(int posti) {
+        this.posti = posti;
     }
 
     public Materia getMateria() {

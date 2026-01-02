@@ -1,5 +1,7 @@
 package it.unisa.ilfarodellostudio.users;
 
+import it.unisa.ilfarodellostudio.activities.ActivitiesService;
+import it.unisa.ilfarodellostudio.activities.entity.Materia;
 import it.unisa.ilfarodellostudio.users.dto.DocenteDto;
 import it.unisa.ilfarodellostudio.users.dto.FamigliaDto;
 import it.unisa.ilfarodellostudio.users.dto.StudenteDto;
@@ -24,7 +26,7 @@ public class UsersController {
     private UsersService usersService;
 
     @Autowired
-    private FamigliaRepository famigliaRepository;
+    private ActivitiesService activitiesService;
 
     /* =========================================================================
        1. REGISTRAZIONE PUBBLICA UNIFICATA (Docenti e Famiglie)
@@ -33,8 +35,15 @@ public class UsersController {
 
     // Mostra il form unico di registrazione
     @GetMapping("/register")
-    public String showRegistrationForm() {
-        return "registrazione"; // Corrisponde al file registrazione.html
+    public String showRegistrationForm(Model model) {
+        // Recuperiamo la lista dal DB
+        List<Materia> materie = activitiesService.getAllMaterie();
+
+        // La passiamo al template
+        model.addAttribute("materie", materie);
+
+        // Inizializziamo un oggetto vuoto per il form se necessario
+        return "registrazione";
     }
 
     // Gestisce l'invio del form unico
@@ -46,7 +55,7 @@ public class UsersController {
             @RequestParam String email,
             @RequestParam String password,
             @RequestParam String conferma_password,
-            @RequestParam(required = false) String materia, // Solo per Docenti
+            @RequestParam(required = false) List<String> materie,
             Model model) {
 
         try {
@@ -62,7 +71,7 @@ public class UsersController {
                     docenteDto.setCognome(cognome);
                     docenteDto.setEmail(email);
                     docenteDto.setPassword(password);
-                    docenteDto.setMateria(materia);
+                    docenteDto.setMaterie(materie);
 
                     usersService.registraDocente(docenteDto);
                     break;
@@ -90,13 +99,14 @@ public class UsersController {
 
         } catch (Exception e) {
             // Errore: ricarica la pagina mostrando l'errore
+            model.addAttribute("materie", activitiesService.getAllMaterie());
             model.addAttribute("error", "Errore durante la registrazione: " + e.getMessage());
             model.addAttribute("ruolo", ruolo);
             model.addAttribute("nome", nome);
             model.addAttribute("cognome", cognome);
             model.addAttribute("email", email);
             if (ruolo.equalsIgnoreCase("docente")) {
-                model.addAttribute("materia", materia);
+                model.addAttribute("materia", materie);
             }
             return "registrazione";
         }

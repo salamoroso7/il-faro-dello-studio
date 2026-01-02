@@ -11,7 +11,7 @@ import java.util.Set;
 @Table(name = "studente")
 public class Studente extends UtenteRegistrato {
 
-    @Column(nullable = false, length = 11)
+    @Column(nullable = false, length = 16)
     private String codiceFiscale;
 
     @Column(nullable = false)
