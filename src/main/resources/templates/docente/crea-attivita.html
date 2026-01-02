@@ -50,10 +50,12 @@
             font-size: 14px;
         }
 
-        /* Stile dei campi di testo, data e ora */
+        /* Stile dei campi di testo, data, ora e numero */
         input[type="text"],
         input[type="date"],
-        input[type="time"] {
+        input[type="time"],
+        input[type="number"],
+        select {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
@@ -61,6 +63,10 @@
             font-size: 16px;
             box-sizing: border-box;
             transition: border-color 0.3s;
+        }
+
+        select {
+            height: 50px;
         }
 
         input:focus {
@@ -140,8 +146,7 @@
 
                         <div class="form-group">
                             <label for="materia">Materia</label>
-                            <select id="materia" name="materiaNome" class="form-select" required
-                                style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; height: 50px;">
+                            <select id="materia" name="materiaNome" required>
                                 <option value="" disabled selected>Scegli una delle tue materie...</option>
                                 <option th:each="m : ${materieDocente}" th:value="${m.nome}" th:text="${m.nome}">
                                     Matematica</option>
@@ -155,9 +160,7 @@
                             </div>
                             <div class="input-col form-group">
                                 <label for="posti">Posti Disponibili</label>
-                                <input type="number" id="posti" name="posti" min="1" max="25" value="1" required
-                                    class="form-control"
-                                    style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; height: 50px;">
+                                <input type="number" id="posti" name="posti" min="1" max="25" value="1" required>
                             </div>
                         </div>
 
