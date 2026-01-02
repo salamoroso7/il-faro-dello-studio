@@ -4,6 +4,7 @@ import it.unisa.ilfarodellostudio.users.dto.DocenteDto;
 import it.unisa.ilfarodellostudio.users.dto.FamigliaDto;
 import it.unisa.ilfarodellostudio.users.dto.StudenteDto;
 import it.unisa.ilfarodellostudio.users.entity.Famiglia;
+import it.unisa.ilfarodellostudio.users.entity.UtenteRegistrato;
 import it.unisa.ilfarodellostudio.users.repository.FamigliaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class UsersController {
@@ -104,6 +106,13 @@ public class UsersController {
     public String showStudenteForm(Model model) {
         model.addAttribute("studenteDto", new StudenteDto());
         return "famiglia/registrazione-studente";
+    }
+
+    @GetMapping("/admin/lista-utenti")
+    public String showListaUtenti(Model model) {
+        List<UtenteRegistrato> utenti = usersService.getAllUtenti();
+        model.addAttribute("utenti", utenti);
+        return "admin/lista-utenti";
     }
 
     @PostMapping("/users/crea-studente")

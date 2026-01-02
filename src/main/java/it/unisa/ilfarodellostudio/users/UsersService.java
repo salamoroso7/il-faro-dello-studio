@@ -6,6 +6,7 @@ import it.unisa.ilfarodellostudio.users.dto.StudenteDto;
 import it.unisa.ilfarodellostudio.users.entity.Docente;
 import it.unisa.ilfarodellostudio.users.entity.Famiglia;
 import it.unisa.ilfarodellostudio.users.entity.Studente;
+import it.unisa.ilfarodellostudio.users.entity.UtenteRegistrato;
 import it.unisa.ilfarodellostudio.users.repository.DocenteRepository;
 import it.unisa.ilfarodellostudio.users.repository.FamigliaRepository;
 import it.unisa.ilfarodellostudio.users.repository.StudenteRepository;
@@ -14,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -34,6 +37,25 @@ public class UsersService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    /**
+     * Recupera tutti gli utenti registrati (Docenti, Famiglie e Studenti)
+     * e li unisce in un'unica lista.
+     */
+    public List<UtenteRegistrato> getAllUtenti() {
+        List<UtenteRegistrato> tuttiGliUtenti = new ArrayList<>();
+
+        // Recuperiamo e aggiungiamo i docenti
+        tuttiGliUtenti.addAll(docenteRepository.findAll());
+
+        // Recuperiamo e aggiungiamo le famiglie
+        tuttiGliUtenti.addAll(famigliaRepository.findAll());
+
+        // Recuperiamo e aggiungiamo gli studenti
+        tuttiGliUtenti.addAll(studenteRepository.findAll());
+
+        return tuttiGliUtenti;
+    }
 
     /**
      * Esegue la registrazione del docente.
@@ -114,4 +136,6 @@ public class UsersService {
     private String generaUsername() {
         return "S-" + (10000 + new Random().nextInt(90000));
     }
+
+    // Metodo per disattivare account
 }
