@@ -11,10 +11,10 @@ import java.util.Set;
 @Table(name = "studente")
 public class Studente extends UtenteRegistrato {
 
-    @Column(nullable = false, length = 16)
+    @Column(name = "codice_fiscale", nullable = false, length = 16)
     private String codiceFiscale;
 
-    @Column(nullable = false)
+    @Column(name = "data_nascita", nullable = false)
     private LocalDate dataNascita;
 
     @ManyToOne(fetch = FetchType.LAZY)

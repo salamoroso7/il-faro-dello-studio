@@ -156,5 +156,83 @@ public class UsersService {
         return "S-" + (10000 + new Random().nextInt(90000));
     }
 
-    // Metodo per disattivare account
+    /**
+     * Attiva un'utenza precedentemente disattivata.
+     * Cerca l'utente tra Docenti, Famiglie e Studenti e imposta isAttivo = true.
+     *
+     * @param email Email dell'utente da attivare
+     * @throws RuntimeException se l'utente non viene trovato in nessuna repository
+     */
+    @Transactional
+    public void attivaUtente(String email) {
+        // Cerca prima tra i docenti
+        Optional<Docente> docente = docenteRepository.findByEmail(email);
+        if (docente.isPresent()) {
+            Docente d = docente.get();
+            d.setAttivo(true);
+            docenteRepository.save(d);
+            return;
+        }
+
+        // Cerca tra le famiglie
+        Optional<Famiglia> famiglia = famigliaRepository.findByEmail(email);
+        if (famiglia.isPresent()) {
+            Famiglia f = famiglia.get();
+            f.setAttivo(true);
+            famigliaRepository.save(f);
+            return;
+        }
+
+        // Cerca tra gli studenti
+        Optional<Studente> studente = studenteRepository.findByEmail(email);
+        if (studente.isPresent()) {
+            Studente s = studente.get();
+            s.setAttivo(true);
+            studenteRepository.save(s);
+            return;
+        }
+
+        // Se non trovato in nessuna repository
+        throw new RuntimeException("Utente non trovato con email: " + email);
+    }
+
+    /**
+     * Disattiva un'utenza attiva.
+     * Cerca l'utente tra Docenti, Famiglie e Studenti e imposta isAttivo = false.
+     *
+     * @param email Email dell'utente da disattivare
+     * @throws RuntimeException se l'utente non viene trovato in nessuna repository
+     */
+    @Transactional
+    public void disattivaUtente(String email) {
+        // Cerca prima tra i docenti
+        Optional<Docente> docente = docenteRepository.findByEmail(email);
+        if (docente.isPresent()) {
+            Docente d = docente.get();
+            d.setAttivo(false);
+            docenteRepository.save(d);
+            return;
+        }
+
+        // Cerca tra le famiglie
+        Optional<Famiglia> famiglia = famigliaRepository.findByEmail(email);
+        if (famiglia.isPresent()) {
+            Famiglia f = famiglia.get();
+            f.setAttivo(false);
+            famigliaRepository.save(f);
+            return;
+        }
+
+        // Cerca tra gli studenti
+        Optional<Studente> studente = studenteRepository.findByEmail(email);
+        if (studente.isPresent()) {
+            Studente s = studente.get();
+            s.setAttivo(false);
+            studenteRepository.save(s);
+            return;
+        }
+
+        // Se non trovato in nessuna repository
+        throw new RuntimeException("Utente non trovato con email: " + email);
+    }
 }
