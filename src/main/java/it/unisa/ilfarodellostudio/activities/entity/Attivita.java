@@ -14,6 +14,7 @@ public class Attivita {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_attivita")
     private Long idAttivita;
 
     @Column(nullable = false)
@@ -25,10 +26,10 @@ public class Attivita {
     @Column(nullable = false)
     private LocalDate data;
 
-    @Column(nullable = false)
+    @Column(name = "ora_inizio", nullable = false)
     private LocalTime oraInizio;
 
-    @Column(nullable = false)
+    @Column(name = "ora_fine", nullable = false)
     private LocalTime oraFine;
 
     @Column(nullable = false)
