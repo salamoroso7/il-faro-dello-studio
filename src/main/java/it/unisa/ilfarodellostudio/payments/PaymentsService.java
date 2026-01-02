@@ -33,28 +33,24 @@ public class PaymentsService {
      */
     @Transactional
     public Pagamento creaPagamentoGenerale(Pagamento nuovoPagamento) {
-        // 1. Salvo l'entità Pagamento (la tassa comune)
+        // 1. Salvo il pagamento (la tassa)
         Pagamento pagamentoSalvato = pagamentoRepository.save(nuovoPagamento);
 
-        // 2. Recupero tutte le famiglie presenti nel sistema
+        // 2. Recupero le famiglie (diventano entità "managed")
         List<Famiglia> tutteLeFamiglie = famigliaRepository.findAll();
 
-        // 3. Per ogni famiglia, creo un record nella tabella di giunzione "effettua"
-        List<Effettua> associazioni = tutteLeFamiglie.stream().map(famiglia -> {
+        // 3. Colleghiamo il pagamento a ogni famiglia
+        for (Famiglia famiglia : tutteLeFamiglie) {
             EffettuaId id = new EffettuaId(famiglia.getEmail(), pagamentoSalvato.getIdPagamento());
 
             Effettua associazione = new Effettua();
             associazione.setId(id);
-            associazione.setFamiglia(famiglia);
             associazione.setPagamento(pagamentoSalvato);
             associazione.setStato(StatoPagamento.NON_EFFETTUATO);
-            associazione.setDataPagamento(null); // Non ancora pagato
+            associazione.setDataPagamento(null);
 
-            return associazione;
-        }).collect(Collectors.toList());
-
-        // 4. Salvo massivamente tutte le associazioni
-        effettuaRepository.saveAll(associazioni);
+            famiglia.addPagamentoEffettuato(associazione);
+        }
 
         return pagamentoSalvato;
     }

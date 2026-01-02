@@ -1,5 +1,6 @@
 package it.unisa.ilfarodellostudio.users.entity;
 
+import it.unisa.ilfarodellostudio.payments.entity.Effettua;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -11,6 +12,9 @@ public class Famiglia extends UtenteRegistrato {
 
     @OneToMany(mappedBy = "famiglia", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Studente> studenti = new ArrayList<>();
+
+    @OneToMany(mappedBy = "famiglia", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Effettua> pagamentiEffettuati = new ArrayList<>();
 
     public Famiglia() {
         super();
@@ -28,9 +32,22 @@ public class Famiglia extends UtenteRegistrato {
         this.studenti = studenti;
     }
 
+    public List<Effettua> getPagamentiEffettuati() {
+        return pagamentiEffettuati;
+    }
+
+    public void setPagamentiEffettuati(List<Effettua> pagamentiEffettuati) {
+        this.pagamentiEffettuati = pagamentiEffettuati;
+    }
+
     // Metodo helper per la coerenza bidirezionale
     public void addStudente(Studente studente) {
         studenti.add(studente);
         studente.setFamiglia(this); // Ora Studente ha il metodo setFamiglia visibile
+    }
+
+    public void addPagamentoEffettuato(Effettua associazione) {
+        this.pagamentiEffettuati.add(associazione);
+        associazione.setFamiglia(this);
     }
 }

@@ -1,7 +1,11 @@
 package it.unisa.ilfarodellostudio.activities;
 
 import it.unisa.ilfarodellostudio.activities.entity.Attivita;
+import it.unisa.ilfarodellostudio.activities.entity.Materia;
 import it.unisa.ilfarodellostudio.activities.repository.AttivitaRepository;
+import it.unisa.ilfarodellostudio.activities.repository.MateriaRepository;
+import it.unisa.ilfarodellostudio.payments.entity.StatoPagamento;
+import it.unisa.ilfarodellostudio.users.entity.Famiglia;
 import it.unisa.ilfarodellostudio.users.entity.Studente;
 import it.unisa.ilfarodellostudio.users.repository.StudenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +27,9 @@ public class ActivitiesService {
   
     @Autowired
     private StudenteRepository studenteRepository;
+
+    @Autowired
+    private MateriaRepository materiaRepository;
 
     // CREATE
     public Attivita creaAttivita(Attivita attivita) {
@@ -50,6 +57,10 @@ public class ActivitiesService {
         attivitaRepository.deleteById(id);
     }
 
+    public List<Materia> getAllMaterie() {
+        return materiaRepository.findAll();
+    }
+
     /**
      * Esegue l'iscrizione di uno studente a una determinata attività.
      * <p>
@@ -73,12 +84,20 @@ public class ActivitiesService {
                 .orElseThrow(() -> new RuntimeException("Attività " + idAttivita + " non trovata"));
 
         // Controllo posti
-        if(attivita.getIscritti().size() >= Attivita.MAX_POSTI) {
+        if(attivita.getIscritti().size() >= attivita.getPosti()) {
             throw new RuntimeException("Impossibile iscriversi: l'attività " + attivita.getTitolo() + " è già al completo");
         }
 
         // Controllo pagamenti famiglia
-        /* TODO */
+        Famiglia famiglia = studente.getFamiglia();
+
+        boolean haPagamentiScaduti = famiglia.getPagamentiEffettuati().stream()
+                .anyMatch(p -> p.getStato() == StatoPagamento.SCADUTO);
+
+        if (haPagamentiScaduti) {
+            throw new RuntimeException("Iscrizione negata: la famiglia associata allo studente ha pagamenti in sospeso (Stato: SCADUTO). " +
+                    "Si prega di regolarizzare la posizione prima di procedere.");
+        }
 
         // Aggiunta bidirezionale dello studente all'attività
         attivita.aggiungiStudente(studente);

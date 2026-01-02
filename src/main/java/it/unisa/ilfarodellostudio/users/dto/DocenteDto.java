@@ -1,11 +1,13 @@
 package it.unisa.ilfarodellostudio.users.dto;
 
+import java.util.List;
+
 public class DocenteDto {
     private String nome;
     private String cognome;
     private String email;
     private String password;
-    private String materia;
+    private List<String> materie;
 
     public String getNome() {
         return nome;
@@ -39,11 +41,11 @@ public class DocenteDto {
         this.password = password;
     }
 
-    public String getMateria() {
-        return materia;
+    public List<String> getMaterie() {
+        return materie;
     }
 
-    public void setMateria(String materia) {
-        this.materia = materia;
+    public void setMaterie(List<String> materie) {
+        this.materie = materie;
     }
 }

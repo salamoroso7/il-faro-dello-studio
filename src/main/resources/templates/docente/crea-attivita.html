@@ -139,7 +139,13 @@
 
         <div class="form-group">
             <label for="materia">Materia</label>
-            <input type="text" id="materia" name="materia" required>
+            <select id="materia" name="materiaNome" class="form-select" required
+                    style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd;">
+                <option value="" disabled selected>Scegli una delle tue materie...</option>
+                <option th:each="m : ${materieDocente}"
+                        th:value="${m.nome}"
+                        th:text="${m.nome}">Matematica</option>
+            </select>
         </div>
 
         <div class="row">
@@ -148,8 +154,20 @@
                 <input type="date" id="data" name="data" required>
             </div>
             <div class="col form-group">
+                <label for="posti">Posti Disponibili</label>
+                <input type="number" id="posti" name="posti" min="1" max="25" value="1" required
+                       style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd;">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col form-group">
                 <label for="ora">Ora Inizio</label>
-                <input type="time" id="ora" name="ora" required>
+                <input type="time" id="ora" name="oraInizio" required>
+            </div>
+            <div class="col form-group">
+                <label for="oraFine">Ora Fine</label>
+                <input type="time" id="oraFine" name="oraFine" required>
             </div>
         </div>
 
