@@ -10,10 +10,12 @@
 
         <ul class="nav flex-column">
             <li class="nav-item mb-1">
-                <a href="/admin/dashboard-admin" class="nav-link"
-                    th:classappend="${currentPage == 'dashboard'} ? 'active' : ''">
-                    <i class="fas fa-home me-2"></i> Dashboard
-                </a>
+                <form th:action="@{/admin/dashboard-admin}" method="get" class="m-0">
+                    <button type="submit" class="nav-link nav-link-btn"
+                        th:classappend="${currentPage == 'dashboard'} ? 'active' : ''">
+                        <i class="fas fa-home me-2"></i> Dashboard
+                    </button>
+                </form>
             </li>
 
             <li class="nav-item mb-1">
