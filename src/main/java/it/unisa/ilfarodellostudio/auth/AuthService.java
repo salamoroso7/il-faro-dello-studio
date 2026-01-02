@@ -98,6 +98,7 @@ public class AuthService implements UserDetailsService {
      * @return Una stringa rappresentante il ruolo (es. "DOCENTE").
      */
     private String getRuolo(UtenteRegistrato u) {
+        if (u.isAdmin()) return "ADMIN";
         if (u instanceof Docente) return "DOCENTE";
         if (u instanceof Studente) return "STUDENTE";
         if (u instanceof Famiglia) return "FAMIGLIA";

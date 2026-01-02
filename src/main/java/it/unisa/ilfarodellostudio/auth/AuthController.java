@@ -43,6 +43,11 @@ public class AuthController {
         return "login"; // Ritorna login.html
     }
 
+    @GetMapping("/admin/dashboard-admin")
+    public String dashboardAdmin() {
+        return "admin/dashboard-admin";
+    }
+
     // Dashboard per i Docenti
     @GetMapping("/docente/dashboard-docente")
     public String dashboardDocente(Authentication authentication, Model model) {

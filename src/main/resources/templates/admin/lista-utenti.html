@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="UTF-8">
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<title>Admin - Il Faro dello Studio</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        /* Sidebar Nera per Admin */
+        .sidebar {
+            background: linear-gradient(180deg, #212529 0%, #343a40 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            padding: 15px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link-btn {
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar .nav-link-btn:focus {
+            outline: none;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #495057;
+            color: white;
+            font-weight: bold;
+        }
+	</style>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row">
+		<nav class="col-md-3 col-lg-2 d-md-block sidebar collapse show p-0">
+			<div class="p-3 text-white fw-bold d-flex align-items-center mb-4 mt-2">
+				<i class="fas fa-cogs fa-2x me-2"></i>
+				<span class="fs-6">Il Faro - Admin</span>
+			</div>
+			<ul class="nav flex-column">
+				<li class="nav-item mb-1">
+					<form class="m-0" method="get" th:action="@{/admin/lista-utenti}">
+						<button class="nav-link nav-link-btn" type="submit">
+							<i class="fas fa-sign-out-alt me-2"></i> Gestione Utenti
+						</button>
+					</form>
+				</li>
+				<li class="nav-item mb-1">
+					<form class="m-0" method="post" th:action="@{/logout}">
+						<button class="nav-link nav-link-btn" type="submit">
+							<i class="fas fa-sign-out-alt me-2"></i> Logout
+						</button>
+					</form>
+				</li>
+			</ul>
+		</nav>
+
+		<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+			<h2 class="fw-bold mb-4">Anagrafica Utenti</h2>
+
+			<div class="card border-0 shadow-sm">
+				<div class="card-body p-0">
+					<table class="table table-hover mb-0">
+						<thead class="table-dark">
+						<tr>
+							<th>Nome</th>
+							<th>Ruolo</th>
+							<th>Email</th>
+							<th>Stato</th>
+							<th class="text-end">Azioni</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr th:each="u : ${utenti}">
+							<td th:text="${u.nome + ' ' + u.cognome}">Nome Cognome</td>
+
+                            <td>
+                                <span class="badge bg-dark" th:if="${u.isAdmin}">
+                                    <i class="fas fa-user-shield"></i> Admin
+                                </span>
+
+                                <th:block th:unless="${u.isAdmin}">
+                                    <span class="badge bg-warning text-dark"
+                                          th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Docente)}">Docente</span>
+
+                                    <span class="badge bg-info text-dark"
+                                          th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Famiglia)}">Famiglia</span>
+
+                                    <span class="badge bg-primary"
+                                          th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Studente)}">Studente</span>
+                                </th:block>
+                            </td>
+
+							<td th:text="${u.email}">email@esempio.it</td>
+
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${u.isAttivo} ? 'bg-success' : 'bg-danger'"
+                                      th:text="${u.isAttivo} ? 'Attivo' : 'Sospeso'">
+                                    Stato
+                                </span>
+                            </td>
+
+							<td class="text-end">
+								<button class="btn btn-sm btn-outline-danger">Gestisci</button>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<footer class="text-center mt-5 text-muted small">
+				&copy; 2025 Il Faro dello Studio
+			</footer>
+		</main>
+	</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

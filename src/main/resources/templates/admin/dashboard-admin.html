@@ -25,6 +25,9 @@
             transition: all 0.3s;
         }
 
+        .sidebar .nav-link-btn { background: none; border: none; width: 100%; text-align: left; cursor: pointer; display: flex; align-items: center; }
+        .sidebar .nav-link-btn:focus { outline: none; }
+
         .sidebar .nav-link:hover {
             background-color: rgba(255,255,255,0.1);
             color: white;
@@ -65,13 +68,25 @@
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item mb-1">
-                    <a class="nav-link active" href="#"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
+                    <form th:action="@{/admin/dashboard-admin}" method="get" class="m-0">
+                        <button type="submit" class="nav-link nav-link-btn">
+                            <i class="fas fa-sign-out-alt me-2"></i> Dashboard
+                        </button>
+                    </form>
                 </li>
                 <li class="nav-item mb-1">
-                    <a class="nav-link" href="lista_utenti.html"><i class="fas fa-users me-2"></i> Gestione Utenti</a>
+                    <form th:action="@{/admin/lista-utenti}" method="get" class="m-0">
+                        <button type="submit" class="nav-link nav-link-btn">
+                            <i class="fas fa-sign-out-alt me-2"></i> Gestione Utenti
+                        </button>
+                    </form>
                 </li>
-                <li class="nav-item mt-5 pt-5 border-top border-secondary">
-                    <a class="nav-link" href="index.html"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+                <li class="nav-item mb-1">
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <button type="submit" class="nav-link nav-link-btn">
+                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                        </button>
+                    </form>
                 </li>
             </ul>
         </nav>
@@ -141,7 +156,7 @@
                                 <td>Oggi, 10:30</td>
                                 <td><span class="badge bg-success rounded-pill">Attivo</span></td>
                                 <td class="text-end pe-4">
-                                    <a href="lista_utenti.html" class="btn btn-sm btn-outline-secondary">Gestisci</a>
+                                    <a href="lista-utenti.html" class="btn btn-sm btn-outline-secondary">Gestisci</a>
                                 </td>
                             </tr>
                             <tr>
@@ -150,7 +165,7 @@
                                 <td>Ieri, 15:45</td>
                                 <td><span class="badge bg-warning rounded-pill">In attesa</span></td>
                                 <td class="text-end pe-4">
-                                    <a href="lista_utenti.html" class="btn btn-sm btn-primary">Approva</a>
+                                    <a href="lista-utenti.html" class="btn btn-sm btn-primary">Approva</a>
                                 </td>
                             </tr>
                             <tr>
@@ -159,7 +174,7 @@
                                 <td>28/12/2025</td>
                                 <td><span class="badge bg-success rounded-pill">Attivo</span></td>
                                 <td class="text-end pe-4">
-                                    <a href="lista_utenti.html" class="btn btn-sm btn-outline-secondary">Gestisci</a>
+                                    <a href="lista-utenti.html" class="btn btn-sm btn-outline-secondary">Gestisci</a>
                                 </td>
                             </tr>
                             </tbody>
@@ -167,7 +182,7 @@
                     </div>
                 </div>
                 <div class="card-footer bg-white text-center py-3">
-                    <a href="lista_utenti.html" class="text-decoration-none fw-bold">Visualizza tutti gli utenti <i class="fas fa-arrow-right ms-1"></i></a>
+                    <a href="lista-utenti.html" class="text-decoration-none fw-bold">Visualizza tutti gli utenti <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
 

@@ -23,6 +23,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/index", "/login", "/register", "/css/**", "/js/**").permitAll() // Accesso libero
                         .requestMatchers("/docente/**").hasRole("DOCENTE")
                         .requestMatchers("/famiglia/**").hasRole("FAMIGLIA")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated() // Tutto il resto richiede login
                 )
                 .formLogin(form -> form
