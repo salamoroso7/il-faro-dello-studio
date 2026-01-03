@@ -1,7 +1,9 @@
 package it.unisa.ilfarodellostudio.auth;
 
+import it.unisa.ilfarodellostudio.users.UsersService;
 import it.unisa.ilfarodellostudio.users.entity.Docente;
 import it.unisa.ilfarodellostudio.users.entity.Famiglia;
+import it.unisa.ilfarodellostudio.users.entity.UtenteRegistrato;
 import it.unisa.ilfarodellostudio.users.repository.DocenteRepository;
 import it.unisa.ilfarodellostudio.users.repository.FamigliaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 /**
  * Controller dedicato alla gestione delle rotte di autenticazione.
@@ -25,6 +29,8 @@ public class AuthController {
     private DocenteRepository docenteRepository;
     @Autowired
     private FamigliaRepository famigliaRepository;
+    @Autowired
+    private UsersService usersService;
 
     /**
      * Gestisce la richiesta GET per la pagina di login.
@@ -44,7 +50,17 @@ public class AuthController {
     }
 
     @GetMapping("/admin/dashboard-admin")
-    public String dashboardAdmin() {
+    public String dashboardAdmin(Model model) {
+        // Recupera le statistiche dal service
+        long totalUtenti = usersService.countAllUtenti();
+        long utentiSospesi = usersService.countUtentiSospesi();
+        List<UtenteRegistrato> ultimeRegistrazioni = usersService.getUltimeRegistrazioni(3);
+
+        // Passa i dati al template
+        model.addAttribute("totalUtenti", totalUtenti);
+        model.addAttribute("utentiSospesi", utentiSospesi);
+        model.addAttribute("ultimeRegistrazioni", ultimeRegistrazioni);
+
         return "admin/dashboard-admin";
     }
 

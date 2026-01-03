@@ -29,7 +29,7 @@
 			<!-- Sidebar Admin -->
 			<th:block th:replace="~{fragments/admin-sidebar :: admin-sidebar('utenti')}" />
 
-			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 d-flex flex-column">
 				<h2 class="fw-bold mb-4">Anagrafica Utenti</h2>
 
 				<!-- Barra di ricerca -->
@@ -101,7 +101,7 @@
 
 										<!-- Messaggio per admin -->
 										<span th:if="${u.isAdmin}" class="text-muted small">
-											<i class="fas fa-lock me-1"></i>Protetto
+											<i class="fas fa-lock me-1"></i>
 										</span>
 									</td>
 								</tr>
@@ -167,14 +167,13 @@
 					</div>
 				</div>
 
-				<footer class="text-center mt-5 text-muted small">
-					&copy; 2025 Il Faro dello Studio
-				</footer>
+
+				<th:block th:replace="~{fragments/footer :: standardFooter}" />
+
 			</main>
 		</div>
 	</div>
-	</div>
-	</div>
+
 
 	<script>
 		// Funzione per filtrare la tabella in base alla ricerca

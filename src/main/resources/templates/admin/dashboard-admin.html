@@ -38,7 +38,7 @@
         <div class="row">
             <th:block th:replace="~{fragments/admin-sidebar :: admin-sidebar('dashboard')}" />
 
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 d-flex flex-column">
 
                 <header class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
                     <h2 class="text-dark fw-bold">Pannello di Controllo</h2>
@@ -50,8 +50,8 @@
                         <div class="card stat-card text-white bg-primary h-100 shadow-sm">
                             <div class="card-body position-relative p-4">
                                 <h5 class="card-title text-white-50">Utenti Registrati</h5>
-                                <p class="display-5 fw-bold mb-0">1,245</p>
-                                <small class="text-white-50">+15 questa settimana</small>
+                                <p class="display-5 fw-bold mb-0" th:text="${totalUtenti}">0</p>
+                                <small class="text-white-50">Totale nel sistema</small>
                                 <i class="fas fa-users icon-bg"></i>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                         <div class="card stat-card text-white bg-danger h-100 shadow-sm">
                             <div class="card-body position-relative p-4">
                                 <h5 class="card-title text-white-50">Utenti Sospesi</h5>
-                                <p class="display-5 fw-bold mb-0">3</p>
+                                <p class="display-5 fw-bold mb-0" th:text="${utentiSospesi}">0</p>
                                 <small class="text-white-50">Richiedono attenzione</small>
                                 <i class="fas fa-user-slash icon-bg"></i>
                             </div>
@@ -92,54 +92,39 @@
                                     <tr>
                                         <th class="ps-4">Utente</th>
                                         <th>Ruolo</th>
-                                        <th>Data Registrazione</th>
-                                        <th>Stato</th>
-                                        <th class="text-end pe-4">Azioni</th>
+                                        <th class="pe-4">Data Registrazione</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="ps-4 fw-bold">Giulia Bianchi</td>
-                                        <td><span class="badge bg-info text-dark">Studente</span></td>
-                                        <td>Oggi, 10:30</td>
-                                        <td><span class="badge bg-success rounded-pill">Attivo</span></td>
-                                        <td class="text-end pe-4">
-                                            <a href="lista-utenti.html"
-                                                class="btn btn-sm btn-outline-secondary">Gestisci</a>
+                                    <tr th:each="u : ${ultimeRegistrazioni}">
+                                        <td class="ps-4 fw-bold" th:text="${u.nome + ' ' + u.cognome}">Nome Cognome</td>
+                                        <td>
+                                            <span class="badge bg-dark" th:if="${u.isAdmin}">
+                                                <i class="fas fa-user-shield"></i> Admin
+                                            </span>
+                                            <th:block th:unless="${u.isAdmin}">
+                                                <span class="badge bg-warning text-dark"
+                                                    th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Docente)}">Docente</span>
+                                                <span class="badge bg-info text-dark"
+                                                    th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Famiglia)}">Famiglia</span>
+                                                <span class="badge bg-primary"
+                                                    th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Studente)}">Studente</span>
+                                            </th:block>
                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-bold">Prof. Antonio Verdi</td>
-                                        <td><span class="badge bg-warning text-dark">Docente</span></td>
-                                        <td>Ieri, 15:45</td>
-                                        <td><span class="badge bg-warning rounded-pill">In attesa</span></td>
-                                        <td class="text-end pe-4">
-                                            <a href="lista-utenti.html" class="btn btn-sm btn-primary">Approva</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-bold">Famiglia Esposito</td>
-                                        <td><span class="badge bg-secondary">Famiglia</span></td>
-                                        <td>28/12/2025</td>
-                                        <td><span class="badge bg-success rounded-pill">Attivo</span></td>
-                                        <td class="text-end pe-4">
-                                            <a href="lista-utenti.html"
-                                                class="btn btn-sm btn-outline-secondary">Gestisci</a>
-                                        </td>
+                                        <td class="pe-4" th:text="${u.email}">email@esempio.it</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     <div class="card-footer bg-white text-center py-3">
-                        <a href="lista-utenti.html" class="text-decoration-none fw-bold">Visualizza tutti gli utenti <i
-                                class="fas fa-arrow-right ms-1"></i></a>
+                        <a href="/admin/lista-utenti" class="text-decoration-none fw-bold">Visualizza tutti gli utenti
+                            <i class="fas fa-arrow-right ms-1"></i></a>
                     </div>
                 </div>
 
-                <footer class="text-center mt-5 text-muted small">
-                    &copy; 2025 Il Faro dello Studio - Pannello Amministrazione
-                </footer>
+                <th:block th:replace="~{fragments/footer :: customTextFooter('Pannello Amministrazione')}" />
+
             </main>
         </div>
     </div>

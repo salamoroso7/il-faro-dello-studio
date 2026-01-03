@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface DocenteRepository extends JpaRepository<Docente, String> {
     Optional<Docente> findByEmail(String email);
+    long countByIsAttivoFalse();
 }
