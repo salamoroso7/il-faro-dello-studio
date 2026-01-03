@@ -22,45 +22,33 @@ public class ActivitiesController {
 
     @Autowired
     private ActivitiesService activitiesService;
-
     @Autowired
-    private MateriaRepository materiaRepository; // Serve per gestire le materie!
-
+    private MateriaRepository materiaRepository;
     @Autowired
     private UsersService usersService;
 
-    // Rotta per visualizzare "Le mie Attività"
+    // --- LISTA ATTIVITÀ ---
     @GetMapping("/docente/gestione-attivita")
     public String gestioneAttivita(Model model, Principal principal) {
         String emailDocente = principal.getName();
         Docente docente = usersService.cercaDocente(emailDocente)
                 .orElseThrow(() -> new RuntimeException("Docente non trovato"));
-        
-        // Passiamo la lista delle attività create da questo docente
-        model.addAttribute("attivitaDocente", docente.getAttivitaCreate());
-        
+
+        model.addAttribute("attivitaDocente", activitiesService.dammiTutteLeAttivita(docente));
         return "docente/gestione-attivita";
     }
 
-    // Rotta per visualizzare il form "Crea Nuova"
+    // --- FORM CREA ---
     @GetMapping("/docente/crea-attivita")
     public String creaNuovaAttivita(Model model, Principal principal) {
-        // 1. Recuperiamo l'email del docente loggato
         String emailDocente = principal.getName();
-
-        // 2. Cerchiamo il docente nel DB
         Docente docente = usersService.cercaDocente(emailDocente)
                 .orElseThrow(() -> new RuntimeException("Docente non trovato"));
-
-        // 3. Passiamo al modello solo le materie insegnate da lui
         model.addAttribute("materieDocente", docente.getMaterieInsegnate());
-
         return "docente/crea-attivita";
     }
 
-    /* =======================
-       CREA ATTIVITÀ (POST)
-       ======================= */
+    // --- POST CREA (GESTIONE ERRORI TRAMITE CATCH) ---
     @PostMapping("/attivita/crea")
     public String creaAttivita(@RequestParam String nome,
                                @RequestParam String descrizione,
@@ -69,79 +57,60 @@ public class ActivitiesController {
                                @RequestParam LocalTime oraInizio,
                                @RequestParam LocalTime oraFine,
                                @RequestParam Integer posti,
-                               Model model, Principal principal,
+                               Principal principal,
                                RedirectAttributes redirectAttributes) {
+        try {
+            // 1. Recupero Dati
+            String emailDocente = principal.getName();
+            Docente docente = usersService.cercaDocente(emailDocente)
+                    .orElseThrow(() -> new RuntimeException("Docente non trovato"));
 
-        // --- 1. RECUPERO DOCENTE ---
-        String emailDocente = principal.getName();
-        Docente docente = usersService.cercaDocente(emailDocente)
-                .orElseThrow(() -> new RuntimeException("Docente non trovato"));
+            // 2. Costruzione Oggetti
+            Materia materiaObj = new Materia();
+            materiaObj.setNome(materia);
 
-        // --- 2. VALIDAZIONI (Mancavano i return!) ---
+            Attivita attivita = new Attivita();
+            attivita.setTitolo(nome);
+            attivita.setDescrizione(descrizione);
+            attivita.setData(data);
+            attivita.setOraInizio(oraInizio);
+            attivita.setOraFine(oraFine);
+            attivita.setPosti(posti);
+            attivita.setMateria(materiaObj);
+            attivita.setDocente(docente);
 
-        // A. Orari Invertiti
-        if (!oraFine.isAfter(oraInizio)) {
-            redirectAttributes.addFlashAttribute("error", "Errore: Fine lezione deve essere successiva all'inizio.");
-            return "redirect:/docente/gestione-attivita"; // <--- AGGIUNTO QUESTO
+            // 3. CHIAMATA AL SERVICE (Qui avvengono le validazioni)
+            activitiesService.creaAttivita(attivita);
+
+            // 4. Successo
+            redirectAttributes.addFlashAttribute("success", "Attività creata con successo!");
+            return "redirect:/docente/gestione-attivita";
+
+        } catch (RuntimeException e) {
+            // 5. ERRORE CATTURATO (Data passata, sovrapposizione, ecc.)
+            // Mostriamo il messaggio nell'HTML senza far crashare il sito
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/docente/gestione-attivita";
         }
-
-        // B. Data nel Passato
-        if (LocalDateTime.of(data, oraInizio).isBefore(LocalDateTime.now())) {
-            redirectAttributes.addFlashAttribute("error", "Errore: Non puoi creare lezioni nel passato.");
-            return "redirect:/docente/gestione-attivita"; // <--- AGGIUNTO QUESTO
-        }
-
-        // C. Sovrapposizione
-        // Nota: Il service deve usare il metodo che passa solo l'ID del docente (visto nel passaggio precedente)
-        if (activitiesService.existsOverlappingLesson(docente, data, oraInizio, oraFine)) {
-            redirectAttributes.addFlashAttribute("error", "Errore: Sovrapposizione con un'altra lezione.");
-            return "redirect:/docente/gestione-attivita"; // <--- AGGIUNTO QUESTO
-        }
-
-        // --- 3. LOGICA DI CREAZIONE (Eseguita solo se i return sopra non scattano) ---
-
-        // CORREZIONE IMPORTANTE: Usa findByNome (perché 'materia' è una Stringa), non findById!
-        Materia materiaObj = materiaRepository.findByNome(materia).orElseGet(() -> {
-            Materia nuova = new Materia();
-            nuova.setNome(materia);
-            return materiaRepository.save(nuova);
-        });
-
-        Attivita attivita = new Attivita();
-        attivita.setTitolo(nome);
-        attivita.setDescrizione(descrizione);
-        attivita.setData(data);
-        attivita.setOraInizio(oraInizio);
-        attivita.setOraFine(oraFine);
-        attivita.setPosti(posti);
-        attivita.setMateria(materiaObj);
-        attivita.setDocente(docente);
-
-        activitiesService.creaAttivita(attivita);
-
-        redirectAttributes.addFlashAttribute("success", "Attività creata con successo!");
-        return "redirect:/docente/gestione-attivita";
     }
-    /* =======================
-       FORM MODIFICA
-       ======================= */
+
+    // --- FORM MODIFICA ---
     @GetMapping("/attivita/modifica/{id}")
     public String mostraFormModifica(@PathVariable Long id, Model model, Principal principal) {
         Attivita attivita = activitiesService.visualizzaAttivita(id);
-        
-        // Carichiamo anche le materie del docente per la modifica
         String emailDocente = principal.getName();
-        Docente docente = usersService.cercaDocente(emailDocente)
-                .orElseThrow(() -> new RuntimeException("Docente non trovato"));
+
+        if (attivita == null || !attivita.getDocente().getEmail().equals(emailDocente)) {
+            return "redirect:/docente/gestione-attivita?error=Non autorizzato";
+        }
+
+        Docente docente = usersService.cercaDocente(emailDocente).orElseThrow();
         model.addAttribute("materieDocente", docente.getMaterieInsegnate());
-        
         model.addAttribute("attivita", attivita);
         return "docente/modifica-attivita";
     }
 
-    /* =======================
-     MODIFICA ATTIVITÀ (POST)
-     ======================= */
+    // --- POST MODIFICA ---
     @PostMapping("/attivita/modifica")
     public String modificaAttivita(@RequestParam Long id,
                                    @RequestParam String nome,
@@ -151,58 +120,70 @@ public class ActivitiesController {
                                    @RequestParam LocalTime oraInizio,
                                    @RequestParam LocalTime oraFine,
                                    @RequestParam Integer posti,
-                                   Model model, Principal principal,
+                                   Principal principal,
                                    RedirectAttributes redirectAttributes) {
 
-        // --- 1. RECUPERO DOCENTE ---
-        String emailDocente = principal.getName();
-        Docente docente = usersService.cercaDocente(emailDocente)
-                .orElseThrow(() -> new RuntimeException("Docente non trovato"));
-
-        // --- 2. RECUPERO ATTIVITÀ E CHECK PERMESSI ---
         Attivita attivita = activitiesService.visualizzaAttivita(id);
-        if (attivita == null || !attivita.getDocente().getEmail().equals(docente.getEmail())) {
+        String emailDocente = principal.getName();
+
+        if (attivita == null || !attivita.getDocente().getEmail().equals(emailDocente)) {
             redirectAttributes.addFlashAttribute("error", "Errore: Attività non trovata o non autorizzata.");
             return "redirect:/docente/gestione-attivita";
         }
 
-        // --- 3. VALIDAZIONE ORARI E DATE ---
-        if (!oraFine.isAfter(oraInizio)) {
-            redirectAttributes.addFlashAttribute("error", "Errore: Fine lezione deve essere successiva all'inizio.");
-            return "redirect:/attivita/modifica/" + id;
-        }
-
+        // Qui replichiamo i controlli base per sicurezza anche in modifica
         if (LocalDateTime.of(data, oraInizio).isBefore(LocalDateTime.now())) {
             redirectAttributes.addFlashAttribute("error", "Errore: Non puoi spostare lezioni nel passato.");
             return "redirect:/attivita/modifica/" + id;
         }
 
-        // --- 4. CONTROLLO SOVRAPPOSIZIONE ---
-        // Nota: Usiamo la variante che esclude l'ID corrente per non andare in conflitto con se stessa
-        if (activitiesService.verificaSovrapposizioneEsclusoId(docente, data, oraInizio, oraFine, id)) {
+        // Verifica sovrapposizione escluso se stesso
+        if (activitiesService.verificaSovrapposizioneEsclusoId(attivita.getDocente(), data, oraInizio, oraFine, id)) {
             redirectAttributes.addFlashAttribute("error", "Errore: Sovrapposizione con un'altra lezione.");
             return "redirect:/attivita/modifica/" + id;
         }
 
-        // --- 5. LOGICA DI MODIFICA (Eseguita solo se i controlli passano) ---
-        // Nota: Usiamo findByNome per sicurezza (se materia è una stringa)
-        Materia materiaObj = materiaRepository.findByNome(materia).orElseGet(() -> {
-            Materia nuova = new Materia();
-            nuova.setNome(materia);
-            return materiaRepository.save(nuova);
-        });
-
+        // Aggiornamento
         attivita.setTitolo(nome);
         attivita.setDescrizione(descrizione);
         attivita.setData(data);
         attivita.setOraInizio(oraInizio);
         attivita.setOraFine(oraFine);
         attivita.setPosti(posti);
-        attivita.setMateria(materiaObj);
+
+        // Gestione materia cambio nome
+        if(!attivita.getMateria().getNome().equals(materia)) {
+            Materia m = new Materia();
+            m.setNome(materia);
+            // Il cascade o logica di salvataggio gestirà la nuova materia se necessario
+            // Oppure recuperala come nel create
+            Materia materiaDb = materiaRepository.findByNome(materia)
+                    .orElseGet(() -> materiaRepository.save(m));
+            attivita.setMateria(materiaDb);
+        }
 
         activitiesService.modificaAttivita(attivita);
 
         redirectAttributes.addFlashAttribute("success", "Attività modificata con successo!");
+        return "redirect:/docente/gestione-attivita";
+    }
+
+    // --- CANCELLA ---
+    @GetMapping("/attivita/cancella/{id}")
+    public String cancellaAttivita(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+        try {
+            Attivita attivita = activitiesService.visualizzaAttivita(id);
+            String emailDocente = principal.getName();
+
+            if (attivita != null && attivita.getDocente().getEmail().equals(emailDocente)) {
+                activitiesService.eliminaAttivita(id);
+                redirectAttributes.addFlashAttribute("success", "Attività eliminata.");
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Errore: Non autorizzato.");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Errore durante l'eliminazione.");
+        }
         return "redirect:/docente/gestione-attivita";
     }
 }
