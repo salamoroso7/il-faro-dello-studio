@@ -21,7 +21,7 @@
 			<!-- Sidebar Famiglia -->
 			<th:block th:replace="~{fragments/famiglia-sidebar :: famiglia-sidebar('pagamenti')}" />
 
-			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 d-flex flex-column">
 				<h2 class="text-primary fw-bold mb-4">Gestione Pagamenti e Tasse</h2>
 
 				<div class="card shadow border-0">
@@ -62,20 +62,15 @@
 									<td class="fw-bold">€ 45,00</td>
 									<td><span class="badge bg-success rounded-pill">Saldato</span></td>
 									<td class="text-end p-3">
-										<button class="btn btn-outline-secondary btn-sm rounded-pill"
-											onclick="alert('Download PDF ricevuta...')"><i
-												class="fas fa-download me-1"></i>
-											Ricevuta
-										</button>
+
 									</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
 				</div>
-				<footer class="text-center mt-5 text-muted small">
-					&copy; 2025 Il Faro dello Studio
-				</footer>
+				<th:block th:replace="~{fragments/footer :: standardFooter}" />
+
 			</main>
 		</div>
 	</div>

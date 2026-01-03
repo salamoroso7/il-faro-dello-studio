@@ -21,7 +21,7 @@
             <!-- Sidebar Famiglia -->
             <th:block th:replace="~{fragments/famiglia-sidebar :: famiglia-sidebar('dashboard')}" />
 
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 d-flex flex-column">
                 <h2 class="text-primary fw-bold mb-4">
                     Benvenuto, <span th:text="${famiglia?.nome ?: 'Ospite'}"></span>
                 </h2>
@@ -50,9 +50,8 @@
                         </div>
                     </div>
                 </div>
-                <footer class="text-center mt-5 text-muted small">
-                    &copy; 2025 Il Faro dello Studio
-                </footer>
+                <th:block th:replace="~{fragments/footer :: standardFooter}" />
+
             </main>
         </div>
     </div>

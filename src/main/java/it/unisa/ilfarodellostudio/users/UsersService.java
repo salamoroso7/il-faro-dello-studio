@@ -235,4 +235,50 @@ public class UsersService {
         // Se non trovato in nessuna repository
         throw new RuntimeException("Utente non trovato con email: " + email);
     }
+
+    /**
+     * Conta il numero totale di utenti registrati nel sistema.
+     *
+     * @return Il numero totale di Docenti + Famiglie + Studenti
+     */
+    public long countAllUtenti() {
+        long docenti = docenteRepository.count();
+        long famiglie = famigliaRepository.count();
+        long studenti = studenteRepository.count();
+        return docenti + famiglie + studenti;
+    }
+
+    /**
+     * Conta il numero di utenti sospesi (isAttivo = false).
+     *
+     * @return Il numero totale di utenti non attivi
+     */
+    public long countUtentiSospesi() {
+        long docentiSospesi = docenteRepository.countByIsAttivoFalse();
+        long famiglieSospese = famigliaRepository.countByIsAttivoFalse();
+        long studentiSospesi = studenteRepository.countByIsAttivoFalse();
+        return docentiSospesi + famiglieSospese + studentiSospesi;
+    }
+
+    /**
+     * Recupera le ultime registrazioni di utenti.
+     * Restituisce gli ultimi N utenti registrati.
+     *
+     * @param limit Numero massimo di utenti da recuperare
+     * @return Lista degli ultimi utenti registrati
+     */
+    public List<UtenteRegistrato> getUltimeRegistrazioni(int limit) {
+        List<UtenteRegistrato> tuttiGliUtenti = getAllUtenti();
+        
+        // Prendi gli ultimi N utenti (assumendo che l'ordine di inserimento sia preservato)
+        int size = tuttiGliUtenti.size();
+        int fromIndex = Math.max(0, size - limit);
+        
+        List<UtenteRegistrato> ultimi = new ArrayList<>(tuttiGliUtenti.subList(fromIndex, size));
+        
+        // Inverti l'ordine per mostrare i più recenti per primi
+        java.util.Collections.reverse(ultimi);
+        
+        return ultimi;
+    }
 }
