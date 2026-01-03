@@ -48,7 +48,7 @@ public class RegistrazioneStudenteTest {
     }
 
     @Test
-    @DisplayName("TC_GU_1_3: Codice Fiscale > 11 cifre")
+    @DisplayName("TC_GU_1_3: Codice Fiscale > 16 cifre")
     void testCodiceFiscaleLungo() {
         Famiglia famiglia = creaFamiglia("famiglia@test.com");
 
@@ -60,8 +60,8 @@ public class RegistrazioneStudenteTest {
             usersService.creaStudente(dto, famiglia.getEmail());
         });
 
-        assertTrue(exception.getMessage().contains("superiore alle 11 cifre") ||
-                exception.getMessage().contains("deve essere di 11 cifre"));
+        assertTrue(exception.getMessage().contains("superiore alle 16 cifre") ||
+                exception.getMessage().contains("deve essere di 16 cifre"));
     }
 
     @Test
