@@ -5,6 +5,7 @@ import it.unisa.ilfarodellostudio.activities.entity.Materia;
 import it.unisa.ilfarodellostudio.activities.repository.AttivitaRepository;
 import it.unisa.ilfarodellostudio.activities.repository.MateriaRepository;
 import it.unisa.ilfarodellostudio.payments.entity.StatoPagamento;
+import it.unisa.ilfarodellostudio.users.entity.Docente;
 import it.unisa.ilfarodellostudio.users.entity.Famiglia;
 import it.unisa.ilfarodellostudio.users.entity.Studente;
 import it.unisa.ilfarodellostudio.users.repository.StudenteRepository;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +39,18 @@ public class ActivitiesService {
         return attivitaRepository.save(attivita);
     }
 
+    // 1. Usato per la CREAZIONE (Controller: /attivita/crea)
+    public boolean existsOverlappingLesson(Docente docente, LocalDate data, LocalTime oraInizio, LocalTime oraFine) {
+        // Chiama la query nel repository che controlla se c'è un'intersezione
+        return attivitaRepository.existsOverlappingLesson(docente, data, oraInizio, oraFine);
+    }
+
+
+    // 2. Usato per la MODIFICA (Controller: /attivita/aggiorna)
+    public boolean verificaSovrapposizioneEsclusoId(Docente docente, LocalDate data, LocalTime oraInizio, LocalTime oraFine, Long idDaEscludere) {
+        // Chiama la query che controlla l'intersezione IGNORANDO l'attività con questo ID
+        return attivitaRepository.existsOverlappingLessonExcludingId(docente, data, oraInizio, oraFine, idDaEscludere);
+    }
     // READ ALL
     public List<Attivita> visualizzaTutteLeAttivita() {
         return attivitaRepository.findAll();
