@@ -2,134 +2,174 @@
 <html lang="it">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calendario Attività - Il Faro dello Studio</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <style>
-    body {
-      background-color: #f8f9fa;
-    }
+	<meta charset="UTF-8">
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<title>Calendario Attività - Il Faro dello Studio</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<style>
+		body {
+			background-color: #f8f9fa;
+		}
 
-    .sidebar {
-      background: linear-gradient(180deg, #0d6efd 0%, #0a58ca 100%);
-      color: white;
-      min-height: 100vh;
-    }
+		.sidebar {
+			background: linear-gradient(180deg, #0d6efd 0%, #0a58ca 100%);
+			color: white;
+			min-height: 100vh;
+		}
 
-    .sidebar .nav-link {
-      color: rgba(255, 255, 255, 0.85);
-      padding: 15px 20px;
-      margin: 0 10px;
-      border-radius: 5px;
-      transition: all 0.3s;
-    }
+		.sidebar .nav-link {
+			color: rgba(255, 255, 255, 0.85);
+			padding: 15px 20px;
+			margin: 0 10px;
+			border-radius: 5px;
+			transition: all 0.3s;
+		}
 
-    .sidebar .nav-link:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-      color: white;
-      transform: translateX(5px);
-    }
+		.sidebar .nav-link-btn {
+			background: none;
+			border: none;
+			width: 100%;
+			text-align: left;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+		}
 
-    .sidebar .nav-link.active {
-      background-color: white;
-      color: #0d6efd;
-      font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
+		.sidebar .nav-link-btn:focus {
+			outline: none;
+		}
 
-    .lesson-card {
-      transition: transform 0.2s;
-      border: none;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
+		.sidebar .nav-link:hover {
+			background-color: rgba(255, 255, 255, 0.2);
+			color: white;
+			transform: translateX(5px);
+		}
 
-    .lesson-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-    }
-  </style>
+		.sidebar .nav-link.active {
+			background-color: white;
+			color: #0d6efd;
+			font-weight: bold;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+		}
+
+		.lesson-card {
+			transition: transform 0.2s;
+			border: none;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		}
+
+		.lesson-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+		}
+	</style>
 </head>
 
 <body>
-  <div class="container-fluid">
-    <div class="row">
-      <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse show p-0">
-        <div class="p-3 text-white fw-bold d-flex align-items-center mb-4 mt-2">
-          <i class="fas fa-book-open fa-2x me-2"></i>
-          <span class="fs-6">Il Faro dello Studio</span>
-        </div>
-        <ul class="nav flex-column">
-          <li class="nav-item mb-1"><a class="nav-link" href="dashboard.html"><i class="fas fa-home me-2"></i>
-              Dashboard</a></li>
-          <li class="nav-item mb-1"><a class="nav-link active" href="#"><i class="fas fa-calendar-alt me-2"></i>
-              Calendario Attività</a></li>
-          <li class="nav-item mb-1"><a class="nav-link" href="#"><i class="fas fa-star me-2"></i> I miei Feedback</a>
-          </li>
-          <li class="nav-item mt-5 pt-5 border-top border-light"><a class="nav-link text-white" href="index.html"
-              style="opacity: 0.9;"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
-        </ul>
-      </nav>
+	<div class="container-fluid">
+		<div class="row">
+			<nav class="col-md-3 col-lg-2 d-md-block sidebar collapse show p-0">
+				<div class="p-3 text-white fw-bold d-flex align-items-center mb-4 mt-2">
+					<i class="fas fa-book-open fa-2x me-2"></i>
+					<span class="fs-6">Il Faro dello Studio</span>
+				</div>
+				<ul class="nav flex-column">
+					<li class="nav-item mb-1">
+						<form class="m-0" method="get" th:action="@{/studente/dashboard-studente}">
+							<button class="nav-link nav-link-btn" type="submit">
+								<i class="fas fa-home me-2"></i> Dashboard
+							</button>
+						</form>
+					</li>
 
-      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 d-flex flex-column">
-        <h2 class="text-primary fw-bold mb-4">Calendario Attività Disponibili</h2>
+					<li class="nav-item mb-1">
+						<form class="m-0" method="get" th:action="@{/studente/calendario-attivita}">
+							<button class="nav-link nav-link-btn" type="submit">
+								<i class="fas fa-home me-2"></i> Attività
+							</button>
+						</form>
+					</li>
 
-        <div class="row mb-4">
-          <div class="col-md-4"><input type="text" class="form-control" placeholder="Cerca per materia..."></div>
-          <div class="col-md-3">
-            <select class="form-select">
-              <option selected>Tutti i Docenti</option>
-              <option>Prof. Gravino</option>
-              <option>Prof. De Lucia</option>
-            </select>
-          </div>
-          <div class="col-md-2"><button class="btn btn-primary w-100">Filtra</button></div>
-        </div>
+					<li class="nav-item mb-1">
+						<form class="m-0" method="post" th:action="@{/logout}">
+							<button class="nav-link nav-link-btn" type="submit">
+								<i class="fas fa-sign-out-alt me-2"></i> Logout
+							</button>
+						</form>
+					</li>
+				</ul>
+			</nav>
 
-        <div class="row g-4">
-          <div class="col-md-6 col-lg-4">
-            <div class="card lesson-card h-100">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                  <span class="badge bg-info text-dark">Matematica</span>
-                  <span class="badge bg-success">Aperta</span>
-                </div>
-                <h5 class="card-title fw-bold">Analisi Matematica 1</h5>
-                <p class="text-muted small mb-3"><i class="fas fa-user-tie me-1"></i> Prof. Rossi</p>
-                <p class="card-text small">Ripasso sulle derivate e integrali.</p>
-                <div class="d-flex justify-content-between align-items-center mt-4">
-                  <small class="text-muted"><i class="far fa-clock"></i> 14:00 - 16:00</small>
-                  <a href="dettaglio_attivita.html" class="btn btn-outline-primary btn-sm">Dettagli</a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-4">
-            <div class="card lesson-card h-100">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                  <span class="badge bg-warning text-dark">Informatica</span>
-                  <span class="badge bg-danger">Posti Esauriti</span>
-                </div>
-                <h5 class="card-title fw-bold">Java Advanced</h5>
-                <p class="text-muted small mb-3"><i class="fas fa-user-tie me-1"></i> Prof. Gravino</p>
-                <p class="card-text small">Approfondimento su Spring Boot.</p>
-                <div class="d-flex justify-content-between align-items-center mt-4">
-                  <small class="text-muted"><i class="far fa-clock"></i> 10:00 - 12:00</small>
-                  <button class="btn btn-secondary btn-sm" disabled>Completo</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+				<h2 class="text-primary fw-bold mb-4">Calendario Attività Disponibili</h2>
 
-        <th:block th:replace="~{fragments/footer :: standardFooter}" />
+				<div class="row mb-4">
+					<div class="col-md-4"><input class="form-control" placeholder="Cerca per materia..." type="text">
+					</div>
+					<div class="col-md-3">
+						<select class="form-select">
+							<option selected>Tutti i Docenti</option>
+							<option>Prof. Gravino</option>
+							<option>Prof. De Lucia</option>
+						</select>
+					</div>
+					<div class="col-md-2">
+						<button class="btn btn-primary w-100">Filtra</button>
+					</div>
+				</div>
 
-      </main>
-    </div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+				<div class="row g-4">
+					<div class="col-md-6 col-lg-4">
+						<div class="card lesson-card h-100">
+							<div class="card-body">
+								<div class="d-flex justify-content-between align-items-start mb-2">
+									<span class="badge bg-info text-dark">Matematica</span>
+									<span class="badge bg-success">Aperta</span>
+								</div>
+								<h5 class="card-title fw-bold">Analisi Matematica 1</h5>
+								<p class="text-muted small mb-3"><i class="fas fa-user-tie me-1"></i> Prof. Rossi</p>
+								<p class="card-text small">Ripasso sulle derivate e integrali.</p>
+								<div class="d-flex justify-content-between align-items-center mt-4">
+									<small class="text-muted"><i class="far fa-clock"></i> 14:00 - 16:00</small>
+
+									<form class="m-0" method="get" th:action="@{/studente/dettaglio-attivita}">
+										<!--
+									<input type="hidden" name="id" th:value="${attivita.id}">
+									-->
+
+										<button class="btn btn-outline-primary btn-sm" type="submit">
+											Dettagli
+										</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6 col-lg-4">
+						<div class="card lesson-card h-100">
+							<div class="card-body">
+								<div class="d-flex justify-content-between align-items-start mb-2">
+									<span class="badge bg-warning text-dark">Informatica</span>
+									<span class="badge bg-danger">Posti Esauriti</span>
+								</div>
+								<h5 class="card-title fw-bold">Java Advanced</h5>
+								<p class="text-muted small mb-3"><i class="fas fa-user-tie me-1"></i> Prof. Gravino</p>
+								<p class="card-text small">Approfondimento su Spring Boot.</p>
+								<div class="d-flex justify-content-between align-items-center mt-4">
+									<small class="text-muted"><i class="far fa-clock"></i> 10:00 - 12:00</small>
+									<button class="btn btn-secondary btn-sm" disabled>Completo</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<th:block th:replace="~{fragments/footer :: standardFooter}" />
+			</main>
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
