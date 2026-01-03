@@ -45,6 +45,9 @@ public class ActivitiesService {
         return attivitaRepository.existsOverlappingLesson(docente, data, oraInizio, oraFine);
     }
 
+    public List<Attivita> dammiTutteLeAttivita(Docente docente) {
+        return attivitaRepository.findAllByDocenteAndDataAfter(docente, LocalDate.now());
+    }
 
     // 2. Usato per la MODIFICA (Controller: /attivita/aggiorna)
     public boolean verificaSovrapposizioneEsclusoId(Docente docente, LocalDate data, LocalTime oraInizio, LocalTime oraFine, Long idDaEscludere) {

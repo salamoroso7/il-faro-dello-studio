@@ -1,5 +1,7 @@
 package it.unisa.ilfarodellostudio.auth;
 
+import it.unisa.ilfarodellostudio.activities.ActivitiesService;
+import it.unisa.ilfarodellostudio.activities.entity.Attivita;
 import it.unisa.ilfarodellostudio.users.UsersService;
 import it.unisa.ilfarodellostudio.users.entity.Docente;
 import it.unisa.ilfarodellostudio.users.entity.Famiglia;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -31,6 +34,9 @@ public class AuthController {
     private FamigliaRepository famigliaRepository;
     @Autowired
     private UsersService usersService;
+
+    @Autowired
+    private ActivitiesService activitiesService;
 
     /**
      * Gestisce la richiesta GET per la pagina di login.
@@ -69,11 +75,22 @@ public class AuthController {
     public String dashboardDocente(Authentication authentication, Model model) {
         String email = authentication.getName();
 
-        // Cerca il docente nel DB
-        Docente docente = docenteRepository.findByEmail(email).orElse(null);
+        // 2. Recupera l'oggetto Docente completo dal DB
+        Docente docente = usersService.cercaDocente(email)
+                .orElseThrow(() -> new RuntimeException("Errore: Docente non trovato nel sistema"));
 
-        // Passa l'intero oggetto docente alla pagina HTML
         model.addAttribute("docente", docente);
+
+        // 3. Recupera le attività per contarle
+        // NOTA: Assicurati che in ActivitiesService esista il metodo 'dammiTutteLeAttivita(Docente d)'
+        // o usa il nome del metodo che hai (es. visualizzaAttivitaDocente)
+        List<Attivita> listaAttivita = activitiesService.dammiTutteLeAttivita(docente);
+        System.out.println("DEBUG: Numero attività trovate nel DB -> " + listaAttivita.size()); // <--- GUARDA QUI
+        model.addAttribute("numeroAttivita", listaAttivita.size());
+
+        // 4. Dati Recensioni (Placeholder finché non implementi il sistema feedback)
+        model.addAttribute("mediaRecensioni", 0.0);
+        model.addAttribute("numeroRecensioni", 0);
 
         return "docente/dashboard-docente";
     }
