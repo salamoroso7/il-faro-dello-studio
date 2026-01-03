@@ -1,193 +1,152 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifica Attività</title>
+    <title>Modifica Attività - Il Faro dello Studio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <th:block th:replace="~{fragments/sidebar-styles :: sidebar-styles}" />
     <style>
-        /* Reset e Font di base */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            color: #333;
+            background-color: #f8f9fa;
         }
 
-        /* La "Card" centrale */
-        .container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 500px;
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            font-size: 24px;
-        }
-
-        /* Gruppi di input */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
+        .form-label {
             font-weight: 600;
-            color: #555;
-            font-size: 14px;
-        }
-
-        /* Stile campi input */
-        input[type="text"],
-        input[type="date"],
-        input[type="time"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: border-color 0.3s;
-        }
-
-        input:focus {
-            border-color: #007bff;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-        }
-
-        /* Data e Ora affiancate */
-        .row {
-            display: flex;
-            gap: 15px;
-        }
-        .col {
-            flex: 1;
-        }
-
-        /* Bottoni */
-        .actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        button, .btn-secondary {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            transition: background-color 0.3s;
-        }
-
-        /* Bottone Principale (Salva) */
-        button {
-            background-color: #007bff;
-            color: white;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        /* Bottone Secondario (Torna Indietro) */
-        .btn-secondary {
-            background-color: #e2e6ea;
             color: #495057;
-            display: inline-block; /* Necessario perché è un tag <a> */
-            box-sizing: border-box;
-        }
-        .btn-secondary:hover {
-            background-color: #dbe0e5;
-            color: #212529;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
         }
 
-        /* Messaggi Successo/Errore */
-        .alert-success, .alert-error {
-            margin-top: 20px;
-            padding: 15px;
+        .form-control,
+        .form-select {
+            padding: 0.75rem 1rem;
             border-radius: 8px;
-            text-align: center;
+            border: 1px solid #dee2e6;
+            transition: all 0.2s;
         }
 
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
         }
 
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .btn-action {
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s;
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Modifica Attività</h1>
-
-    <form th:action="@{/attivita/modifica}" method="post">
-
-        <input type="hidden" name="id" th:value="${attivita.idAttivita}">
-
-        <div class="form-group">
-            <label for="nome">Nome attività</label>
-            <input type="text" id="nome" name="nome" th:value="${attivita.titolo}" required>
-        </div>
-
-        <div class="form-group">
-            <label for="descrizione">Descrizione</label>
-            <input type="text" id="descrizione" name="descrizione" th:value="${attivita.descrizione}" required>
-        </div>
-
-        <div class="form-group">
-            <label for="materia">Materia</label>
-            <input type="text" id="materia" name="materia" th:value="${attivita.materia.nome}" required>
-        </div>
-
+    <div class="container-fluid">
         <div class="row">
-            <div class="col form-group">
-                <label for="data">Data</label>
-                <input type="date" id="data" name="data" th:value="${attivita.data}" required>
-            </div>
-            <div class="col form-group">
-                <label for="ora">Ora</label>
-                <input type="time" id="ora" name="ora" th:value="${attivita.oraInizio}" required>
-            </div>
+            <!-- Sidebar Docente -->
+            <th:block th:replace="~{fragments/docente-sidebar :: docente-sidebar('mie_attivita')}" />
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <div class="d-flex align-items-center mb-4">
+                    <a th:href="@{/docente/gestione-attivita}" class="btn btn-link text-decoration-none p-0 me-3">
+                        <i class="fas fa-arrow-left fa-lg text-primary"></i>
+                    </a>
+                    <h2 class="text-primary fw-bold mb-0">Modifica Attività</h2>
+                </div>
+
+                <div class="form-container">
+                    <div class="card shadow-sm border-0 p-4">
+                        <form th:action="@{/attivita/modifica}" method="post">
+                            <input type="hidden" name="id" th:value="${attivita.idAttivita}">
+
+                            <div class="row g-4">
+                                <!-- Nome Attività -->
+                                <div class="col-12">
+                                    <label for="nome" class="form-label">Nome attività</label>
+                                    <input type="text" id="nome" name="nome" class="form-control"
+                                        th:value="${attivita.titolo}" placeholder="Es. Esercizi di Algebra" required>
+                                </div>
+
+                                <!-- Descrizione -->
+                                <div class="col-12">
+                                    <label for="descrizione" class="form-label">Descrizione</label>
+                                    <textarea id="descrizione" name="descrizione" class="form-control" rows="3"
+                                        th:text="${attivita.descrizione}" placeholder="Dettagli dell'attività..."
+                                        required></textarea>
+                                </div>
+
+                                <!-- Materia -->
+                                <div class="col-md-6">
+                                    <label for="materia" class="form-label">Materia</label>
+                                    <select id="materia" name="materia" class="form-select" required>
+                                        <option th:each="m : ${materieDocente}" th:value="${m.nome}" th:text="${m.nome}"
+                                            th:selected="${m.nome == attivita.materia.nome}">
+                                            Matematica</option>
+                                    </select>
+                                </div>
+
+                                <!-- Posti -->
+                                <div class="col-md-6">
+                                    <label for="posti" class="form-label">Posti Disponibili</label>
+                                    <input type="number" id="posti" name="posti" class="form-control" min="1" max="50"
+                                        th:value="${attivita.posti}" required>
+                                </div>
+
+                                <!-- Data -->
+                                <div class="col-md-4">
+                                    <label for="data" class="form-label">Data</label>
+                                    <input type="date" id="data" name="data" class="form-control"
+                                        th:value="${attivita.data}" required>
+                                </div>
+
+                                <!-- Ora Inizio -->
+                                <div class="col-md-4">
+                                    <label for="oraInizio" class="form-label">Ora Inizio</label>
+                                    <input type="time" id="oraInizio" name="oraInizio" class="form-control"
+                                        th:value="${attivita.oraInizio}" required>
+                                </div>
+
+                                <!-- Ora Fine -->
+                                <div class="col-md-4">
+                                    <label for="oraFine" class="form-label">Ora Fine</label>
+                                    <input type="time" id="oraFine" name="oraFine" class="form-control"
+                                        th:value="${attivita.oraFine}" required>
+                                </div>
+
+                                <!-- Azioni -->
+                                <div class="col-12 d-flex gap-3 mt-4">
+                                    <a th:href="@{/docente/gestione-attivita}"
+                                        class="btn btn-outline-secondary btn-action flex-grow-1">
+                                        Annulla
+                                    </a>
+                                    <button type="submit" class="btn btn-primary btn-action flex-grow-1">
+                                        Salva Modifiche
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div th:if="${error}" class="alert alert-danger mt-4 mb-0 border-0 shadow-sm text-center">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <span th:text="${error}"></span>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
         </div>
-
-        <div class="actions">
-            <a th:href="@{/attivita/crea}" class="btn-secondary">Indietro</a>
-            <button type="submit">Salva</button>
-        </div>
-
-    </form>
-
-    <div th:if="${success}" class="alert-success">
-        <span th:text="${success}"></span>
     </div>
 
-    <div th:if="${error}" class="alert-error">
-        <span th:text="${error}"></span>
-    </div>
-
-</div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

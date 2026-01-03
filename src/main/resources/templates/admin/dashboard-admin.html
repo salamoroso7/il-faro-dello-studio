@@ -1,53 +1,27 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - Il Faro dello Studio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <th:block th:replace="~{fragments/sidebar-styles :: sidebar-styles}" />
     <style>
-        body { background-color: #f8f9fa; }
-
-        /* Sidebar Scura per Admin - Distingue il ruolo amministrativo */
-        .sidebar {
-            background: linear-gradient(180deg, #212529 0%, #343a40 100%);
-            color: white;
-            min-height: 100vh;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
-        }
-
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.75);
-            padding: 15px 20px;
-            margin: 0 10px;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-
-        .sidebar .nav-link-btn { background: none; border: none; width: 100%; text-align: left; cursor: pointer; display: flex; align-items: center; }
-        .sidebar .nav-link-btn:focus { outline: none; }
-
-        .sidebar .nav-link:hover {
-            background-color: rgba(255,255,255,0.1);
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .sidebar .nav-link.active {
-            background-color: #495057;
-            color: white;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        body {
+            background-color: #f8f9fa;
         }
 
         .stat-card {
             border: none;
             transition: transform 0.3s;
         }
+
         .stat-card:hover {
             transform: translateY(-5px);
         }
+
         .icon-bg {
             position: absolute;
             right: 20px;
@@ -58,140 +32,103 @@
         }
     </style>
 </head>
+
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse show p-0">
-            <div class="p-3 text-white fw-bold d-flex align-items-center mb-4 mt-2">
-                <i class="fas fa-cogs fa-2x me-2"></i>
-                <span class="fs-6">Il Faro - Admin</span>
-            </div>
-            <ul class="nav flex-column">
-                <li class="nav-item mb-1">
-                    <form th:action="@{/admin/dashboard-admin}" method="get" class="m-0">
-                        <button type="submit" class="nav-link nav-link-btn">
-                            <i class="fas fa-sign-out-alt me-2"></i> Dashboard
-                        </button>
-                    </form>
-                </li>
-                <li class="nav-item mb-1">
-                    <form th:action="@{/admin/lista-utenti}" method="get" class="m-0">
-                        <button type="submit" class="nav-link nav-link-btn">
-                            <i class="fas fa-sign-out-alt me-2"></i> Gestione Utenti
-                        </button>
-                    </form>
-                </li>
-                <li class="nav-item mb-1">
-                    <form th:action="@{/logout}" method="post" class="m-0">
-                        <button type="submit" class="nav-link nav-link-btn">
-                            <i class="fas fa-sign-out-alt me-2"></i> Logout
-                        </button>
-                    </form>
-                </li>
-            </ul>
-        </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <th:block th:replace="~{fragments/admin-sidebar :: admin-sidebar('dashboard')}" />
 
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 d-flex flex-column">
 
-            <header class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-                <h2 class="text-dark fw-bold">Pannello di Controllo</h2>
-                <div class="text-muted small">Accesso effettuato come: <strong>Amministratore</strong></div>
-            </header>
+                <header class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                    <h2 class="text-dark fw-bold">Pannello di Controllo</h2>
+                    <div class="text-muted small">Accesso effettuato come: <strong>Amministratore</strong></div>
+                </header>
 
-            <div class="row g-4 mb-5">
-                <div class="col-md-4">
-                    <div class="card stat-card text-white bg-primary h-100 shadow-sm">
-                        <div class="card-body position-relative p-4">
-                            <h5 class="card-title text-white-50">Utenti Registrati</h5>
-                            <p class="display-5 fw-bold mb-0">1,245</p>
-                            <small class="text-white-50">+15 questa settimana</small>
-                            <i class="fas fa-users icon-bg"></i>
+                <div class="row g-4 mb-5">
+                    <div class="col-md-4">
+                        <div class="card stat-card text-white bg-primary h-100 shadow-sm">
+                            <div class="card-body position-relative p-4">
+                                <h5 class="card-title text-white-50">Utenti Registrati</h5>
+                                <p class="display-5 fw-bold mb-0" th:text="${totalUtenti}">0</p>
+                                <small class="text-white-50">Totale nel sistema</small>
+                                <i class="fas fa-users icon-bg"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card stat-card text-white bg-danger h-100 shadow-sm">
+                            <div class="card-body position-relative p-4">
+                                <h5 class="card-title text-white-50">Utenti Sospesi</h5>
+                                <p class="display-5 fw-bold mb-0" th:text="${utentiSospesi}">0</p>
+                                <small class="text-white-50">Richiedono attenzione</small>
+                                <i class="fas fa-user-slash icon-bg"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card stat-card text-white bg-success h-100 shadow-sm">
+                            <div class="card-body position-relative p-4">
+                                <h5 class="card-title text-white-50">Stato Sistema</h5>
+                                <p class="display-5 fw-bold mb-0">Attivo</p>
+                                <small class="text-white-50">Server online da 15gg</small>
+                                <i class="fas fa-server icon-bg"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-4">
-                    <div class="card stat-card text-white bg-danger h-100 shadow-sm">
-                        <div class="card-body position-relative p-4">
-                            <h5 class="card-title text-white-50">Utenti Sospesi</h5>
-                            <p class="display-5 fw-bold mb-0">3</p>
-                            <small class="text-white-50">Richiedono attenzione</small>
-                            <i class="fas fa-user-slash icon-bg"></i>
+                <div class="card shadow border-0 mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-history me-2"></i>Ultime Attività Recenti
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4">Utente</th>
+                                        <th>Ruolo</th>
+                                        <th class="pe-4">Data Registrazione</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="u : ${ultimeRegistrazioni}">
+                                        <td class="ps-4 fw-bold" th:text="${u.nome + ' ' + u.cognome}">Nome Cognome</td>
+                                        <td>
+                                            <span class="badge bg-dark" th:if="${u.isAdmin}">
+                                                <i class="fas fa-user-shield"></i> Admin
+                                            </span>
+                                            <th:block th:unless="${u.isAdmin}">
+                                                <span class="badge bg-warning text-dark"
+                                                    th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Docente)}">Docente</span>
+                                                <span class="badge bg-info text-dark"
+                                                    th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Famiglia)}">Famiglia</span>
+                                                <span class="badge bg-primary"
+                                                    th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Studente)}">Studente</span>
+                                            </th:block>
+                                        </td>
+                                        <td class="pe-4" th:text="${u.email}">email@esempio.it</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card stat-card text-white bg-success h-100 shadow-sm">
-                        <div class="card-body position-relative p-4">
-                            <h5 class="card-title text-white-50">Stato Sistema</h5>
-                            <p class="display-5 fw-bold mb-0">Attivo</p>
-                            <small class="text-white-50">Server online da 15gg</small>
-                            <i class="fas fa-server icon-bg"></i>
-                        </div>
+                    <div class="card-footer bg-white text-center py-3">
+                        <a href="/admin/lista-utenti" class="text-decoration-none fw-bold">Visualizza tutti gli utenti
+                            <i class="fas fa-arrow-right ms-1"></i></a>
                     </div>
                 </div>
-            </div>
 
-            <div class="card shadow border-0 mb-4">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-history me-2"></i>Ultime Attività Recenti</h5>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light">
-                            <tr>
-                                <th class="ps-4">Utente</th>
-                                <th>Ruolo</th>
-                                <th>Data Registrazione</th>
-                                <th>Stato</th>
-                                <th class="text-end pe-4">Azioni</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td class="ps-4 fw-bold">Giulia Bianchi</td>
-                                <td><span class="badge bg-info text-dark">Studente</span></td>
-                                <td>Oggi, 10:30</td>
-                                <td><span class="badge bg-success rounded-pill">Attivo</span></td>
-                                <td class="text-end pe-4">
-                                    <a href="lista-utenti.html" class="btn btn-sm btn-outline-secondary">Gestisci</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-4 fw-bold">Prof. Antonio Verdi</td>
-                                <td><span class="badge bg-warning text-dark">Docente</span></td>
-                                <td>Ieri, 15:45</td>
-                                <td><span class="badge bg-warning rounded-pill">In attesa</span></td>
-                                <td class="text-end pe-4">
-                                    <a href="lista-utenti.html" class="btn btn-sm btn-primary">Approva</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-4 fw-bold">Famiglia Esposito</td>
-                                <td><span class="badge bg-secondary">Famiglia</span></td>
-                                <td>28/12/2025</td>
-                                <td><span class="badge bg-success rounded-pill">Attivo</span></td>
-                                <td class="text-end pe-4">
-                                    <a href="lista-utenti.html" class="btn btn-sm btn-outline-secondary">Gestisci</a>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="card-footer bg-white text-center py-3">
-                    <a href="lista-utenti.html" class="text-decoration-none fw-bold">Visualizza tutti gli utenti <i class="fas fa-arrow-right ms-1"></i></a>
-                </div>
-            </div>
+                <th:block th:replace="~{fragments/footer :: customTextFooter('Pannello Amministrazione')}" />
 
-            <footer class="text-center mt-5 text-muted small">
-                &copy; 2025 Il Faro dello Studio - Pannello Amministrazione
-            </footer>
-        </main>
+            </main>
+        </div>
     </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <nav th:fragment="docente-sidebar(currentPage)" class="col-md-3 col-lg-2 d-md-block sidebar collapse show p-0">
+        <div class="p-3 text-white fw-bold d-flex align-items-center mb-4 mt-2">
+            <i class="fas fa-book-open fa-2x me-2"></i>
+            <span class="fs-6">Il Faro - Docente</span>
+        </div>
+
+        <ul class="nav flex-column">
+            <li class="nav-item mb-1">
+                <form th:action="@{/docente/dashboard-docente}" method="get" class="m-0">
+                    <button type="submit" class="nav-link nav-link-btn"
+                        th:classappend="${currentPage == 'dashboard'} ? 'active' : ''">
+                        <i class="fas fa-home me-2"></i> Dashboard
+                    </button>
+                </form>
+            </li>
+
+            <li class="nav-item mb-1">
+                <form th:action="@{/docente/gestione-attivita}" method="get" class="m-0">
+                    <button type="submit" class="nav-link nav-link-btn"
+                        th:classappend="${currentPage == 'mie_attivita'} ? 'active' : ''">
+                        <i class="fas fa-chalkboard-teacher me-2"></i> Le mie Attività
+                    </button>
+                </form>
+            </li>
+
+            <li class="nav-item mb-1">
+                <form th:action="@{/docente/crea-attivita}" method="get" class="m-0">
+                    <button type="submit" class="nav-link nav-link-btn"
+                        th:classappend="${currentPage == 'crea_attivita'} ? 'active' : ''">
+                        <i class="fas fa-plus-circle me-2"></i> Crea nuova
+                    </button>
+                </form>
+            </li>
+
+            <li class="nav-item mb-1">
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="nav-link nav-link-btn">
+                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+</body>
+
+</html>

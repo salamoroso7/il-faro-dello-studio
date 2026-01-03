@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lascia un Feedback - Il Faro dello Studio</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .card-header {
+      background-color: #0d6efd; /* Colore primario coerente */
+      color: white;
+    }
+    .rating-select {
+      font-size: 1.2rem;
+      color: #f39c12; /* Colore oro per le stelle testuali */
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
+  <div class="container">
+    <a class="navbar-brand" href="#">Il Faro dello Studio</a>
+    <div class="d-flex">
+      <a th:href="@{/studente/dashboard-studente}" class="btn btn-outline-light btn-sm me-2">Torna alla Dashboard</a>
+      <form th:action="@{/logout}" method="post">
+        <button type="submit" class="btn btn-danger btn-sm">Esci</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+
+      <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <span th:text="${error}">Errore generico</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-header text-center py-3">
+          <h4 class="mb-0"><i class="fas fa-star me-2"></i>Valuta la Lezione</h4>
+        </div>
+        <div class="card-body p-4">
+
+          <div class="alert alert-light border text-center mb-4">
+            <h5 class="alert-heading" th:text="${attivita.titolo}">Titolo Lezione</h5>
+            <p class="mb-1 text-muted">
+              Docente: <strong th:text="${attivita.docente.nome} + ' ' + ${attivita.docente.cognome}">Nome Docente</strong>
+            </p>
+            <p class="mb-0 text-muted">
+              Data: <span th:text="${attivita.data}">2024-01-01</span> alle <span th:text="${attivita.oraInizio}">10:00</span>
+            </p>
+          </div>
+
+          <form th:action="@{/feedback/salva}" method="post">
+
+            <input type="hidden" name="idAttivita" th:value="${attivita.idAttivita}">
+
+            <div class="mb-3">
+              <label for="valutazione" class="form-label fw-bold">La tua valutazione:</label>
+              <select class="form-select rating-select" name="valutazione" id="valutazione" required>
+                <option value="" selected disabled>Seleziona un voto...</option>
+                <option value="5">⭐⭐⭐⭐⭐ - Eccellente</option>
+                <option value="4">⭐⭐⭐⭐ - Molto Buono</option>
+                <option value="3">⭐⭐⭐ - Sufficiente</option>
+                <option value="2">⭐⭐ - Scarso</option>
+                <option value="1">⭐ - Insufficiente</option>
+              </select>
+            </div>
+
+            <div class="mb-4">
+              <label for="commento" class="form-label fw-bold">Il tuo commento (opzionale):</label>
+              <textarea class="form-control" name="commento" id="commento" rows="4" placeholder="Cosa ti è piaciuto? Cosa si può migliorare?"></textarea>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">Invia Feedback</button>
+              <a th:href="@{/studente/dashboard-studente}" class="btn btn-outline-secondary">Annulla</a>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+      <div class="text-center mt-3 text-muted">
+        <small>Il feedback aiuta i docenti a migliorare la qualità delle lezioni.</small>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

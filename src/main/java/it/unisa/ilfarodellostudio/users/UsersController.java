@@ -152,4 +152,31 @@ public class UsersController {
         return "studente/calendario-attivita";
     }
 
+    /* =========================================================================
+       2. GESTIONE UTENTI - SOLO ADMIN
+       Attivazione e disattivazione delle utenze.
+       ========================================================================= */
+
+    @PostMapping("/admin/utenti/attiva")
+    public String attivaUtente(@RequestParam String email, Model model) {
+        try {
+            usersService.attivaUtente(email);
+            return "redirect:/admin/lista-utenti?success=attivato";
+        } catch (Exception e) {
+            model.addAttribute("error", "Errore durante l'attivazione: " + e.getMessage());
+            return "redirect:/admin/lista-utenti?error=true";
+        }
+    }
+
+    @PostMapping("/admin/utenti/disattiva")
+    public String disattivaUtente(@RequestParam String email, Model model) {
+        try {
+            usersService.disattivaUtente(email);
+            return "redirect:/admin/lista-utenti?success=disattivato";
+        } catch (Exception e) {
+            model.addAttribute("error", "Errore durante la disattivazione: " + e.getMessage());
+            return "redirect:/admin/lista-utenti?error=true";
+        }
+    }
+
 }

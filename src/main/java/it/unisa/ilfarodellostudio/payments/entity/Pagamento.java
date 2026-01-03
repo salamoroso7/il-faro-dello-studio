@@ -9,12 +9,13 @@ import java.time.LocalDate;
 public class Pagamento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_pagamento")
     private Long idPagamento;
 
     @Column(nullable = false)
     private String nome;
 
-    @Column(nullable = false)
+    @Column(name = "data_scadenza", nullable = false)
     private LocalDate dataScadenza;
 
     @Column(nullable = false)

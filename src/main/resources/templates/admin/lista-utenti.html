@@ -1,143 +1,294 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
 	<meta charset="UTF-8">
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
 	<title>Admin - Il Faro dello Studio</title>
+
+	<!-- CSRF Token per le chiamate AJAX -->
+	<meta name="_csrf" th:content="${_csrf.token}" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+	<!-- Styles per la Sidebar -->
+	<th:block th:replace="~{fragments/sidebar-styles :: sidebar-styles}" />
+
 	<style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        /* Sidebar Nera per Admin */
-        .sidebar {
-            background: linear-gradient(180deg, #212529 0%, #343a40 100%);
-            color: white;
-            min-height: 100vh;
-        }
-
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.7);
-            padding: 15px 20px;
-            margin: 0 10px;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-
-        .sidebar .nav-link-btn {
-            background: none;
-            border: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
-
-        .sidebar .nav-link-btn:focus {
-            outline: none;
-        }
-
-        .sidebar .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        .sidebar .nav-link.active {
-            background-color: #495057;
-            color: white;
-            font-weight: bold;
-        }
+		body {
+			background-color: #f8f9fa;
+		}
 	</style>
 </head>
+
 <body>
-<div class="container-fluid">
-	<div class="row">
-		<nav class="col-md-3 col-lg-2 d-md-block sidebar collapse show p-0">
-			<div class="p-3 text-white fw-bold d-flex align-items-center mb-4 mt-2">
-				<i class="fas fa-cogs fa-2x me-2"></i>
-				<span class="fs-6">Il Faro - Admin</span>
-			</div>
-			<ul class="nav flex-column">
-				<li class="nav-item mb-1">
-					<form class="m-0" method="get" th:action="@{/admin/lista-utenti}">
-						<button class="nav-link nav-link-btn" type="submit">
-							<i class="fas fa-sign-out-alt me-2"></i> Gestione Utenti
-						</button>
-					</form>
-				</li>
-				<li class="nav-item mb-1">
-					<form class="m-0" method="post" th:action="@{/logout}">
-						<button class="nav-link nav-link-btn" type="submit">
-							<i class="fas fa-sign-out-alt me-2"></i> Logout
-						</button>
-					</form>
-				</li>
-			</ul>
-		</nav>
+	<div class="container-fluid">
+		<div class="row">
+			<!-- Sidebar Admin -->
+			<th:block th:replace="~{fragments/admin-sidebar :: admin-sidebar('utenti')}" />
 
-		<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-			<h2 class="fw-bold mb-4">Anagrafica Utenti</h2>
+			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 d-flex flex-column">
+				<h2 class="fw-bold mb-4">Anagrafica Utenti</h2>
 
-			<div class="card border-0 shadow-sm">
-				<div class="card-body p-0">
-					<table class="table table-hover mb-0">
-						<thead class="table-dark">
-						<tr>
-							<th>Nome</th>
-							<th>Ruolo</th>
-							<th>Email</th>
-							<th>Stato</th>
-							<th class="text-end">Azioni</th>
-						</tr>
-						</thead>
-						<tbody>
-						<tr th:each="u : ${utenti}">
-							<td th:text="${u.nome + ' ' + u.cognome}">Nome Cognome</td>
-
-                            <td>
-                                <span class="badge bg-dark" th:if="${u.isAdmin}">
-                                    <i class="fas fa-user-shield"></i> Admin
-                                </span>
-
-                                <th:block th:unless="${u.isAdmin}">
-                                    <span class="badge bg-warning text-dark"
-                                          th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Docente)}">Docente</span>
-
-                                    <span class="badge bg-info text-dark"
-                                          th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Famiglia)}">Famiglia</span>
-
-                                    <span class="badge bg-primary"
-                                          th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Studente)}">Studente</span>
-                                </th:block>
-                            </td>
-
-							<td th:text="${u.email}">email@esempio.it</td>
-
-                            <td>
-                                <span class="badge"
-                                      th:classappend="${u.isAttivo} ? 'bg-success' : 'bg-danger'"
-                                      th:text="${u.isAttivo} ? 'Attivo' : 'Sospeso'">
-                                    Stato
-                                </span>
-                            </td>
-
-							<td class="text-end">
-								<button class="btn btn-sm btn-outline-danger">Gestisci</button>
-							</td>
-						</tr>
-						</tbody>
-					</table>
+				<!-- Barra di ricerca -->
+				<div class="card border-0 shadow-sm mb-3">
+					<div class="card-body">
+						<div class="input-group">
+							<span class="input-group-text bg-white border-end-0">
+								<i class="fas fa-search text-muted"></i>
+							</span>
+							<input type="text" class="form-control border-start-0" id="searchInput"
+								placeholder="Cerca per email, nome o cognome..." onkeyup="filterTable()">
+						</div>
+					</div>
 				</div>
-			</div>
-			<footer class="text-center mt-5 text-muted small">
-				&copy; 2025 Il Faro dello Studio
-			</footer>
-		</main>
+
+				<div class="card border-0 shadow-sm">
+					<div class="card-body p-0">
+						<table class="table table-hover mb-0">
+							<thead class="table-dark">
+								<tr>
+									<th>Nome</th>
+									<th>Ruolo</th>
+									<th>Email</th>
+									<th>Stato</th>
+									<th class="text-end">Azioni</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="u : ${utenti}">
+									<td th:text="${u.nome + ' ' + u.cognome}">Nome Cognome</td>
+
+									<td>
+										<span class="badge bg-dark" th:if="${u.isAdmin}">
+											<i class="fas fa-user-shield"></i> Admin
+										</span>
+
+										<th:block th:unless="${u.isAdmin}">
+											<span class="badge bg-warning text-dark"
+												th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Docente)}">Docente</span>
+
+											<span class="badge bg-info text-dark"
+												th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Famiglia)}">Famiglia</span>
+
+											<span class="badge bg-primary"
+												th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Studente)}">Studente</span>
+										</th:block>
+									</td>
+
+									<td th:text="${u.email}">email@esempio.it</td>
+
+									<td>
+										<span class="badge" th:classappend="${u.isAttivo} ? 'bg-success' : 'bg-danger'"
+											th:text="${u.isAttivo} ? 'Attivo' : 'Sospeso'">
+											Stato
+										</span>
+									</td>
+
+									<td class="text-end">
+										<!-- Non mostrare pulsanti per gli admin -->
+										<th:block th:unless="${u.isAdmin}">
+											<!-- Icona Modifica Utenza che apre il modal -->
+											<button class="btn btn-sm btn-link text-primary p-0" type="button"
+												data-bs-toggle="modal" data-bs-target="#modificaStatoModal"
+												title="Modifica stato utenza"
+												th:attr="data-email=${u.email}, data-nome=${u.nome + ' ' + u.cognome}, data-stato=${u.isAttivo}">
+												<i class="fas fa-edit fa-lg"></i>
+											</button>
+										</th:block>
+
+										<!-- Messaggio per admin -->
+										<span th:if="${u.isAdmin}" class="text-muted small">
+											<i class="fas fa-lock me-1"></i>
+										</span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<!-- Modal per Modifica Stato Utenza -->
+				<div class="modal fade" id="modificaStatoModal" tabindex="-1" aria-labelledby="modificaStatoModalLabel"
+					aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modificaStatoModalLabel">
+									<i class="fas fa-edit me-2"></i>Modifica Stato Utenza
+								</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<form id="modificaStatoForm" method="post">
+								<div class="modal-body">
+									<input type="hidden" name="email" id="modalEmail">
+
+									<div class="mb-3">
+										<label class="form-label fw-bold">Utente:</label>
+										<p class="text-muted" id="modalNome"></p>
+									</div>
+
+									<div class="mb-3">
+										<label class="form-label fw-bold">Stato Corrente:</label>
+										<p id="modalStatoCorrente"></p>
+									</div>
+
+									<div class="mb-3">
+										<label class="form-label fw-bold">Seleziona Nuovo Stato:</label>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="nuovoStato"
+												id="statoAttivo" value="attivo">
+											<label class="form-check-label" for="statoAttivo">
+												<span class="badge bg-success">Attivo</span>
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="nuovoStato"
+												id="statoDisattivato" value="disattivato">
+											<label class="form-check-label" for="statoDisattivato">
+												<span class="badge bg-danger">Disattivato</span>
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+										<i class="fas fa-times me-1"></i>Annulla
+									</button>
+									<button type="submit" class="btn btn-primary">
+										<i class="fas fa-save me-1"></i>Salva
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+
+
+				<th:block th:replace="~{fragments/footer :: standardFooter}" />
+
+			</main>
+		</div>
 	</div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+	<script>
+		// Funzione per filtrare la tabella in base alla ricerca
+		function filterTable() {
+			const input = document.getElementById('searchInput');
+			const filter = input.value.toLowerCase();
+			const table = document.querySelector('.table tbody');
+			const rows = table.getElementsByTagName('tr');
+
+			for (let i = 0; i < rows.length; i++) {
+				const row = rows[i];
+				const cells = row.getElementsByTagName('td');
+
+				if (cells.length > 0) {
+					const nomeCompleto = cells[0].textContent || cells[0].innerText;
+					const email = cells[2].textContent || cells[2].innerText;
+
+					if (nomeCompleto.toLowerCase().indexOf(filter) > -1 ||
+						email.toLowerCase().indexOf(filter) > -1) {
+						row.style.display = '';
+					} else {
+						row.style.display = 'none';
+					}
+				}
+			}
+		}
+
+		// Popola il modal con i dati dell'utente selezionato
+		const modificaStatoModal = document.getElementById('modificaStatoModal');
+		modificaStatoModal.addEventListener('show.bs.modal', function (event) {
+			const button = event.relatedTarget;
+			const email = button.getAttribute('data-email');
+			const nome = button.getAttribute('data-nome');
+			const isAttivo = button.getAttribute('data-stato') === 'true';
+
+			// Popola i campi del modal
+			document.getElementById('modalEmail').value = email;
+			document.getElementById('modalNome').textContent = nome;
+
+			// Mostra lo stato corrente
+			const statoCorrenteEl = document.getElementById('modalStatoCorrente');
+			if (isAttivo) {
+				statoCorrenteEl.innerHTML = '<span class="badge bg-success">Attivo</span>';
+			} else {
+				statoCorrenteEl.innerHTML = '<span class="badge bg-danger">Sospeso</span>';
+			}
+
+			// Pre-seleziona lo stato opposto
+			if (isAttivo) {
+				document.getElementById('statoDisattivato').checked = true;
+			} else {
+				document.getElementById('statoAttivo').checked = true;
+			}
+		});
+
+		// Gestione del submit del form
+
+		// Gestione del submit del form
+		document.getElementById('modificaStatoForm').addEventListener('submit', function (e) {
+			e.preventDefault();
+
+			const email = document.getElementById('modalEmail').value;
+			const nuovoStato = document.querySelector('input[name="nuovoStato"]:checked')?.value;
+
+			if (!nuovoStato) {
+				alert('Seleziona un nuovo stato');
+				return;
+			}
+
+			// Determina l'azione e l'URL corretti
+			// Endpoint definiti in UsersController: /admin/utenti/attiva e /admin/utenti/disattiva
+			const action = nuovoStato === 'attivo' ? 'attiva' : 'disattiva';
+			const url = `/admin/utenti/${action}`;
+
+			// Prepara i dati come form-urlencoded
+			const params = new URLSearchParams();
+			params.append('email', email);
+
+			// Recupera il token CSRF dai meta tag (se presenti)
+			const csrfTokenMeta = document.querySelector("meta[name='_csrf']");
+			const csrfHeaderMeta = document.querySelector("meta[name='_csrf_header']");
+
+			const headers = {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			};
+
+			if (csrfTokenMeta && csrfHeaderMeta) {
+				headers[csrfHeaderMeta.getAttribute("content")] = csrfTokenMeta.getAttribute("content");
+			}
+
+			// Invia la richiesta POST
+			fetch(url, {
+				method: 'POST',
+				headers: headers,
+				body: params
+			})
+				.then(response => {
+					if (response.ok || response.redirected) {
+						// Chiudi il modal e ricarica la pagina per mostrare lo stato aggiornato
+						const modalInstance = bootstrap.Modal.getInstance(modificaStatoModal);
+						modalInstance.hide();
+						window.location.href = window.location.pathname + "?success=true";
+					} else {
+						console.error("Errore server: ", response.status);
+						alert('Errore durante l\'aggiornamento dello stato. Codice: ' + response.status);
+					}
+				})
+				.catch(error => {
+					console.error('Errore:', error);
+					alert('Si è verificato un errore di rete.');
+				});
+		});
+	</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

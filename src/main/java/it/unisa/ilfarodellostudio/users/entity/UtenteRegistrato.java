@@ -20,10 +20,10 @@ public abstract class UtenteRegistrato {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(name = "is_attivo", nullable = false)
     private boolean isAttivo = true;
 
-    @Column(nullable = false)
+    @Column(name = "is_admin", nullable = false)
     private boolean isAdmin = false;
 
     public UtenteRegistrato() {

@@ -1,88 +1,85 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Docente - Il Faro dello Studio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <th:block th:replace="~{fragments/sidebar-styles :: sidebar-styles}" />
     <style>
-        body { background-color: #f8f9fa; }
-        .sidebar { background: linear-gradient(180deg, #0d6efd 0%, #0a58ca 100%); color: white; min-height: 100vh; }
-        .sidebar .nav-link { color: rgba(255,255,255,0.85); padding: 15px 20px; margin: 0 10px; border-radius: 5px; transition: all 0.3s; }
-        .sidebar .nav-link-btn { background: none; border: none; width: 100%; text-align: left; cursor: pointer; display: flex; align-items: center; }
-        .sidebar .nav-link-btn:focus { outline: none; }
-        .sidebar .nav-link:hover { background-color: rgba(255,255,255,0.2); color: white; transform: translateX(5px); }
-        .sidebar .nav-link.active { background-color: white; color: #0d6efd; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
     </style>
 </head>
+
 <body>
 <div class="container-fluid">
     <div class="row">
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse show p-0">
-            <div class="p-3 text-white fw-bold d-flex align-items-center mb-4 mt-2">
-                <i class="fas fa-book-open fa-2x me-2"></i>
-                <span class="fs-6">Il Faro - Docenti</span>
-            </div>
-            <ul class="nav flex-column">
-                <li class="nav-item mb-1">
-                    <form th:action="@{/docente/dashboard-docente}" method="get" class="m-0">
-                        <button type="submit" class="nav-link nav-link-btn">
-                            <i class="fas fa-home me-2"></i> Dashboard
-                        </button>
-                    </form>
-                </li>
-
-                <li class="nav-item mb-1">
-                    <form th:action="@{/docente/gestione-attivita}" method="get" class="m-0">
-                        <button type="submit" class="nav-link nav-link-btn">
-                            <i class="fas fa-chalkboard-teacher me-2"></i> Le mie Attività
-                        </button>
-                    </form>
-                </li>
-
-                <li class="nav-item mb-1">
-                    <form th:action="@{/docente/crea-attivita}" method="get" class="m-0">
-                        <button type="submit" class="nav-link nav-link-btn">
-                            <i class="fas fa-plus-circle me-2"></i> Crea nuova
-                        </button>
-                    </form>
-                </li>
-
-                <li class="nav-item mt-5 pt-5 border-top border-light">
-                    <form th:action="@{/logout}" method="post" class="m-0">
-                        <button type="submit" class="nav-link nav-link-btn">
-                            <i class="fas fa-sign-out-alt me-2"></i> Logout
-                        </button>
-                    </form>
-                </li>
-            </ul>
-        </nav>
+        <th:block th:replace="~{fragments/docente-sidebar :: docente-sidebar('dashboard')}" />
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
             <h2 class="text-primary fw-bold mb-4">
                 Benvenuto, Prof. <span th:text="${docente?.cognome ?: 'Ospite'}"></span>
             </h2>
+
             <div class="row g-4">
                 <div class="col-md-4">
                     <div class="card text-white bg-primary h-100 shadow-sm border-0">
                         <div class="card-body p-4">
-                            <h5>Attività in Programma</h5>
-                            <p class="display-4 fw-bold mb-0">5</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Attività in Programma</h5>
+                                <i class="fas fa-calendar-alt fa-2x opacity-50"></i>
+                            </div>
+                            <p class="display-4 fw-bold mb-0 mt-3" th:text="${numeroAttivita}">0</p>
+                            <small class="opacity-75">Lezioni future confermate</small>
                         </div>
                     </div>
                 </div>
 
-                <!--
                 <div class="col-md-4">
                     <div class="card text-white bg-warning h-100 shadow-sm border-0">
                         <div class="card-body p-4">
-                            <h5>Feedback Ricevuti</h5>
-                            <p class="display-4 fw-bold mb-0">4.8/5</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Feedback Ricevuti</h5>
+                                <i class="fas fa-star fa-2x opacity-50"></i>
+                            </div>
+
+                            <div class="mt-3">
+                                    <span class="display-4 fw-bold"
+                                          th:text="${mediaRecensioni != null ? #numbers.formatDecimal(mediaRecensioni, 1, 1) : 'N/A'}">
+                                          0.0
+                                    </span>
+                                <span class="fs-4">/ 5</span>
+                            </div>
+
+                            <small class="opacity-75">
+                                Basato su <span th:text="${numeroRecensioni}">0</span> recensioni
+                            </small>
                         </div>
                     </div>
                 </div>
-                -->
+
+                <div class="col-md-4">
+                    <div class="card text-white bg-success h-100 shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Studenti Iscritti</h5>
+                                <i class="fas fa-users fa-2x opacity-50"></i>
+                            </div>
+                            <p class="display-4 fw-bold mb-0 mt-3" th:text="${totaleIscritti ?: 0}">0</p>
+                            <small class="opacity-75">Totale iscrizioni alle tue lezioni</small>
+                        </div>
+                    </div>
+                </div>
 
             </div>
             <footer class="text-center mt-5 text-muted small">
@@ -93,4 +90,5 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
