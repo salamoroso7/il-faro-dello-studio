@@ -27,11 +27,13 @@ public interface AttivitaRepository extends JpaRepository<Attivita, Long> {
     @Query("SELECT COUNT(a) > 0 FROM Attivita a " +
             "WHERE a.docente = :docente " +
             "AND a.data = :data " +
-            "AND (a.oraInizio < :oraFine AND a.oraFine > :oraInizio) " +
-            "AND a.id <> :escludiId") // <--- FONDAMENTALE
+            "AND (a.oraInizio < :oraFine AND a.oraFine > :oraInizio) "
+            ) // <--- FONDAMENTALE
     boolean existsOverlappingLessonExcludingId(@Param("docente") Docente docente,
                                                @Param("data") LocalDate data,
                                                @Param("oraInizio") LocalTime oraInizio,
                                                @Param("oraFine") LocalTime oraFine,
                                                @Param("escludiId") Long escludiId);
+
+     List<Attivita> findAllByDocenteAndDataAfter(Docente docente, LocalDate data);
 }
