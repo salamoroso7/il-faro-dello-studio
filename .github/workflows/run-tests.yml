@@ -30,9 +30,15 @@ jobs:
         distribution: 'temurin'
         cache: maven
         
-    - name: Build with Maven
+    - name: Announce Build
+      run: echo "🚀 Starting Project Build..."
+
+    - name: Build Project 
       env:
         DB_URL: jdbc:mysql://127.0.0.1:3306/ilfarodellostudio
         DB_USER: root
         DB_PWD: root
-      run: ./mvnw clean package
+      run: ./mvnw clean package 
+
+    - name: Announce Tests
+      run: echo "✅ Build and Tests Successful!"
