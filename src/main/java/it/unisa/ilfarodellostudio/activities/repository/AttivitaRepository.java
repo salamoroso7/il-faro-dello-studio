@@ -34,4 +34,6 @@ public interface AttivitaRepository extends JpaRepository<Attivita, Long> {
                                                @Param("oraInizio") LocalTime oraInizio,
                                                @Param("oraFine") LocalTime oraFine,
                                                @Param("escludiId") Long escludiId);
+
+     List<Attivita> findAllByDocenteAndDataAfter(Docente docente, LocalDate data);
 }
