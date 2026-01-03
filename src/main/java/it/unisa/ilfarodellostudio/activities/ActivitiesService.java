@@ -82,7 +82,7 @@ public class ActivitiesService {
        ================================================================= */
 
     public List<Attivita> dammiTutteLeAttivita(Docente docente) {
-        return attivitaRepository.findAllByDocenteAndDataAfter(docente,LocalDate.now());
+        return attivitaRepository.findAllByDocenteAndDataAfter(docente, LocalDate.now());
     }
 
     public Attivita visualizzaAttivita(Long id) {
@@ -127,18 +127,20 @@ public class ActivitiesService {
         Attivita attivita = attivitaRepository.findById(idAttivita)
                 .orElseThrow(() -> new RuntimeException("Attività non trovata"));
 
-        // Controllo Posti
+        // CORREZIONE 1: Messaggio esatto richiesto dal test
         if (attivita.getIscritti().size() >= attivita.getPosti()) {
-            throw new RuntimeException("Attività al completo.");
+            throw new RuntimeException("Impossibile iscriversi: l'attività " + attivita.getTitolo() + " è già al completo");
         }
 
-        // Controllo Pagamenti
+        // CORREZIONE 2: Messaggio esteso richiesto dal test per i pagamenti
         Famiglia famiglia = studente.getFamiglia();
         if (famiglia != null) {
             boolean haPagamentiScaduti = famiglia.getPagamentiEffettuati().stream()
                     .anyMatch(p -> p.getStato() == StatoPagamento.SCADUTO);
+
             if (haPagamentiScaduti) {
-                throw new RuntimeException("Iscrizione negata: pagamenti in sospeso.");
+                throw new RuntimeException("Iscrizione negata: la famiglia associata allo studente ha pagamenti in sospeso (Stato: SCADUTO). " +
+                        "Si prega di regolarizzare la posizione prima di procedere.");
             }
         }
 
