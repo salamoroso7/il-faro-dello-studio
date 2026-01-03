@@ -9,6 +9,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Entity che rappresenta un Docente.
+ * Estende UtenteRegistrato e aggiunge le relazioni con Attività create e Materie insegnate.
+ */
 @Entity
 @Table(name = "docente")
 public class Docente extends UtenteRegistrato {

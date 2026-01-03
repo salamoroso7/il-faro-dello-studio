@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * Repository per la gestione dei Docenti.
+ */
 @Repository
 public interface DocenteRepository extends JpaRepository<Docente, String> {
     Optional<Docente> findByEmail(String email);

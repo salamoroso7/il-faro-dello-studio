@@ -1,7 +1,17 @@
 package it.unisa.ilfarodellostudio.auth;
 
+/**
+ * Data Transfer Object (DTO) per il login.
+ * Contiene le credenziali (username e password) inviate dal client.
+ */
 public class LoginDto {
+    /**
+     * Lo username dell'utente (email).
+     */
     private String username;
+    /**
+     * La password dell'utente.
+     */
     private String password;
 
     public String getUsername() {

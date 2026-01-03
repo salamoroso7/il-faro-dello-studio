@@ -2,6 +2,9 @@ package it.unisa.ilfarodellostudio.users.dto;
 
 import java.time.LocalDate;
 
+/**
+ * DTO per la registrazione di uno Studente (da parte della Famiglia).
+ */
 public class StudenteDto {
     private String nome;
     private String cognome;

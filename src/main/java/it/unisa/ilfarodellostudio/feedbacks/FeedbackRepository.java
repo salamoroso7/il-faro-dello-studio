@@ -6,11 +6,25 @@ import it.unisa.ilfarodellostudio.users.entity.Studente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
+/**
+ * Repository per la gestione della persistenza dei feedback.
+ */
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
-    // Trova tutti i feedback di una specifica attività (utile per il docente)
+    /**
+     * Trova tutti i feedback relativi a un'attività.
+     *
+     * @param attivita l'attività
+     * @return lista di feedback
+     */
     List<Feedback> findByAttivita(Attivita attivita);
 
-    // Controlla se uno studente ha già recensito un'attività (per evitare doppi voti)
+    /**
+     * Verifica se uno studente ha già lasciato un feedback per un'attività.
+     *
+     * @param attivita l'attività
+     * @param studente lo studente
+     * @return true se il feedback esiste già, false altrimenti
+     */
     boolean existsByAttivitaAndStudente(Attivita attivita, Studente studente);
 }

@@ -12,6 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Service per la gestione dei feedback.
+ * Gestisce l'inserimento e il recupero delle recensioni per le attività.
+ */
 @Service
 public class FeedbacksService {
 
@@ -22,6 +26,16 @@ public class FeedbacksService {
     @Autowired
     private StudenteRepository studenteRepository;
 
+    /**
+     * Permette a uno studente di lasciare un feedback per un'attività a cui ha partecipato.
+     *
+     * @param idAttivita ID dell'attività
+     * @param emailStudente email dello studente
+     * @param valutazione voto numerico
+     * @param commento commento testuale
+     * @throws IllegalArgumentException se attività o studente non trovati
+     * @throws IllegalStateException se lo studente non è iscritto o ha già votato
+     */
     @Transactional
     public void lasciaFeedback(Long idAttivita, String emailStudente, int valutazione, String commento) {
 
@@ -54,7 +68,12 @@ public class FeedbacksService {
         feedbackRepository.save(feedback);
     }
 
-    // Recupera i feedback per una data attività (per farli vedere al docente)
+    /**
+     * Recupera la lista dei feedback associati a una specifica attività.
+     *
+     * @param idAttivita ID dell'attività
+     * @return lista dei feedback
+     */
     public List<Feedback> getFeedbackPerAttivita(Long idAttivita) {
         Attivita attivita = attivitaRepository.findById(idAttivita)
                 .orElseThrow(() -> new IllegalArgumentException("Attività non trovata"));

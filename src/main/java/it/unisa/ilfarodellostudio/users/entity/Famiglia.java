@@ -6,6 +6,10 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entity che rappresenta una Famiglia (Genitore).
+ * Estende UtenteRegistrato e gestisce la relazione con Studenti figli e Pagamenti effettuati.
+ */
 @Entity
 @Table(name = "famiglia")
 public class Famiglia extends UtenteRegistrato {

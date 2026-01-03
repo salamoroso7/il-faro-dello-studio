@@ -55,6 +55,14 @@ public class AuthController {
         return "login"; // Ritorna login.html
     }
 
+    /**
+     * Gestisce la dashboard per l'amministratore.
+     * Recupera le statistiche principali (utenti totali, sospesi, ultime registrazioni)
+     * e le passa alla vista.
+     *
+     * @param model il modello per la vista
+     * @return la vista della dashboard admin
+     */
     @GetMapping("/admin/dashboard-admin")
     public String dashboardAdmin(Model model) {
         // Recupera le statistiche dal service
@@ -70,7 +78,14 @@ public class AuthController {
         return "admin/dashboard-admin";
     }
 
-    // Dashboard per i Docenti
+    /**
+     * Gestisce la dashboard per il docente.
+     * Recupera i dati del docente e le statistiche delle sue attività.
+     *
+     * @param authentication informazioni sull'autenticazione corrente
+     * @param model il modello per la vista
+     * @return la vista della dashboard docente
+     */
     @GetMapping("/docente/dashboard-docente")
     public String dashboardDocente(Authentication authentication, Model model) {
         String email = authentication.getName();
@@ -95,7 +110,14 @@ public class AuthController {
         return "docente/dashboard-docente";
     }
 
-    // Dashboard per le Famiglie
+    /**
+     * Gestisce la dashboard per la famiglia.
+     * Visualizza le informazioni relative alla famiglia.
+     *
+     * @param authentication informazioni sull'autenticazione corrente
+     * @param model il modello per la vista
+     * @return la vista della dashboard famiglia
+     */
     @GetMapping("/famiglia/dashboard-famiglia")
     public String dashboardFamiglia(Authentication authentication, Model model) {
         String email = authentication.getName();
@@ -104,7 +126,11 @@ public class AuthController {
         return "famiglia/dashboard-famiglia";
     }
 
-    // Dashboard per gli Studenti
+    /**
+     * Gestisce la dashboard per lo studente.
+     *
+     * @return la vista della dashboard studente
+     */
     @GetMapping("/studente/dashboard-studente")
     public String dashboardStudente() {
         return "studente/dashboard-studente";

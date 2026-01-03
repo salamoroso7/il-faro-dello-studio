@@ -19,6 +19,10 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service per la gestione delle attività (lezioni).
+ * Contiene la logica di business per la creazione, modifica, recupero e gestione delle attività.
+ */
 @Service
 public class ActivitiesService {
 
@@ -32,6 +36,14 @@ public class ActivitiesService {
     /* =================================================================
        METODO CREA: CON VALIDAZIONI COMPLETE (Per i Test JUnit)
        ================================================================= */
+    /**
+     * Crea una nuova attività con validazioni complete.
+     * Effettua controlli sugli orari, date, sovrapposizioni e dati della materia.
+     *
+     * @param attivita l'oggetto attività da creare
+     * @return l'oggetto attività salvato
+     * @throws RuntimeException se le validazioni falliscono
+     */
     @Transactional
     public Attivita creaAttivita(Attivita attivita) {
 
@@ -81,36 +93,88 @@ public class ActivitiesService {
        ALTRI METODI DI GESTIONE
        ================================================================= */
 
+    /**
+     * Recupera tutte le attività di un docente a partire dalla data odierna.
+     *
+     * @param docente il docente di cui recuperare le attività
+     * @return lista delle attività future del docente
+     */
     public List<Attivita> dammiTutteLeAttivita(Docente docente) {
         return attivitaRepository.findAllByDocenteAndDataAfter(docente, LocalDate.now());
     }
 
+    /**
+     * Restituisce un'attività tramite il suo ID.
+     *
+     * @param id l'ID dell'attività
+     * @return l'oggetto attività o null se non trovato
+     */
     public Attivita visualizzaAttivita(Long id) {
         return attivitaRepository.findById(id).orElse(null);
     }
 
+    /**
+     * Restituisce tutte le attività presenti nel sistema.
+     *
+     * @return lista completa delle attività
+     */
     public List<Attivita> visualizzaTutteLeAttivita() {
         return attivitaRepository.findAll();
     }
 
+    /**
+     * Restituisce tutte le materie disponibili.
+     *
+     * @return lista delle materie
+     */
     public List<Materia> getAllMaterie() {
         return materiaRepository.findAll();
     }
 
+    /**
+     * Modifica un'attività esistente.
+     *
+     * @param attivita l'oggetto attività modificato
+     * @return l'attività aggiornata
+     */
     public Attivita modificaAttivita(Attivita attivita) {
         return attivitaRepository.save(attivita);
     }
 
+    /**
+     * Elimina un'attività tramite ID.
+     *
+     * @param id l'ID dell'attività da eliminare
+     */
     public void eliminaAttivita(Long id) {
         attivitaRepository.deleteById(id);
     }
 
     // Metodo helper (usato solo se serve controllo esterno)
+    /**
+     * Verifica l'esistenza di lezioni sovrapposte per un docente in una data e orario specifici.
+     *
+     * @param docente il docente
+     * @param data la data
+     * @param oraInizio ora di inizio
+     * @param oraFine ora di fine
+     * @return true se esiste una sovrapposizione, false altrimenti
+     */
     public boolean existsOverlappingLesson(Docente docente, LocalDate data, LocalTime oraInizio, LocalTime oraFine) {
         return attivitaRepository.existsOverlappingLesson(docente, data, oraInizio, oraFine);
     }
 
     // Wrapper per modifica (controllo sovrapposizione escludendo ID corrente)
+    /**
+     * Verifica l'esistenza di lezioni sovrapposte escludendo un'attività specifica (per modifiche).
+     *
+     * @param docente il docente
+     * @param data la data
+     * @param oraInizio ora di inizio
+     * @param oraFine ora di fine
+     * @param id l'ID dell'attività da escludere dal controllo
+     * @return true se esiste una sovrapposizione, false altrimenti
+     */
     public boolean verificaSovrapposizioneEsclusoId(Docente docente, LocalDate data, LocalTime oraInizio, LocalTime oraFine, Long id) {
         // Assicurati che nel Repository esista il metodo 'existsOverlappingLessonExcludingId'
         // Se l'hai rimosso dal Repository, rimuovi anche questo metodo qui.
@@ -120,6 +184,14 @@ public class ActivitiesService {
     /* =================================================================
        ISCRIZIONE STUDENTI
        ================================================================= */
+    /**
+     * Iscrive uno studente a un'attività specifica.
+     * Effettua controlli sulla disponibilità dei posti e sullo stato dei pagamenti della famiglia dello studente.
+     *
+     * @param emailStudente email dello studente da iscrivere
+     * @param idAttivita ID dell'attività a cui iscrivere lo studente
+     * @throws RuntimeException se l'iscrizione fallisce (posti esauriti o pagamenti scaduti)
+     */
     @Transactional
     public void iscriviStudenteAdAttivita(String emailStudente, Long idAttivita) {
         Studente studente = studenteRepository.findById(emailStudente)
