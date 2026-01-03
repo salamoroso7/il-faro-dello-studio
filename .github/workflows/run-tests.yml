@@ -10,6 +10,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: ilfarodellostudio
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
     - uses: actions/checkout@v3
     
@@ -21,4 +31,8 @@ jobs:
         cache: maven
         
     - name: Build with Maven
+      env:
+        DB_URL: jdbc:mysql://127.0.0.1:3306/ilfarodellostudio
+        DB_USER: root
+        DB_PWD: root
       run: ./mvnw clean package
