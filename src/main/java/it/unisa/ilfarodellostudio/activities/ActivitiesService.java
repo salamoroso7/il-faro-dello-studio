@@ -14,113 +14,135 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Servizio per la gestione delle operazioni relative alle attività.
- * Fornisce la logica di business per le iscrizioni e la gestione delle attività.
- */
 @Service
 public class ActivitiesService {
 
     @Autowired
     private AttivitaRepository attivitaRepository;
-  
     @Autowired
     private StudenteRepository studenteRepository;
-
     @Autowired
     private MateriaRepository materiaRepository;
 
-    // CREATE
+    /* =================================================================
+       METODO CREA: CON VALIDAZIONI COMPLETE (Per i Test JUnit)
+       ================================================================= */
+    @Transactional
     public Attivita creaAttivita(Attivita attivita) {
+
+        // 1. Validazione Orari (Fine deve essere dopo Inizio)
+        if (!attivita.getOraFine().isAfter(attivita.getOraInizio())) {
+            throw new RuntimeException("Errore: L'orario di fine deve essere successivo all'inizio.");
+        }
+
+        // 2. Validazione Data Passata (TC_GA_1_2)
+        if (LocalDateTime.of(attivita.getData(), attivita.getOraInizio()).isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Errore: Non puoi creare lezioni nel passato.");
+        }
+
+        // 3. Validazione Lunghezza Descrizione (TC_GA_1_3)
+        if (attivita.getDescrizione() != null && attivita.getDescrizione().length() > 300) {
+            throw new RuntimeException("Errore: La descrizione supera i 300 caratteri.");
+        }
+
+        // 4. Validazione Nome Materia (TC_GA_1_1 - Nessun numero permesso)
+        if (attivita.getMateria() != null && attivita.getMateria().getNome().matches(".*\\d.*")) {
+            throw new RuntimeException("Errore: Il nome della materia non può contenere numeri.");
+        }
+
+        // 5. Validazione Sovrapposizione Oraria (TC_GA_1_4)
+        boolean sovrapposizione = attivitaRepository.existsOverlappingLesson(
+                attivita.getDocente(),
+                attivita.getData(),
+                attivita.getOraInizio(),
+                attivita.getOraFine()
+        );
+
+        if (sovrapposizione) {
+            throw new RuntimeException("Errore: Sovrapposizione con un'altra lezione.");
+        }
+
+        // 6. Gestione Materia (Salva se nuova, usa esistente se c'è)
+        Materia m = attivita.getMateria();
+        Materia materiaDb = materiaRepository.findByNome(m.getNome())
+                .orElseGet(() -> materiaRepository.save(m));
+        attivita.setMateria(materiaDb);
+
+        // 7. Salvataggio finale
         return attivitaRepository.save(attivita);
     }
 
-    // 1. Usato per la CREAZIONE (Controller: /attivita/crea)
-    public boolean existsOverlappingLesson(Docente docente, LocalDate data, LocalTime oraInizio, LocalTime oraFine) {
-        // Chiama la query nel repository che controlla se c'è un'intersezione
-        return attivitaRepository.existsOverlappingLesson(docente, data, oraInizio, oraFine);
-    }
+    /* =================================================================
+       ALTRI METODI DI GESTIONE
+       ================================================================= */
 
     public List<Attivita> dammiTutteLeAttivita(Docente docente) {
-        return attivitaRepository.findAllByDocenteAndDataAfter(docente, LocalDate.now());
+        return attivitaRepository.findAllByDocenteAndDataAfter(docente,LocalDate.now());
     }
 
-    // 2. Usato per la MODIFICA (Controller: /attivita/aggiorna)
-    public boolean verificaSovrapposizioneEsclusoId(Docente docente, LocalDate data, LocalTime oraInizio, LocalTime oraFine, Long idDaEscludere) {
-        // Chiama la query che controlla l'intersezione IGNORANDO l'attività con questo ID
-        return attivitaRepository.existsOverlappingLessonExcludingId(docente, data, oraInizio, oraFine, idDaEscludere);
+    public Attivita visualizzaAttivita(Long id) {
+        return attivitaRepository.findById(id).orElse(null);
     }
-    // READ ALL
+
     public List<Attivita> visualizzaTutteLeAttivita() {
         return attivitaRepository.findAll();
-    }
-
-    // READ BY ID
-    public Attivita visualizzaAttivita(Long id) {
-        Optional<Attivita> risultato = attivitaRepository.findById(id);
-        return risultato.orElse(null);
-    }
-
-    // UPDATE
-    public Attivita modificaAttivita(Attivita attivita) {
-        return attivitaRepository.save(attivita);
-    }
-
-    // DELETE
-    public void eliminaAttivita(Long id) {
-        attivitaRepository.deleteById(id);
     }
 
     public List<Materia> getAllMaterie() {
         return materiaRepository.findAll();
     }
 
-    /**
-     * Esegue l'iscrizione di uno studente a una determinata attività.
-     * <p>
-     * Il metodo verifica l'esistenza delle entità, controlla che ci siano posti
-     * disponibili nell'attività e, in futuro, verificherà lo stato dei pagamenti
-     * dell'account Famiglia associato.
-     * </p>
-     *
-     * @param emailStudente l'identificativo univoco dello studente da iscrivere
-     * @param idAttivita l'identificativo univoco dell'attività a cui iscriversi
-     * @throws RuntimeException se lo studente o l'attività non vengono trovati,
-     * o se il numero massimo di posti è stato raggiunto.
-     */
+    public Attivita modificaAttivita(Attivita attivita) {
+        return attivitaRepository.save(attivita);
+    }
+
+    public void eliminaAttivita(Long id) {
+        attivitaRepository.deleteById(id);
+    }
+
+    // Metodo helper (usato solo se serve controllo esterno)
+    public boolean existsOverlappingLesson(Docente docente, LocalDate data, LocalTime oraInizio, LocalTime oraFine) {
+        return attivitaRepository.existsOverlappingLesson(docente, data, oraInizio, oraFine);
+    }
+
+    // Wrapper per modifica (controllo sovrapposizione escludendo ID corrente)
+    public boolean verificaSovrapposizioneEsclusoId(Docente docente, LocalDate data, LocalTime oraInizio, LocalTime oraFine, Long id) {
+        // Assicurati che nel Repository esista il metodo 'existsOverlappingLessonExcludingId'
+        // Se l'hai rimosso dal Repository, rimuovi anche questo metodo qui.
+        return attivitaRepository.existsOverlappingLessonExcludingId(docente, data, oraInizio, oraFine, id);
+    }
+
+    /* =================================================================
+       ISCRIZIONE STUDENTI
+       ================================================================= */
     @Transactional
     public void iscriviStudenteAdAttivita(String emailStudente, Long idAttivita) {
-
         Studente studente = studenteRepository.findById(emailStudente)
-                .orElseThrow(() -> new RuntimeException("Studente " + emailStudente + " non trovato"));
-
+                .orElseThrow(() -> new RuntimeException("Studente non trovato"));
         Attivita attivita = attivitaRepository.findById(idAttivita)
-                .orElseThrow(() -> new RuntimeException("Attività " + idAttivita + " non trovata"));
+                .orElseThrow(() -> new RuntimeException("Attività non trovata"));
 
-        // Controllo posti
-        if(attivita.getIscritti().size() >= attivita.getPosti()) {
-            throw new RuntimeException("Impossibile iscriversi: l'attività " + attivita.getTitolo() + " è già al completo");
+        // Controllo Posti
+        if (attivita.getIscritti().size() >= attivita.getPosti()) {
+            throw new RuntimeException("Attività al completo.");
         }
 
-        // Controllo pagamenti famiglia
+        // Controllo Pagamenti
         Famiglia famiglia = studente.getFamiglia();
-
-        boolean haPagamentiScaduti = famiglia.getPagamentiEffettuati().stream()
-                .anyMatch(p -> p.getStato() == StatoPagamento.SCADUTO);
-
-        if (haPagamentiScaduti) {
-            throw new RuntimeException("Iscrizione negata: la famiglia associata allo studente ha pagamenti in sospeso (Stato: SCADUTO). " +
-                    "Si prega di regolarizzare la posizione prima di procedere.");
+        if (famiglia != null) {
+            boolean haPagamentiScaduti = famiglia.getPagamentiEffettuati().stream()
+                    .anyMatch(p -> p.getStato() == StatoPagamento.SCADUTO);
+            if (haPagamentiScaduti) {
+                throw new RuntimeException("Iscrizione negata: pagamenti in sospeso.");
+            }
         }
 
-        // Aggiunta bidirezionale dello studente all'attività
         attivita.aggiungiStudente(studente);
-
-        // Salvataggio dell'entità proprietaria della relazione
         attivitaRepository.save(attivita);
     }
 }
