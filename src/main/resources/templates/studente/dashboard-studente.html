@@ -7,71 +7,10 @@
 	<title>Il Faro dello Studio - Dashboard Studente</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<th:block th:replace="~{fragments/sidebar-styles :: sidebar-styles}" />
 	<style>
 		body {
 			background-color: #f8f9fa;
-		}
-
-		/* STILE UNIFORMATO CON LA HOME PAGE */
-		.sidebar {
-			min-height: 100vh;
-			/* Usa lo stesso blu della navbar della Home (var(--bs-primary)) o un codice esadecimale simile */
-			background-color: #0d6efd;
-			background: linear-gradient(180deg, #0d6efd 0%, #0a58ca 100%);
-			/* Leggera sfumatura per profondità */
-			color: white;
-			box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-		}
-
-		.sidebar .nav-link {
-			color: rgba(255, 255, 255, 0.85);
-			/* Bianco leggermente trasparente */
-			padding: 15px 20px;
-			border-radius: 5px;
-			margin: 0 10px;
-			transition: all 0.3s;
-		}
-
-		.sidebar .nav-link-btn {
-			background: none;
-			border: none;
-			width: 100%;
-			text-align: left;
-			cursor: pointer;
-			display: flex;
-			align-items: center;
-		}
-
-		.sidebar .nav-link-btn:focus {
-			outline: none;
-		}
-
-		.sidebar .nav-link:hover {
-			color: white;
-			background-color: rgba(255, 255, 255, 0.2);
-			/* Effetto hover più morbido */
-			transform: translateX(5px);
-		}
-
-		.sidebar .nav-link.active {
-			color: #0d6efd;
-			/* Testo blu */
-			background-color: white;
-			/* Sfondo bianco per evidenziare */
-			font-weight: bold;
-			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-		}
-
-		.sidebar .nav-link i {
-			width: 25px;
-			text-align: center;
-		}
-
-		/* Branding nell'header della sidebar */
-		.sidebar-brand {
-			padding: 20px;
-			background-color: rgba(0, 0, 0, 0.1);
-			margin-bottom: 20px;
 		}
 
 		.card-icon-bg {
@@ -119,38 +58,8 @@
 	<div class="container-fluid">
 		<div class="row">
 
-			<nav class="col-md-3 col-lg-2 d-md-block sidebar collapse show p-0" id="sidebarMenu">
-				<div class="sidebar-brand d-flex align-items-center text-white text-decoration-none">
-					<i class="fas fa-book-open fa-2x me-2"></i>
-					<span class="fs-6 fw-bold">Il Faro dello Studio</span>
-				</div>
-
-				<ul class="nav flex-column">
-					<li class="nav-item mb-1">
-						<form class="m-0" method="get" th:action="@{/studente/dashboard-studente}">
-							<button class="nav-link nav-link-btn" type="submit">
-								<i class="fas fa-home me-2"></i> Dashboard
-							</button>
-						</form>
-					</li>
-
-					<li class="nav-item mb-1">
-						<form class="m-0" method="get" th:action="@{/studente/calendario-attivita}">
-							<button class="nav-link nav-link-btn" type="submit">
-								<i class="fas fa-home me-2"></i> Attività
-							</button>
-						</form>
-					</li>
-
-					<li class="nav-item mb-1">
-						<form class="m-0" method="post" th:action="@{/logout}">
-							<button class="nav-link nav-link-btn" type="submit">
-								<i class="fas fa-sign-out-alt me-2"></i> Logout
-							</button>
-						</form>
-					</li>
-				</ul>
-			</nav>
+			<!-- Sidebar Studente -->
+			<th:block th:replace="~{fragments/studente-sidebar :: studente-sidebar('dashboard')}" />
 
 			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-0">
 
@@ -265,7 +174,7 @@
 					</div>
 				</div>
 
-				<th:block th:replace="~{fragments/footer :: darkFooter}" />
+				<th:block th:replace="~{fragments/footer :: standardFooter}" />
 
 			</main>
 		</div>
