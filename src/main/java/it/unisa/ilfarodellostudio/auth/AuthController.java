@@ -2,6 +2,7 @@ package it.unisa.ilfarodellostudio.auth;
 
 import it.unisa.ilfarodellostudio.activities.ActivitiesService;
 import it.unisa.ilfarodellostudio.activities.entity.Attivita;
+import it.unisa.ilfarodellostudio.feedbacks.entity.Feedback;
 import it.unisa.ilfarodellostudio.users.UsersService;
 import it.unisa.ilfarodellostudio.users.entity.Docente;
 import it.unisa.ilfarodellostudio.users.entity.Famiglia;
@@ -75,22 +76,38 @@ public class AuthController {
     public String dashboardDocente(Authentication authentication, Model model) {
         String email = authentication.getName();
 
-        // 2. Recupera l'oggetto Docente completo dal DB
+        // 1. Recupera l'oggetto Docente (che contiene già la lista feedbackRicevuti)
         Docente docente = usersService.cercaDocente(email)
-                .orElseThrow(() -> new RuntimeException("Errore: Docente non trovato nel sistema"));
+                .orElseThrow(() -> new RuntimeException("Errore: Docente non trovato"));
 
         model.addAttribute("docente", docente);
 
-        // 3. Recupera le attività per contarle
-        // NOTA: Assicurati che in ActivitiesService esista il metodo 'dammiTutteLeAttivita(Docente d)'
-        // o usa il nome del metodo che hai (es. visualizzaAttivitaDocente)
+        // 2. Calcolo Attività
         List<Attivita> listaAttivita = activitiesService.dammiTutteLeAttivita(docente);
-        System.out.println("DEBUG: Numero attività trovate nel DB -> " + listaAttivita.size()); // <--- GUARDA QUI
         model.addAttribute("numeroAttivita", listaAttivita.size());
 
-        // 4. Dati Recensioni (Placeholder finché non implementi il sistema feedback)
-        model.addAttribute("mediaRecensioni", 0.0);
-        model.addAttribute("numeroRecensioni", 0);
+        // 3. CALCOLO REALE FEEDBACK
+        List<Feedback> feedbacks = docente.getFeedbackRicevuti();
+        int numeroRecensioni = (feedbacks != null) ? feedbacks.size() : 0;
+
+        // Calcolo della media usando gli Stream di Java
+        double mediaRecensioni = 0.0;
+        if (numeroRecensioni > 0) {
+            mediaRecensioni = feedbacks.stream()
+                    .mapToInt(Feedback::getValutazione) // Estrae il voto (int)
+                    .average()                          // Calcola la media
+                    .orElse(0.0);
+        }
+
+        model.addAttribute("numeroRecensioni", numeroRecensioni);
+        model.addAttribute("mediaRecensioni", mediaRecensioni);
+
+        // 4. Calcolo Iscritti (esempio basato sulle attività)
+        // Se ogni attività ha una lista di iscritti, potresti sommarli così:
+        long totaleIscritti = listaAttivita.stream()
+                .mapToLong(a -> a.getIscritti() != null ? a.getIscritti().size() : 0)
+                .sum();
+        model.addAttribute("totaleIscritti", totaleIscritti);
 
         return "docente/dashboard-docente";
     }

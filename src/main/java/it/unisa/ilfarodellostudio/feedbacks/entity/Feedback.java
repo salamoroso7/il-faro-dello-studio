@@ -1,9 +1,9 @@
 package it.unisa.ilfarodellostudio.feedbacks.entity;
 
-import it.unisa.ilfarodellostudio.activities.entity.Attivita;
+import it.unisa.ilfarodellostudio.users.entity.Docente;
+import it.unisa.ilfarodellostudio.users.entity.Famiglia;
 import it.unisa.ilfarodellostudio.users.entity.Studente;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "feedback")
@@ -19,21 +19,31 @@ public class Feedback {
     @Column(length = 1000)
     private String commento;
 
-    @Column(nullable = false)
-    private LocalDateTime dataInserimento;
+    // Il destinatario è sempre un docente
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "docente_email", nullable = false)
+    private Docente docente;
 
-    // Relazione con lo Studente che lascia il feedback
-    @ManyToOne
-    @JoinColumn(name = "studente_email", nullable = false)
+    // Autore può essere uno Studente...
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "studente_email")
     private Studente studente;
 
-    // Relazione con l'Attività recensita
-    @ManyToOne
-    @JoinColumn(name = "attivita_id", nullable = false)
-    private Attivita attivita;
+    // ...oppure una Famiglia
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "famiglia_email")
+    private Famiglia famiglia;
+
+    // Logica di controllo: un feedback deve avere esattamente un autore
+    @PrePersist
+    @PreUpdate
+    private void validate() {
+        if ((studente == null && famiglia == null) || (studente != null && famiglia != null)) {
+            throw new IllegalStateException("Il feedback deve essere inviato o da uno studente o da una famiglia.");
+        }
+    }
 
     public Feedback() {
-        this.dataInserimento = LocalDateTime.now();
     }
 
     // === GETTER E SETTER ===
@@ -46,12 +56,27 @@ public class Feedback {
     public String getCommento() { return commento; }
     public void setCommento(String commento) { this.commento = commento; }
 
-    public LocalDateTime getDataInserimento() { return dataInserimento; }
-    public void setDataInserimento(LocalDateTime dataInserimento) { this.dataInserimento = dataInserimento; }
+    public Docente getDocente() {
+        return docente;
+    }
 
-    public Studente getStudente() { return studente; }
-    public void setStudente(Studente studente) { this.studente = studente; }
+    public void setDocente(Docente docente) {
+        this.docente = docente;
+    }
 
-    public Attivita getAttivita() { return attivita; }
-    public void setAttivita(Attivita attivita) { this.attivita = attivita; }
+    public Studente getStudente() {
+        return studente;
+    }
+
+    public void setStudente(Studente studente) {
+        this.studente = studente;
+    }
+
+    public Famiglia getFamiglia() {
+        return famiglia;
+    }
+
+    public void setFamiglia(Famiglia famiglia) {
+        this.famiglia = famiglia;
+    }
 }

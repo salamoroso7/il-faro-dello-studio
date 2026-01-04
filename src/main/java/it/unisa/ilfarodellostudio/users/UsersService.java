@@ -69,6 +69,16 @@ public class UsersService {
     }
 
     /**
+     * Recupera la lista completa di tutti i docenti registrati nel sistema.
+     * Utilizzato per popolare menu a tendina e liste di selezione.
+     * * @return Lista di oggetti Docente
+     */
+    @Transactional(readOnly = true)
+    public List<Docente> getAllDocenti() {
+        return docenteRepository.findAll();
+    }
+
+    /**
      * Esegue la registrazione del docente.
      * Mappa i dati dal DTO all'Entity Docente e cifra la password.
      */

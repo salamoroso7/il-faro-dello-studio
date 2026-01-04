@@ -1,10 +1,13 @@
 package it.unisa.ilfarodellostudio.users.entity;
 
 import it.unisa.ilfarodellostudio.activities.entity.Attivita;
+import it.unisa.ilfarodellostudio.feedbacks.entity.Feedback;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -23,6 +26,9 @@ public class Studente extends UtenteRegistrato {
 
     @ManyToMany(mappedBy = "iscritti")
     private Set<Attivita> attivita = new HashSet<>();
+
+    @OneToMany(mappedBy = "studente", cascade = CascadeType.ALL)
+    private List<Feedback> feedbackInviati = new ArrayList<>();
 
     public Studente() {
         super();
@@ -64,5 +70,13 @@ public class Studente extends UtenteRegistrato {
 
     public void setAttivita(Set<Attivita> attivita) {
         this.attivita = attivita;
+    }
+
+    public List<Feedback> getFeedbackInviati() {
+        return feedbackInviati;
+    }
+
+    public void setFeedbackInviati(List<Feedback> feedbackInviati) {
+        this.feedbackInviati = feedbackInviati;
     }
 }

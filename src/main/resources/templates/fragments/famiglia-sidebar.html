@@ -37,6 +37,15 @@
             </li>
 
             <li class="nav-item mb-1">
+                <form th:action="@{/feedback/lascia}" method="get" class="m-0">
+                    <button type="submit" class="nav-link nav-link-btn"
+                            th:classappend="${currentPage == 'feedback'} ? 'active' : ''">
+                        <i class="fas fa-comment-dots me-2"></i> Feedback Docenti
+                    </button>
+                </form>
+            </li>
+
+            <li class="nav-item mb-1">
                 <form th:action="@{/logout}" method="post" class="m-0">
                     <button type="submit" class="nav-link nav-link-btn">
                         <i class="fas fa-sign-out-alt me-2"></i> Logout
