@@ -188,16 +188,6 @@ public class UsersController {
         }
     }
 
-    /**
-     * Mostra il calendario attività per lo studente.
-     *
-     * @return vista calendario
-     */
-    @GetMapping("/studente/calendario-attivita")
-    public String mostraAttivitaStudente() {
-        return "studente/calendario-attivita";
-    }
-
     /* =========================================================================
        2. GESTIONE UTENTI - SOLO ADMIN
        Attivazione e disattivazione delle utenze.

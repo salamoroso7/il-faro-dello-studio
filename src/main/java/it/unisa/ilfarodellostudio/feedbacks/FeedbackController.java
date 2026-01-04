@@ -2,8 +2,6 @@ package it.unisa.ilfarodellostudio.feedbacks;
 
 import it.unisa.ilfarodellostudio.users.UsersService;
 import it.unisa.ilfarodellostudio.users.entity.Docente;
-import it.unisa.ilfarodellostudio.activities.repository.AttivitaRepository;
-import it.unisa.ilfarodellostudio.activities.entity.Attivita;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -13,9 +11,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-/**
- * Controller per la gestione delle richieste web relative ai feedback.
- */
 @Controller
 @RequestMapping("/feedback")
 public class FeedbackController {
@@ -26,24 +21,14 @@ public class FeedbackController {
     @Autowired
     private UsersService usersService;
 
-    @Autowired
-    private AttivitaRepository attivitaRepository;
-
     /**
-     * Mostra il form per lasciare un feedback su un'attività.
-     *
-     * @param idAttivita ID dell'attività
-     * @param model modello per la vista
-     * @return la vista del form feedback
+     * Mostra il form per lasciare un feedback.
+     * Utilizza UsersService per recuperare i docenti.
      */
-    @GetMapping("/nuovo/{idAttivita}")
-    public String mostraFormFeedback(@PathVariable Long idAttivita, Model model, Authentication authentication) {
-        // Recupera l'attività per mostrare il titolo nella pagina
-        Attivita attivita = attivitaRepository.findById(idAttivita)
-                .orElseThrow(() -> new IllegalArgumentException("Attività non trovata"));
-
-        model.addAttribute("attivita", attivita);
-        model.addAttribute("docenteEmail", attivita.getDocente().getEmail());
+    @GetMapping("/lascia")
+    public String mostraFormFeedback(Authentication authentication, Model model) {
+        List<Docente> docenti = usersService.getAllDocenti();
+        model.addAttribute("listaDocenti", docenti);
 
         // Determiniamo il ruolo qui per semplificare la vita a Thymeleaf
         boolean isStudente = authentication.getAuthorities().stream()
@@ -55,14 +40,8 @@ public class FeedbackController {
     }
 
     /**
-     * Salva il feedback inviato tramite form.
-     *
-     * @param idAttivita ID dell'attività
-     * @param valutazione voto
-     * @param commento commento
-     * @param principal info utente
-     * @param model modello vista
-     * @return redirect alla dashboard o al form in caso di errore
+     * Gestisce l'invio del form.
+     * Identifica l'utente loggato e smista la richiesta al metodo corretto del service.
      */
     @PostMapping("/salva")
     public String salvaFeedback(@RequestParam String docenteEmail,
@@ -97,3 +76,4 @@ public class FeedbackController {
         }
     }
 }
+

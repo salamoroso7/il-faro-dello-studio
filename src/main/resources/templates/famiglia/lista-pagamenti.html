@@ -28,43 +28,39 @@
 					<div class="card-body p-0">
 						<table class="table table-hover align-middle mb-0">
 							<thead class="bg-light">
-								<tr>
-									<th class="p-3">Causale</th>
-									<th>Scadenza</th>
-									<th>Importo</th>
-									<th>Stato</th>
-									<th class="text-end p-3">Azioni</th>
-								</tr>
+							<tr>
+								<th class="p-3">Causale</th>
+								<th>Scadenza</th>
+								<th>Importo</th>
+								<th>Stato</th>
+								<th class="text-end p-3">Azioni</th>
+							</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td class="p-3 fw-bold">Rata Iscrizione 2026 - Gennaio</td>
-									<td>31/01/2026</td>
-									<td class="fw-bold">€ 150,00</td>
-									<td><span class="badge bg-danger rounded-pill">Non Pagato</span></td>
-									<td class="text-end p-3">
-										<form th:action="@{/famiglia/checkout-pagamento}" method="get"
-											class="d-inline m-0">
-											<!--
-                                <input type="hidden" name="idPagamento" th:value="${pagamento.id}">
-                                -->
+							<tr th:each="item : ${listaPagamenti}">
+								<td class="p-3 fw-bold" th:text="${item.pagamento.nome}">Rata Iscrizione</td>
 
-											<button type="submit"
-												class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+								<td th:text="${#temporals.format(item.pagamento.dataScadenza, 'dd/MM/yyyy')}">31/01/2026</td>
+
+								<td class="fw-bold" th:text="'€ ' + ${#numbers.formatDecimal(item.pagamento.importo, 1, 2, 'POINT')}">€ 150,00</td>
+
+								<td>
+									<span th:if="${item.stato.name() == 'EFFETTUATO'}" class="badge bg-success rounded-pill">Effettuato</span>
+									<span th:if="${item.stato.name() == 'NON_EFFETTUATO'}" class="badge bg-warning text-dark rounded-pill">Non effettuato</span>
+									<span th:if="${item.stato.name() == 'SCADUTO'}" class="badge bg-danger rounded-pill">Scaduto</span>
+								</td>
+
+								<td class="text-end p-3">
+									<div th:if="${item.stato.name() != 'EFFETTUATO'}">
+										<form th:action="@{/famiglia/checkout-pagamento}" method="get" class="d-inline m-0">
+											<input type="hidden" name="idPagamento" th:value="${item.pagamento.idPagamento}">
+											<button type="submit" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
 												Paga Ora <i class="fas fa-arrow-right ms-1"></i>
 											</button>
 										</form>
-									</td>
-								</tr>
-								<tr>
-									<td class="p-3 fw-bold">Materiale Didattico</td>
-									<td>15/12/2025</td>
-									<td class="fw-bold">€ 45,00</td>
-									<td><span class="badge bg-success rounded-pill">Saldato</span></td>
-									<td class="text-end p-3">
-
-									</td>
-								</tr>
+									</div>
+								</td>
+							</tr>
 							</tbody>
 						</table>
 					</div>

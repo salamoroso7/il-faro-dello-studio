@@ -2,13 +2,17 @@ package it.unisa.ilfarodellostudio.auth;
 
 import it.unisa.ilfarodellostudio.activities.ActivitiesService;
 import it.unisa.ilfarodellostudio.activities.entity.Attivita;
+import it.unisa.ilfarodellostudio.activities.repository.AttivitaRepository;
+import it.unisa.ilfarodellostudio.feedbacks.FeedbackRepository;
 import it.unisa.ilfarodellostudio.feedbacks.entity.Feedback;
 import it.unisa.ilfarodellostudio.users.UsersService;
 import it.unisa.ilfarodellostudio.users.entity.Docente;
 import it.unisa.ilfarodellostudio.users.entity.Famiglia;
+import it.unisa.ilfarodellostudio.users.entity.Studente;
 import it.unisa.ilfarodellostudio.users.entity.UtenteRegistrato;
 import it.unisa.ilfarodellostudio.users.repository.DocenteRepository;
 import it.unisa.ilfarodellostudio.users.repository.FamigliaRepository;
+import it.unisa.ilfarodellostudio.users.repository.StudenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -16,6 +20,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -31,13 +37,24 @@ public class AuthController {
 
     @Autowired
     private DocenteRepository docenteRepository;
+
     @Autowired
     private FamigliaRepository famigliaRepository;
+
     @Autowired
     private UsersService usersService;
 
     @Autowired
     private ActivitiesService activitiesService;
+
+    @Autowired
+    private FeedbackRepository feedbackRepository;
+
+    @Autowired
+    private StudenteRepository studenteRepository;
+
+    @Autowired
+    private AttivitaRepository attivitaRepository;
 
     /**
      * Gestisce la richiesta GET per la pagina di login.
@@ -149,7 +166,22 @@ public class AuthController {
      * @return la vista della dashboard studente
      */
     @GetMapping("/studente/dashboard-studente")
-    public String dashboardStudente() {
+    public String dashboardStudente(Authentication authentication, Model model) {
+        String emailStudente = authentication.getName();
+        Studente studente = studenteRepository.findByEmail(emailStudente).orElse(null);
+        int numeroFeedback = feedbackRepository.findByStudenteEmail(emailStudente).size();
+        // Recupero attività future
+        List<Attivita> attivitaFuture = attivitaRepository.findUpcomingByStudenteEmail(
+                emailStudente, LocalDate.now(), LocalTime.now());
+
+        // La prima della lista è la più vicina
+        Attivita prossima = attivitaFuture.isEmpty() ? null : attivitaFuture.get(0);
+
+        model.addAttribute("studente", studente);
+        model.addAttribute("feedbackCount", numeroFeedback);
+        model.addAttribute("attivitaFuture", attivitaFuture);
+        model.addAttribute("prossimaAttivita", prossima);
+
         return "studente/dashboard-studente";
     }
 }

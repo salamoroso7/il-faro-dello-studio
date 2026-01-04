@@ -6,6 +6,7 @@ import it.unisa.ilfarodellostudio.activities.entity.Materia;
 import it.unisa.ilfarodellostudio.users.UsersService;
 import it.unisa.ilfarodellostudio.users.entity.Docente;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 /**
  * Controller per la gestione delle attività didattiche.
@@ -30,12 +32,33 @@ public class ActivitiesController {
     private UsersService usersService;
 
     /**
-     * Mostra la pagina di dettaglio generica (stub) per lo studente.
+     * Mostra il calendario attività per lo studente.
      *
-     * @return la vista di dettaglio attività
+     * @return vista calendario
      */
+    @GetMapping("/studente/calendario-attivita")
+    public String mostraAttivitaStudente(Authentication authentication, Model model) {
+        // 1. Prendiamo l'email dello studente autenticato
+        String emailStudente = authentication.getName();
+
+        // 2. Chiamiamo il service con il nuovo filtro
+        List<Attivita> listaAttivita = activitiesService.visualizzaAttivitaDisponibili(emailStudente);
+
+        // 3. Passiamo la lista pulita alla pagina
+        model.addAttribute("listaAttivita", listaAttivita);
+
+        return "studente/calendario-attivita";
+    }
+
     @GetMapping("/studente/dettaglio-attivita")
-    public String mostraDettagliAttivita() {
+    public String mostraDettagliAttivita(@RequestParam("id") Long id, Model model) {
+        Attivita attivita = activitiesService.visualizzaAttivita(id);
+
+        if (attivita == null) {
+            return "redirect:/studente/calendario-attivita"; // Protezione se l'ID non esiste
+        }
+
+        model.addAttribute("attivita", attivita);
         return "studente/dettaglio-attivita";
     }
 
@@ -257,5 +280,28 @@ public class ActivitiesController {
             redirectAttributes.addFlashAttribute("error", "Errore durante l'eliminazione.");
         }
         return "redirect:/docente/gestione-attivita";
+    }
+
+
+    @PostMapping("/studente/iscriviti-attivita")
+    public String iscriviti(
+            @RequestParam("id") Long idAttivita,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            String emailStudente = authentication.getName();
+            activitiesService.iscriviStudenteAdAttivita(emailStudente, idAttivita);
+
+            // Messaggio di successo
+            redirectAttributes.addFlashAttribute("success", "Iscrizione completata con successo!");
+            return "redirect:/studente/dashboard-studente";
+
+        } catch (RuntimeException e) {
+            // Cattura l'errore (posti esauriti o pagamenti) e lo passa alla pagina
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/studente/dettaglio-attivita?id=" + idAttivita;
     }
 }

@@ -139,13 +139,12 @@ public class ActivitiesService {
         return attivitaRepository.findById(id).orElse(null);
     }
 
-    /**
-     * Restituisce tutte le attività presenti nel sistema.
-     *
-     * @return lista completa delle attività
-     */
-    public List<Attivita> visualizzaTutteLeAttivita() {
-        return attivitaRepository.findAll();
+    public List<Attivita> visualizzaAttivitaDisponibili(String emailStudente) {
+        return attivitaRepository.findDisponibiliUpcoming(
+                emailStudente,
+                LocalDate.now(),
+                LocalTime.now()
+        );
     }
 
     /**

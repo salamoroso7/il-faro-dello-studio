@@ -159,5 +159,10 @@ public class Attivita {
     public void setIscritti(Set<Studente> iscritti) {
         this.iscritti = iscritti;
     }
+
+    // Nella classe Attivita.java
+    public int getPostiRimanenti() {
+        return this.posti - this.iscritti.size();
+    }
 }
 

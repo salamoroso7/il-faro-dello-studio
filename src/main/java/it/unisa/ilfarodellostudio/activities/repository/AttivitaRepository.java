@@ -63,4 +63,22 @@ public interface AttivitaRepository extends JpaRepository<Attivita, Long> {
      * @return lista di attività
      */
      List<Attivita> findAllByDocenteAndDataAfter(Docente docente, LocalDate data);
+
+
+    @Query("SELECT a FROM Attivita a JOIN a.iscritti s " +
+            "WHERE s.email = :email " +
+            "AND (a.data > :oggi OR (a.data = :oggi AND a.oraInizio > :ora)) " +
+            "ORDER BY a.data ASC, a.oraInizio ASC")
+    List<Attivita> findUpcomingByStudenteEmail(@Param("email") String email,
+                                               @Param("oggi") LocalDate oggi,
+                                               @Param("ora") LocalTime ora);
+
+
+    @Query("SELECT a FROM Attivita a " +
+            "WHERE (a.data > :oggi OR (a.data = :oggi AND a.oraInizio > :ora)) " +
+            "AND NOT EXISTS (SELECT s FROM a.iscritti s WHERE s.email = :emailStudente) " +
+            "ORDER BY a.data ASC, a.oraInizio ASC")
+    List<Attivita> findDisponibiliUpcoming(@Param("emailStudente") String email,
+                                           @Param("oggi") LocalDate oggi,
+                                           @Param("ora") LocalTime ora);
 }
