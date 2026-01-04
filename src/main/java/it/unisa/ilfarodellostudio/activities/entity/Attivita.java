@@ -8,6 +8,10 @@ import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Entity che rappresenta un'attività didattica (lezione, evento, ecc.).
+ * Collegata a un docente, una materia e una lista di studenti iscritti.
+ */
 @Entity
 @Table(name = "attivita")
 public class Attivita {
@@ -55,11 +59,21 @@ public class Attivita {
     public Attivita() {}
 
     // Helper method per mantenere la sincronizzazione bidirezionale
+    /**
+     * Aggiunge uno studente alla lista degli iscritti e sincronizza la relazione.
+     *
+     * @param studente lo studente da iscrivere
+     */
     public void aggiungiStudente(Studente studente) {
         this.iscritti.add(studente);
         studente.getAttivita().add(this);
     }
 
+    /**
+     * Rimuove uno studente dalla lista degli iscritti e sincronizza la relazione.
+     *
+     * @param studente lo studente da rimuovere
+     */
     public void rimuoviStudente(Studente studente) {
         this.iscritti.remove(studente);
         studente.getAttivita().remove(this);

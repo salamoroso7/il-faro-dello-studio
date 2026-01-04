@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.security.Principal;
 import java.util.List;
 
+/**
+ * Controller per la gestione degli utenti (registrazione, liste, ecc.).
+ */
 @Controller
 public class UsersController {
 
@@ -31,7 +34,12 @@ public class UsersController {
        Usa la pagina 'registrazione.html' che abbiamo creato.
        ========================================================================= */
 
-    // Mostra il form unico di registrazione
+    /**
+     * Mostra il form unico di registrazione.
+     *
+     * @param model modello vista
+     * @return vista registrazione
+     */
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         // Recuperiamo la lista dal DB
@@ -44,7 +52,20 @@ public class UsersController {
         return "registrazione";
     }
 
-    // Gestisce l'invio del form unico
+    /**
+     * Gestisce l'invio del form unico di registrazione.
+     * Smista la registrazione in base al ruolo selezionato (Docente o Famiglia).
+     *
+     * @param ruolo ruolo selezionato
+     * @param nome nome
+     * @param cognome cognome
+     * @param email email
+     * @param password password
+     * @param conferma_password conferma password
+     * @param materie lista materie (solo per docenti)
+     * @param model modello vista
+     * @return redirect al login o ricarica la pagina in caso di errore
+     */
     @PostMapping("/register")
     public String handleRegistration(
             @RequestParam String ruolo, // Campo <select name="ruolo">
@@ -110,6 +131,12 @@ public class UsersController {
         }
     }
 
+    /**
+     * Mostra la lista di tutti gli utenti registrati (per Admin).
+     *
+     * @param model modello vista
+     * @return vista lista utenti
+     */
     @GetMapping("/admin/lista-utenti")
     public String showListaUtenti(Model model) {
         List<UtenteRegistrato> utenti = usersService.getAllUtenti();
@@ -117,12 +144,26 @@ public class UsersController {
         return "admin/lista-utenti";
     }
 
+    /**
+     * Mostra il form di registrazione studente (per Famiglia).
+     *
+     * @param model modello vista
+     * @return vista form studente
+     */
     @GetMapping("/famiglia/registrazione-studente")
     public String showStudenteForm(Model model) {
         model.addAttribute("studenteDto", new StudenteDto());
         return "famiglia/registrazione-studente";
     }
 
+    /**
+     * Gestisce la creazione dello studente da parte della famiglia.
+     *
+     * @param studenteDto dto dati studente
+     * @param principal info famiglia loggata
+     * @param model modello vista
+     * @return vista form con messaggio successo o errore
+     */
     @PostMapping("/famiglia/registrazione-studente")
     public String createStudente(@ModelAttribute StudenteDto studenteDto, Principal principal, Model model) {
         try {
@@ -147,6 +188,11 @@ public class UsersController {
         }
     }
 
+    /**
+     * Mostra il calendario attività per lo studente.
+     *
+     * @return vista calendario
+     */
     @GetMapping("/studente/calendario-attivita")
     public String mostraAttivitaStudente() {
         return "studente/calendario-attivita";
@@ -157,6 +203,13 @@ public class UsersController {
        Attivazione e disattivazione delle utenze.
        ========================================================================= */
 
+    /**
+     * Attiva un utente (Admin).
+     *
+     * @param email email utente
+     * @param model modello vista
+     * @return redirect lista utenti
+     */
     @PostMapping("/admin/utenti/attiva")
     public String attivaUtente(@RequestParam String email, Model model) {
         try {
@@ -168,6 +221,13 @@ public class UsersController {
         }
     }
 
+    /**
+     * Disattiva un utente (Admin).
+     *
+     * @param email email utente
+     * @param model modello vista
+     * @return redirect lista utenti
+     */
     @PostMapping("/admin/utenti/disattiva")
     public String disattivaUtente(@RequestParam String email, Model model) {
         try {

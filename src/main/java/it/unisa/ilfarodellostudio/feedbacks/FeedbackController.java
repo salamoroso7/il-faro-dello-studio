@@ -11,6 +11,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+/**
+ * Controller per la gestione delle richieste web relative ai feedback.
+ */
 @Controller
 @RequestMapping("/feedback")
 public class FeedbackController {
@@ -22,13 +25,16 @@ public class FeedbackController {
     private UsersService usersService;
 
     /**
-     * Mostra il form per lasciare un feedback.
-     * Utilizza UsersService per recuperare i docenti.
+     * Mostra il form per lasciare un feedback su un'attività.
+     *
+     * @param idAttivita ID dell'attività
+     * @param model modello per la vista
+     * @return la vista del form feedback
      */
-    @GetMapping("/lascia")
-    public String mostraFormFeedback(Authentication authentication, Model model) {
-        List<Docente> docenti = usersService.getAllDocenti();
-        model.addAttribute("listaDocenti", docenti);
+    @GetMapping("/nuovo/{idAttivita}")
+    public String mostraFormFeedback(@PathVariable Long idAttivita, Model model) {
+        // Recupera l'attività per mostrare il titolo nella pagina
+      //  Attivita attivita = activitiesService.getAttivitaById(idAttivita);
 
         // Determiniamo il ruolo qui per semplificare la vita a Thymeleaf
         boolean isStudente = authentication.getAuthorities().stream()
@@ -40,8 +46,14 @@ public class FeedbackController {
     }
 
     /**
-     * Gestisce l'invio del form.
-     * Identifica l'utente loggato e smista la richiesta al metodo corretto del service.
+     * Salva il feedback inviato tramite form.
+     *
+     * @param idAttivita ID dell'attività
+     * @param valutazione voto
+     * @param commento commento
+     * @param principal info utente
+     * @param model modello vista
+     * @return redirect alla dashboard o al form in caso di errore
      */
     @PostMapping("/salva")
     public String salvaFeedback(@RequestParam String docenteEmail,

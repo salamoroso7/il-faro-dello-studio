@@ -10,6 +10,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Entity che rappresenta uno Studente.
+ * Estende UtenteRegistrato e include dati specifici come Codice Fiscale, Data di Nascita e riferimenti a Famiglia e Attività.
+ */
 @Entity
 @Table(name = "studente")
 public class Studente extends UtenteRegistrato {

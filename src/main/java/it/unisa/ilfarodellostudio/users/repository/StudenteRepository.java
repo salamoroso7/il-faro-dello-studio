@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * Repository per la gestione degli Studenti.
+ */
 @Repository
 public interface StudenteRepository extends JpaRepository<Studente, String> {
     Optional<Studente> findByEmail(String email);

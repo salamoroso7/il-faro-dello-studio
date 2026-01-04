@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
+/**
+ * Entity che rappresenta una tassa o un pagamento richiesto.
+ * Definisce l'importo, la scadenza e il nome della tassa.
+ */
 @Entity
 @Table(name = "pagamento")
 public class Pagamento {

@@ -1,5 +1,8 @@
 package it.unisa.ilfarodellostudio.users.dto;
 
+/**
+ * DTO per la registrazione di una Famiglia (Genitore).
+ */
 public class FamigliaDto {
     private String nome;
     private String cognome;

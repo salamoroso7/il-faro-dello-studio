@@ -2,6 +2,10 @@ package it.unisa.ilfarodellostudio.users.dto;
 
 import java.util.List;
 
+/**
+ * DTO per la registrazione di un Docente.
+ * Contiene i dati anagrafici e la lista delle materie insegnate.
+ */
 public class DocenteDto {
     private String nome;
     private String cognome;

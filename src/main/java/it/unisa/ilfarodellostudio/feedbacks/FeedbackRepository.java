@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+/**
+ * Repository per la gestione della persistenza dei feedback.
+ */
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     /**
      * Restituisce tutti i feedback ricevuti da un docente specifico.
@@ -12,12 +15,19 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     List<Feedback> findByDocenteEmail(String email);
 
     /**
-     * Restituisce tutti i feedback inviati da uno studente specifico.
+     * Trova tutti i feedback relativi a un'attività.
+     *
+     * @param attivita l'attività
+     * @return lista di feedback
      */
-    List<Feedback> findByStudenteEmail(String email);
+    List<Feedback> findByAttivita(Attivita attivita);
 
     /**
-     * Restituisce tutti i feedback inviati da una famiglia specifica.
+     * Verifica se uno studente ha già lasciato un feedback per un'attività.
+     *
+     * @param attivita l'attività
+     * @param studente lo studente
+     * @return true se il feedback esiste già, false altrimenti
      */
-    List<Feedback> findByFamigliaEmail(String email);
+    boolean existsByAttivitaAndStudente(Attivita attivita, Studente studente);
 }

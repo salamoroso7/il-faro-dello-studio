@@ -5,6 +5,9 @@ import it.unisa.ilfarodellostudio.users.entity.Famiglia;
 import it.unisa.ilfarodellostudio.users.entity.Studente;
 import jakarta.persistence.*;
 
+/**
+ * Entity che rappresenta un feedback lasciato da uno studente per un'attività.
+ */
 @Entity
 @Table(name = "feedback")
 public class Feedback {

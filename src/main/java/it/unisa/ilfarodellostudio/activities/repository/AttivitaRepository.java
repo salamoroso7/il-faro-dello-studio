@@ -11,9 +11,20 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+/**
+ * Repository per la gestione della persistenza delle attività.
+ */
 @Repository
 public interface AttivitaRepository extends JpaRepository<Attivita, Long> {
-    // 2. Controllo Sovrapposizione per CREAZIONE (Nuova attività)
+    /**
+     * Verifica se esiste una lezione sovrapposta per lo stesso docente.
+     *
+     * @param docente il docente
+     * @param data la data
+     * @param oraInizio ora inizio
+     * @param oraFine ora fine
+     * @return true se esiste sovrapposizione
+     */
     @Query("SELECT COUNT(a) > 0 FROM Attivita a " +
             "WHERE a.docente = :docente " +
             "AND a.data = :data " +
@@ -23,7 +34,16 @@ public interface AttivitaRepository extends JpaRepository<Attivita, Long> {
                                     @Param("oraInizio") LocalTime oraInizio,
                                     @Param("oraFine") LocalTime oraFine);
 
-    // 3. Controllo Sovrapposizione per MODIFICA (Esclude l'ID corrente)
+    /**
+     * Verifica sovrapposizione escludendo un ID specifico (per modifiche).
+     *
+     * @param docente docente
+     * @param data data
+     * @param oraInizio ora inizio
+     * @param oraFine ora fine
+     * @param escludiId ID da escludere
+     * @return true se esiste sovrapposizione
+     */
     @Query("SELECT COUNT(a) > 0 FROM Attivita a " +
             "WHERE a.docente = :docente " +
             "AND a.data = :data " +
@@ -35,5 +55,12 @@ public interface AttivitaRepository extends JpaRepository<Attivita, Long> {
                                                @Param("oraFine") LocalTime oraFine,
                                                @Param("escludiId") Long escludiId);
 
+    /**
+     * Trova tutte le attività di un docente successive a una certa data.
+     *
+     * @param docente il docente
+     * @param data la data di partenza
+     * @return lista di attività
+     */
      List<Attivita> findAllByDocenteAndDataAfter(Docente docente, LocalDate data);
 }

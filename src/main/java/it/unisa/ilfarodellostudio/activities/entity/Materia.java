@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Entity che rappresenta una materia di insegnamento.
+ */
 @Entity
 @Table(name = "materia")
 public class Materia {

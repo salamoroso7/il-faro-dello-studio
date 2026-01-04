@@ -48,6 +48,8 @@ public class UsersService {
     /**
      * Recupera tutti gli utenti registrati (Docenti, Famiglie e Studenti)
      * e li unisce in un'unica lista.
+     *
+     * @return una lista contenente tutti gli utenti del sistema
      */
     public List<UtenteRegistrato> getAllUtenti() {
         List<UtenteRegistrato> tuttiGliUtenti = new ArrayList<>();
@@ -64,6 +66,12 @@ public class UsersService {
         return tuttiGliUtenti;
     }
 
+    /**
+     * Cerca un docente tramite email.
+     *
+     * @param email email del docente
+     * @return un Optional con il docente se trovato
+     */
     public Optional<Docente> cercaDocente(String email) {
         return docenteRepository.findByEmail(email);
     }
@@ -81,6 +89,9 @@ public class UsersService {
     /**
      * Esegue la registrazione del docente.
      * Mappa i dati dal DTO all'Entity Docente e cifra la password.
+     *
+     * @param dto oggetto contenente i dati di registrazione
+     * @throws IllegalArgumentException se l'email esiste già
      */
     @Transactional
     public void registraDocente(DocenteDto dto) {
@@ -109,6 +120,9 @@ public class UsersService {
     /**
      * Esegue la registrazione della famiglia.
      * Mappa i dati dal DTO all'Entity Famiglia e cifra la password.
+     *
+     * @param dto oggetto contenente i dati di registrazione
+     * @throws IllegalArgumentException se l'email esiste già
      */
     @Transactional
     public void registraFamiglia(FamigliaDto dto) {
@@ -130,6 +144,12 @@ public class UsersService {
     /**
      * Esegue la registrazione dello studente effettuata dalla famiglia.
      * Genera automaticamente Email e Password (poiché assenti nel StudenteDto).
+     *
+     * @param dto dati dello studente
+     * @param emailFamiglia email della famiglia genitore
+     * @return un oggetto con le credenziali generate
+     * @throws RuntimeException se famiglia non trovata
+     * @throws IllegalArgumentException se validazioni falliscono
      */
     @Transactional
     public RegistrazioneResult creaStudente(StudenteDto dto, String emailFamiglia) {
