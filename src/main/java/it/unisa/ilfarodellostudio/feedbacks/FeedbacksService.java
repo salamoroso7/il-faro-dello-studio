@@ -31,6 +31,9 @@ public class FeedbacksService {
     @Autowired
     private StudenteRepository studenteRepository;
 
+    @Autowired
+    private FamigliaRepository famigliaRepository;
+
     /**
      * Permette a uno studente di lasciare un feedback per un'attività a cui ha partecipato.
      *
@@ -83,9 +86,24 @@ public class FeedbacksService {
      * @param idAttivita ID dell'attività
      * @return lista dei feedback
      */
-    public List<Feedback> getFeedbackPerAttivita(Long idAttivita) {
-        Attivita attivita = attivitaRepository.findById(idAttivita)
-                .orElseThrow(() -> new IllegalArgumentException("Attività non trovata"));
-        return feedbackRepository.findByAttivita(attivita);
+    private Feedback creaBaseFeedback(Docente docente, int valutazione, String commento) {
+        Feedback feedback = new Feedback();
+        feedback.setDocente(docente);
+        feedback.setValutazione(valutazione);
+        feedback.setCommento(commento);
+        return feedback;
+    }
+
+    /**
+     * Recupera la lista dei feedback associati a un docente.
+     *
+     * @param docenteEmail Email del docente
+     * @return lista dei feedback
+     */
+    public List<Feedback> getFeedbackPerDocente(String docenteEmail) {
+        if (!docenteRepository.existsById(docenteEmail)) {
+            throw new EntityNotFoundException("Docente non trovato");
+        }
+        return feedbackRepository.findByDocenteEmail(docenteEmail);
     }
 }

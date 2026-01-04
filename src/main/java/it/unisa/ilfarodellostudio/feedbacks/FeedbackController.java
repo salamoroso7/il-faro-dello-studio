@@ -2,6 +2,8 @@ package it.unisa.ilfarodellostudio.feedbacks;
 
 import it.unisa.ilfarodellostudio.users.UsersService;
 import it.unisa.ilfarodellostudio.users.entity.Docente;
+import it.unisa.ilfarodellostudio.activities.repository.AttivitaRepository;
+import it.unisa.ilfarodellostudio.activities.entity.Attivita;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,9 @@ public class FeedbackController {
     @Autowired
     private UsersService usersService;
 
+    @Autowired
+    private AttivitaRepository attivitaRepository;
+
     /**
      * Mostra il form per lasciare un feedback su un'attività.
      *
@@ -32,9 +37,13 @@ public class FeedbackController {
      * @return la vista del form feedback
      */
     @GetMapping("/nuovo/{idAttivita}")
-    public String mostraFormFeedback(@PathVariable Long idAttivita, Model model) {
+    public String mostraFormFeedback(@PathVariable Long idAttivita, Model model, Authentication authentication) {
         // Recupera l'attività per mostrare il titolo nella pagina
-      //  Attivita attivita = activitiesService.getAttivitaById(idAttivita);
+        Attivita attivita = attivitaRepository.findById(idAttivita)
+                .orElseThrow(() -> new IllegalArgumentException("Attività non trovata"));
+
+        model.addAttribute("attivita", attivita);
+        model.addAttribute("docenteEmail", attivita.getDocente().getEmail());
 
         // Determiniamo il ruolo qui per semplificare la vita a Thymeleaf
         boolean isStudente = authentication.getAuthorities().stream()
