@@ -1,5 +1,6 @@
 package it.unisa.ilfarodellostudio.users.entity;
 
+import it.unisa.ilfarodellostudio.feedbacks.entity.Feedback;
 import it.unisa.ilfarodellostudio.payments.entity.Effettua;
 import jakarta.persistence.*;
 
@@ -15,6 +16,9 @@ public class Famiglia extends UtenteRegistrato {
 
     @OneToMany(mappedBy = "famiglia", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Effettua> pagamentiEffettuati = new ArrayList<>();
+
+    @OneToMany(mappedBy = "famiglia", cascade = CascadeType.ALL)
+    private List<Feedback> feedbackInviati = new ArrayList<>();
 
     public Famiglia() {
         super();
@@ -38,6 +42,14 @@ public class Famiglia extends UtenteRegistrato {
 
     public void setPagamentiEffettuati(List<Effettua> pagamentiEffettuati) {
         this.pagamentiEffettuati = pagamentiEffettuati;
+    }
+
+    public List<Feedback> getFeedbackInviati() {
+        return feedbackInviati;
+    }
+
+    public void setFeedbackInviati(List<Feedback> feedbackInviati) {
+        this.feedbackInviati = feedbackInviati;
     }
 
     // Metodo helper per la coerenza bidirezionale

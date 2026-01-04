@@ -1,63 +1,86 @@
 package it.unisa.ilfarodellostudio.feedbacks;
 
-import it.unisa.ilfarodellostudio.activities.entity.Attivita;
-import it.unisa.ilfarodellostudio.activities.repository.AttivitaRepository;
+import it.unisa.ilfarodellostudio.feedbacks.entity.Feedback;
+import it.unisa.ilfarodellostudio.users.entity.Docente;
+import it.unisa.ilfarodellostudio.users.entity.Famiglia;
 import it.unisa.ilfarodellostudio.users.entity.Studente;
+import it.unisa.ilfarodellostudio.users.repository.DocenteRepository;
+import it.unisa.ilfarodellostudio.users.repository.FamigliaRepository;
 import it.unisa.ilfarodellostudio.users.repository.StudenteRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import it.unisa.ilfarodellostudio.feedbacks.entity.Feedback;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class FeedbacksService {
 
     @Autowired
     private FeedbackRepository feedbackRepository;
+
     @Autowired
-    private AttivitaRepository attivitaRepository;
+    private DocenteRepository docenteRepository;
+
     @Autowired
     private StudenteRepository studenteRepository;
 
+    @Autowired
+    private FamigliaRepository famigliaRepository;
+
+    /**
+     * Consente a uno studente di inviare un feedback a un docente.
+     * @param studenteEmail L'email dello studente (mittente)
+     * @param docenteEmail  L'email del docente (destinatario)
+     * @param valutazione   Punteggio da 1 a 5
+     * @param commento      Testo opzionale del feedback
+     * @throws EntityNotFoundException se lo studente o il docente non esistono
+     * @throws IllegalArgumentException se la valutazione non è nel range consentito
+     */
     @Transactional
-    public void lasciaFeedback(Long idAttivita, String emailStudente, int valutazione, String commento) {
+    public void inviaFeedbackDaStudente(String studenteEmail, String docenteEmail, int valutazione, String commento) {
+        Studente studente = studenteRepository.findById(studenteEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Studente non trovato"));
 
-        // 1. Recupera Attività e Studente
-        Attivita attivita = attivitaRepository.findById(idAttivita)
-                .orElseThrow(() -> new IllegalArgumentException("Attività non trovata"));
+        Docente docente = docenteRepository.findById(docenteEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Docente non trovato"));
 
-        Studente studente = studenteRepository.findById(emailStudente)
-                .orElseThrow(() -> new IllegalArgumentException("Studente non trovato"));
-
-        // 2. Controllo: Lo studente ha partecipato all'attività?
-        // (Opzionale: rimuovi questo if se vuoi permettere feedback liberi)
-        if (!attivita.getIscritti().contains(studente)) {
-            throw new IllegalStateException("Non puoi recensire un'attività a cui non sei iscritto.");
-        }
-
-        // 3. Controllo: Ha già votato?
-        if (feedbackRepository.existsByAttivitaAndStudente(attivita, studente)) {
-            throw new IllegalStateException("Hai già inviato un feedback per questa attività.");
-        }
-
-        // 4. Salva il Feedback
-        Feedback feedback = new Feedback();
-        feedback.setAttivita(attivita);
+        Feedback feedback = creaBaseFeedback(docente, valutazione, commento);
         feedback.setStudente(studente);
-        feedback.setValutazione(valutazione);
-        feedback.setCommento(commento);
-        feedback.setDataInserimento(LocalDateTime.now());
 
         feedbackRepository.save(feedback);
     }
 
-    // Recupera i feedback per una data attività (per farli vedere al docente)
-    public List<Feedback> getFeedbackPerAttivita(Long idAttivita) {
-        Attivita attivita = attivitaRepository.findById(idAttivita)
-                .orElseThrow(() -> new IllegalArgumentException("Attività non trovata"));
-        return feedbackRepository.findByAttivita(attivita);
+    /**
+     * Consente a una famiglia di inviare un feedback a un docente.
+     * @param famigliaEmail L'email della famiglia (mittente)
+     * @param docenteEmail  L'email del docente (destinatario)
+     * @param valutazione   Punteggio da 1 a 5
+     * @param commento      Testo opzionale del feedback
+     * @throws EntityNotFoundException se la famiglia o il docente non esistono
+     */
+    @Transactional
+    public void inviaFeedbackDaFamiglia(String famigliaEmail, String docenteEmail, int valutazione, String commento) {
+        Famiglia famiglia = famigliaRepository.findById(famigliaEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Famiglia non trovata"));
+
+        Docente docente = docenteRepository.findById(docenteEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Docente non trovato"));
+
+        Feedback feedback = creaBaseFeedback(docente, valutazione, commento);
+        feedback.setFamiglia(famiglia); // Imposta la famiglia come autore
+
+        feedbackRepository.save(feedback);
+    }
+
+    private Feedback creaBaseFeedback(Docente docente, int valutazione, String commento) {
+        if (valutazione < 1 || valutazione > 5) {
+            throw new IllegalArgumentException("La valutazione deve essere compresa tra 1 e 5");
+        }
+
+        Feedback feedback = new Feedback();
+        feedback.setDocente(docente);
+        feedback.setValutazione(valutazione);
+        feedback.setCommento(commento);
+        return feedback;
     }
 }

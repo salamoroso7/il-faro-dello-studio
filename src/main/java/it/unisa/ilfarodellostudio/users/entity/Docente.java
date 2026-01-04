@@ -2,6 +2,7 @@ package it.unisa.ilfarodellostudio.users.entity;
 
 import it.unisa.ilfarodellostudio.activities.entity.Attivita;
 import it.unisa.ilfarodellostudio.activities.entity.Materia;
+import it.unisa.ilfarodellostudio.feedbacks.entity.Feedback;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ public class Docente extends UtenteRegistrato {
     )
     private Set<Materia> materieInsegnate = new HashSet<>();
 
+    @OneToMany(mappedBy = "docente", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Feedback> feedbackRicevuti = new ArrayList<>();
+
     public Docente() {
         super();
     }
@@ -42,5 +46,13 @@ public class Docente extends UtenteRegistrato {
 
     public void setMaterieInsegnate(Set<Materia> materieInsegnate) {
         this.materieInsegnate = materieInsegnate;
+    }
+
+    public List<Feedback> getFeedbackRicevuti() {
+        return feedbackRicevuti;
+    }
+
+    public void setFeedbackRicevuti(List<Feedback> feedbackRicevuti) {
+        this.feedbackRicevuti = feedbackRicevuti;
     }
 }
