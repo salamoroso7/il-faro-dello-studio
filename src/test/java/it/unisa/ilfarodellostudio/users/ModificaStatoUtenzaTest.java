@@ -77,7 +77,7 @@ public class ModificaStatoUtenzaTest {
     // --- TEST CASES ---
 
     /**
-     * TC_GU_10_1 - Test con email null
+     * TC_GU_10_1.1 - Test con email null
      * Verifica che il sistema rifiuti la modifica quando l'email è null.
      */
     @Test
@@ -91,7 +91,7 @@ public class ModificaStatoUtenzaTest {
     }
 
     /**
-     * TC_GU_10_1 - Test con email vuota
+     * TC_GU_10_1.2 - Test con email vuota
      * Verifica che il sistema rifiuti la modifica quando l'email è vuota.
      */
     @Test
@@ -105,7 +105,7 @@ public class ModificaStatoUtenzaTest {
     }
 
     /**
-     * TC_GU_10_1 - Test con email inesistente
+     * TC_GU_10_1.3 - Test con email inesistente
      * Verifica che il sistema rifiuti la modifica quando l'email non esiste nel database.
      */
     @Test
@@ -120,7 +120,7 @@ public class ModificaStatoUtenzaTest {
     }
 
     /**
-     * TC_GU_10_1 - Test disattivazione con email null
+     * TC_GU_10_1.4 - Test disattivazione con email null
      * Verifica che il sistema rifiuti la disattivazione quando l'email è null.
      */
     @Test
@@ -134,7 +134,7 @@ public class ModificaStatoUtenzaTest {
     }
 
     /**
-     * TC_GU_10_1 - Test disattivazione con email inesistente
+     * TC_GU_10_1.5 - Test disattivazione con email inesistente
      * Verifica che il sistema rifiuti la disattivazione quando l'email non esiste.
      */
     @Test
@@ -149,7 +149,29 @@ public class ModificaStatoUtenzaTest {
     }
 
     /**
-     * TC_GU_10_2 - Test attivazione Docente
+     * TC_GU_10_2 - Tentativo di cambio stato con valore non valido.
+     *
+     * Questo test case NON è eseguibile nel contesto attuale per motivi architetturali:
+     *
+     * 1. Livello Service: La logica di business è separata in due metodi distinti e specifici:
+     *    - {@link UsersService#attivaUtente(String)} imposta esplicitamente lo stato a 'true'.
+     *    - {@link UsersService#disattivaUtente(String)} imposta esplicitamente lo stato a 'false'.
+     *    Non esiste un singolo metodo che accetta uno stato arbitrario come parametro, rendendo impossibile
+     *    il passaggio di un valore non booleano o non valido a questo livello.
+     *
+     * 2. Livello Controller: Anche l'esposizione web riflette questa separazione con due endpoint distinti:
+     *    - POST /admin/utenti/attiva (gestito da {@link UsersController#attivaUtente})
+     *    - POST /admin/utenti/disattiva (gestito da {@link UsersController#disattivaUtente})
+     *    Il controller non riceve lo stato come parametro di input dall'utente, ma deduce l'azione
+     *    dall'endpoint chiamato.
+     *
+     * Di conseguenza, la logica di validazione dello "stato non valido" è implicitamente gestita
+     * dall'assenza di un punto di ingresso che permetta tale scenario.
+     */
+
+
+    /**
+     * TC_GU_10_3.1 - Test attivazione Docente
      * Verifica che un docente disattivato possa essere attivato correttamente.
      */
     @Test
@@ -168,7 +190,7 @@ public class ModificaStatoUtenzaTest {
     }
 
     /**
-     * TC_GU_10_2 - Test disattivazione Docente
+     * TC_GU_10_3.2 - Test disattivazione Docente
      * Verifica che un docente attivo possa essere disattivato correttamente.
      */
     @Test
@@ -187,7 +209,7 @@ public class ModificaStatoUtenzaTest {
     }
 
     /**
-     * TC_GU_10_2 - Test attivazione Famiglia
+     * TC_GU_10_3.3 - Test attivazione Famiglia
      * Verifica che una famiglia disattivata possa essere attivata correttamente.
      */
     @Test
@@ -206,7 +228,7 @@ public class ModificaStatoUtenzaTest {
     }
 
     /**
-     * TC_GU_10_2 - Test disattivazione Famiglia
+     * TC_GU_10_3.4 - Test disattivazione Famiglia
      * Verifica che una famiglia attiva possa essere disattivata correttamente.
      */
     @Test
@@ -225,7 +247,7 @@ public class ModificaStatoUtenzaTest {
     }
 
     /**
-     * TC_GU_10_2 - Test attivazione Studente
+     * TC_GU_10_3.5 - Test attivazione Studente
      * Verifica che uno studente disattivato possa essere attivato correttamente.
      */
     @Test
@@ -245,7 +267,7 @@ public class ModificaStatoUtenzaTest {
     }
 
     /**
-     * TC_GU_10_2 - Test disattivazione Studente
+     * TC_GU_10_3.6 - Test disattivazione Studente
      * Verifica che uno studente attivo possa essere disattivato correttamente.
      */
     @Test

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+	<meta charset="UTF-8">
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<title>Lascia un Feedback - Il Faro dello Studio</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<th:block th:replace="~{fragments/sidebar-styles :: sidebar-styles}" />
+
+	<style>
+        body { background-color: #f8f9fa; }
+        .rating-select { font-size: 1.2rem; color: #f39c12; }
+	</style>
+</head>
+<body>
+
+<div class="container-fluid">
+	<div class="row">
+
+		<th:block th:if="${userRole == 'STUDENTE'}">
+			<th:block th:replace="~{fragments/studente-sidebar :: studente-sidebar('feedback')}" />
+		</th:block>
+
+		<th:block th:if="${userRole == 'FAMIGLIA'}">
+			<th:block th:replace="~{fragments/famiglia-sidebar :: famiglia-sidebar('feedback')}" />
+		</th:block>
+
+		<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+
+			<div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${error}">
+				<i class="fas fa-exclamation-circle me-2"></i>
+				<span th:text="${error}">Errore</span>
+				<button class="btn-close" data-bs-dismiss="alert" type="button"></button>
+			</div>
+
+			<div class="row justify-content-center mt-4">
+				<div class="col-lg-8">
+					<div class="card shadow-sm border-0">
+						<div class="card-header bg-primary text-white py-3">
+							<h4 class="mb-0"><i class="fas fa-star me-2"></i>Valuta l'operato di un Docente</h4>
+						</div>
+						<div class="card-body p-4">
+							<form method="post" th:action="@{/feedback/salva}">
+
+								<div class="mb-4">
+									<label class="form-label fw-bold" for="docenteEmail">Docente:</label>
+									<select class="form-select" id="docenteEmail" name="docenteEmail" required>
+										<option disabled selected value="">Seleziona il docente...</option>
+										<option th:each="docente : ${listaDocenti}"
+												th:value="${docente.email}"
+												th:text="${docente.nome} + ' ' + ${docente.cognome}">
+											Docente
+										</option>
+									</select>
+								</div>
+
+								<div class="mb-3">
+									<label class="form-label fw-bold" for="valutazione">Valutazione:</label>
+									<select class="form-select rating-select" id="valutazione" name="valutazione" required>
+										<option disabled selected value="">Quante stelle assegni?</option>
+										<option value="5">⭐⭐⭐⭐⭐ - Eccellente</option>
+										<option value="4">⭐⭐⭐⭐ - Molto Buono</option>
+										<option value="3">⭐⭐⭐ - Sufficiente</option>
+										<option value="2">⭐⭐ - Scarso</option>
+										<option value="1">⭐ - Insufficiente</option>
+									</select>
+								</div>
+
+								<div class="mb-4">
+									<label class="form-label fw-bold" for="commento">Commento (opzionale):</label>
+									<textarea class="form-control" id="commento" name="commento" rows="4"
+											  placeholder="Inserisci qui il tuo commento..."></textarea>
+								</div>
+
+								<div class="d-grid gap-2">
+									<button class="btn btn-primary btn-lg shadow-sm" type="submit">
+										<i class="fas fa-paper-plane me-2"></i>Invia il Feedback
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<th:block th:replace="~{fragments/footer :: standardFooter}" />
+		</main>
+	</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

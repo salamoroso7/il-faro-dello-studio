@@ -1,13 +1,15 @@
 package it.unisa.ilfarodellostudio.feedbacks;
 
-import it.unisa.ilfarodellostudio.activities.ActivitiesService;
-import it.unisa.ilfarodellostudio.activities.entity.Attivita;
+import it.unisa.ilfarodellostudio.users.UsersService;
+import it.unisa.ilfarodellostudio.users.entity.Docente;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
+import java.util.List;
 
 /**
  * Controller per la gestione delle richieste web relative ai feedback.
@@ -17,10 +19,10 @@ import java.security.Principal;
 public class FeedbackController {
 
     @Autowired
-    private FeedbacksService feedbackService;
+    private FeedbacksService feedbacksService;
 
     @Autowired
-    private ActivitiesService activitiesService; // Serve per recuperare info sull'attività
+    private UsersService usersService;
 
     /**
      * Mostra il form per lasciare un feedback su un'attività.
@@ -34,8 +36,13 @@ public class FeedbackController {
         // Recupera l'attività per mostrare il titolo nella pagina
       //  Attivita attivita = activitiesService.getAttivitaById(idAttivita);
 
-        //model.addAttribute("attivita", attivita);
-        return "studente/lascia-feedback"; // Crea questo file HTML!
+        // Determiniamo il ruolo qui per semplificare la vita a Thymeleaf
+        boolean isStudente = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_STUDENTE"));
+
+        model.addAttribute("userRole", isStudente ? "STUDENTE" : "FAMIGLIA");
+
+        return "lascia-feedback";
     }
 
     /**
@@ -49,25 +56,35 @@ public class FeedbackController {
      * @return redirect alla dashboard o al form in caso di errore
      */
     @PostMapping("/salva")
-    public String salvaFeedback(@RequestParam Long idAttivita,
+    public String salvaFeedback(@RequestParam String docenteEmail,
                                 @RequestParam int valutazione,
-                                @RequestParam String commento,
-                                Principal principal,
-                                Model model) {
+                                @RequestParam(required = false) String commento,
+                                Authentication authentication,
+                                RedirectAttributes redirectAttributes) {
         try {
-            String emailStudente = principal.getName();
-            feedbackService.lasciaFeedback(idAttivita, emailStudente, valutazione, commento);
+            // Otteniamo l'email dell'utente autenticato (mittente)
+            String emailMittente = authentication.getName();
 
-            return "redirect:/studente/dashboard-studente?success=FeedbackInviato";
+            // Verifichiamo il ruolo dell'utente
+            boolean isStudente = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_STUDENTE"));
+
+            if (isStudente) {
+                feedbacksService.inviaFeedbackDaStudente(emailMittente, docenteEmail, valutazione, commento);
+            } else {
+                feedbacksService.inviaFeedbackDaFamiglia(emailMittente, docenteEmail, valutazione, commento);
+            }
+
+            // Messaggio di successo che apparirà nella dashboard
+            redirectAttributes.addFlashAttribute("success", "Il tuo feedback è stato inviato con successo al docente.");
+
+            // Redirect dinamico alla dashboard corretta
+            return isStudente ? "redirect:/studente/dashboard-studente" : "redirect:/famiglia/dashboard-famiglia";
 
         } catch (Exception e) {
-            // In caso di errore ricarica la pagina con il messaggio
-            model.addAttribute("error", e.getMessage());
-            // Dobbiamo ricaricare l'oggetto attivita per non rompere la pagina
-           // Attivita att = activitiesService.getAttivitaById(idAttivita);
-          //  model.addAttribute("attivita", att);
-
-            return "studente/lascia-feedback";
+            // In caso di errore (es. docente non trovato o validazione fallita)
+            redirectAttributes.addFlashAttribute("error", "Impossibile inviare il feedback: " + e.getMessage());
+            return "redirect:/feedback/lascia";
         }
     }
 }
