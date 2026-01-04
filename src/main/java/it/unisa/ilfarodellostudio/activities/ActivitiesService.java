@@ -4,11 +4,10 @@ import it.unisa.ilfarodellostudio.activities.entity.Attivita;
 import it.unisa.ilfarodellostudio.activities.entity.Materia;
 import it.unisa.ilfarodellostudio.activities.repository.AttivitaRepository;
 import it.unisa.ilfarodellostudio.activities.repository.MateriaRepository;
-import it.unisa.ilfarodellostudio.payments.entity.StatoPagamento;
+import it.unisa.ilfarodellostudio.payments.PaymentsService;
+import it.unisa.ilfarodellostudio.users.UsersService;
 import it.unisa.ilfarodellostudio.users.entity.Docente;
-import it.unisa.ilfarodellostudio.users.entity.Famiglia;
 import it.unisa.ilfarodellostudio.users.entity.Studente;
-import it.unisa.ilfarodellostudio.users.repository.StudenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,11 +26,16 @@ import java.util.Optional;
 public class ActivitiesService {
 
     @Autowired
-    private AttivitaRepository attivitaRepository;
-    @Autowired
-    private StudenteRepository studenteRepository;
-    @Autowired
     private MateriaRepository materiaRepository;
+
+    @Autowired
+    private AttivitaRepository attivitaRepository;
+
+    @Autowired
+    private UsersService usersService;
+
+    @Autowired
+    private PaymentsService paymentsService;
 
     /* =================================================================
        METODO CREA: CON VALIDAZIONI COMPLETE (Per i Test JUnit)
@@ -87,6 +91,28 @@ public class ActivitiesService {
 
         // 7. Salvataggio finale
         return attivitaRepository.save(attivita);
+    }
+
+    /* =================================================================
+       METOOO ISCRIZIONE STUDENTI AD ATTIVITA': USE CASE UC_GA_6 (CON TEST)
+       ================================================================= */
+    @Transactional
+    public void iscriviStudenteAdAttivita(String emailStudente, Long idAttivita) {
+        Studente studente = usersService.cercaStudente(emailStudente)
+                .orElseThrow(() -> new RuntimeException("Studente non trovato"));
+
+        Attivita attivita = visualizzaAttivita(idAttivita);
+
+        // Controllo posti
+        if (attivita.getIscritti().size() >= attivita.getPosti()) {
+            throw new RuntimeException("Impossibile iscriversi: l'attività " + attivita.getTitolo() + " è già al completo");
+        }
+
+        // Controllo pagamenti
+        paymentsService.verificaSituazioneDebitoria(studente.getFamiglia());
+
+        attivita.aggiungiStudente(studente);
+        attivitaRepository.save(attivita);
     }
 
     /* =================================================================
@@ -181,42 +207,22 @@ public class ActivitiesService {
         return attivitaRepository.existsOverlappingLessonExcludingId(docente, data, oraInizio, oraFine, id);
     }
 
-    /* =================================================================
-       ISCRIZIONE STUDENTI
-       ================================================================= */
     /**
-     * Iscrive uno studente a un'attività specifica.
-     * Effettua controlli sulla disponibilità dei posti e sullo stato dei pagamenti della famiglia dello studente.
-     *
-     * @param emailStudente email dello studente da iscrivere
-     * @param idAttivita ID dell'attività a cui iscrivere lo studente
-     * @throws RuntimeException se l'iscrizione fallisce (posti esauriti o pagamenti scaduti)
+     * Cerca una materia tramite il nome.
+     * @param nome Il nome della materia da cercare.
+     * @return Un Optional contenente la materia se trovata.
+     */
+    public Optional<Materia> cercaMateriaPerNome(String nome) {
+        return materiaRepository.findByNome(nome);
+    }
+
+    /**
+     * Salva o aggiorna una materia nel database.
+     * @param materia L'oggetto materia da salvare.
+     * @return La materia salvata.
      */
     @Transactional
-    public void iscriviStudenteAdAttivita(String emailStudente, Long idAttivita) {
-        Studente studente = studenteRepository.findById(emailStudente)
-                .orElseThrow(() -> new RuntimeException("Studente non trovato"));
-        Attivita attivita = attivitaRepository.findById(idAttivita)
-                .orElseThrow(() -> new RuntimeException("Attività non trovata"));
-
-        // CORREZIONE 1: Messaggio esatto richiesto dal test
-        if (attivita.getIscritti().size() >= attivita.getPosti()) {
-            throw new RuntimeException("Impossibile iscriversi: l'attività " + attivita.getTitolo() + " è già al completo");
-        }
-
-        // CORREZIONE 2: Messaggio esteso richiesto dal test per i pagamenti
-        Famiglia famiglia = studente.getFamiglia();
-        if (famiglia != null) {
-            boolean haPagamentiScaduti = famiglia.getPagamentiEffettuati().stream()
-                    .anyMatch(p -> p.getStato() == StatoPagamento.SCADUTO);
-
-            if (haPagamentiScaduti) {
-                throw new RuntimeException("Iscrizione negata: la famiglia associata allo studente ha pagamenti in sospeso (Stato: SCADUTO). " +
-                        "Si prega di regolarizzare la posizione prima di procedere.");
-            }
-        }
-
-        attivita.aggiungiStudente(studente);
-        attivitaRepository.save(attivita);
+    public Materia salvaMateria(Materia materia) {
+        return materiaRepository.save(materia);
     }
 }

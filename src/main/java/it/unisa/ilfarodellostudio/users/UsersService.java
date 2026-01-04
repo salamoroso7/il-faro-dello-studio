@@ -67,10 +67,18 @@ public class UsersService {
     }
 
     /**
-     * Cerca un docente tramite email.
-     *
-     * @param email email del docente
-     * @return un Optional con il docente se trovato
+     * Cerca uno studente nel database tramite la sua email.
+     * @param email l'indirizzo email dello studente da cercare.
+     * @return un Optional contenente lo studente se trovato, altrimenti vuoto.
+     */
+    public Optional<Studente> cercaStudente(String email) {
+        return studenteRepository.findByEmail(email);
+    }
+
+    /**
+     * Cerca un docente nel database tramite la sua email.
+     * @param email l'indirizzo email del docente da cercare.
+     * @return un Optional contenente il docente se trovato, altrimenti vuoto.
      */
     public Optional<Docente> cercaDocente(String email) {
         return docenteRepository.findByEmail(email);

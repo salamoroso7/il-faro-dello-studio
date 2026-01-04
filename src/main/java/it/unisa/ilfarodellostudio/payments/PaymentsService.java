@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service per la gestione dei pagamenti e delle tasse.
@@ -104,5 +103,14 @@ public class PaymentsService {
             }
         }
         effettuaRepository.saveAll(nonPagati);
+    }
+
+    public void verificaSituazioneDebitoria(Famiglia famiglia) {
+        boolean haPagamentiScaduti = famiglia.getPagamentiEffettuati().stream()
+                .anyMatch(p -> p.getStato() == StatoPagamento.SCADUTO);
+
+        if (haPagamentiScaduti) {
+            throw new RuntimeException("Iscrizione negata: pagamenti in sospeso (Stato: SCADUTO)");
+        }
     }
 }

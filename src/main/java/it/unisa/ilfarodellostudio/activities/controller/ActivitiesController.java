@@ -3,7 +3,6 @@ package it.unisa.ilfarodellostudio.activities.controller;
 import it.unisa.ilfarodellostudio.activities.ActivitiesService;
 import it.unisa.ilfarodellostudio.activities.entity.Attivita;
 import it.unisa.ilfarodellostudio.activities.entity.Materia;
-import it.unisa.ilfarodellostudio.activities.repository.MateriaRepository;
 import it.unisa.ilfarodellostudio.users.UsersService;
 import it.unisa.ilfarodellostudio.users.entity.Docente;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +25,7 @@ public class ActivitiesController {
 
     @Autowired
     private ActivitiesService activitiesService;
-    @Autowired
-    private MateriaRepository materiaRepository;
+
     @Autowired
     private UsersService usersService;
 
@@ -218,14 +216,13 @@ public class ActivitiesController {
         attivita.setOraFine(oraFine);
         attivita.setPosti(posti);
 
-        // Gestione materia cambio nome
         if(!attivita.getMateria().getNome().equals(materia)) {
             Materia m = new Materia();
             m.setNome(materia);
-            // Il cascade o logica di salvataggio gestirà la nuova materia se necessario
-            // Oppure recuperala come nel create
-            Materia materiaDb = materiaRepository.findByNome(materia)
-                    .orElseGet(() -> materiaRepository.save(m));
+
+            Materia materiaDb = activitiesService.cercaMateriaPerNome(materia)
+                    .orElseGet(() -> activitiesService.salvaMateria(m));
+
             attivita.setMateria(materiaDb);
         }
 
