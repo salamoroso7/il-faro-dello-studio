@@ -13,4 +13,5 @@ import java.util.Optional;
 public interface StudenteRepository extends JpaRepository<Studente, String> {
     Optional<Studente> findByEmail(String email);
     long countByIsAttivoFalse();
+    boolean existsByCodiceFiscale(String codiceFiscale);
 }

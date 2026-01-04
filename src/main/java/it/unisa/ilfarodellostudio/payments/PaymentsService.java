@@ -113,4 +113,18 @@ public class PaymentsService {
             throw new RuntimeException("Iscrizione negata: pagamenti in sospeso (Stato: SCADUTO)");
         }
     }
+
+    /**
+     * Ritorna tutti i record della tabella di giunzione 'effettua'
+     * per avere accesso sia ai dettagli del pagamento che allo stato.
+     */
+    public List<Effettua> getAllPagamentiConStato() {
+        return effettuaRepository.findAll();
+    }
+
+    public Effettua getDettaglioPagamento(String emailFamiglia, Long idPagamento) {
+        EffettuaId id = new EffettuaId(emailFamiglia, idPagamento);
+        return effettuaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pagamento non trovato"));
+    }
 }

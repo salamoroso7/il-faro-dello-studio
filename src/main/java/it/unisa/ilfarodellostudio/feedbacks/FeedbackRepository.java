@@ -15,4 +15,13 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
      */
     List<Feedback> findByDocenteEmail(String email);
 
+    /**
+     * Restituisce tutti i feedback inviati da uno studente specifico.
+     */
+    List<Feedback> findByStudenteEmail(String email);
+
+    /**
+     * Restituisce tutti i feedback inviati da una famiglia specifica.
+     */
+    List<Feedback> findByFamigliaEmail(String email);
 }

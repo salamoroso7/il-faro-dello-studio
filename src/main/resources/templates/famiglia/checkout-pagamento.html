@@ -30,35 +30,54 @@
                                 <h5 class="mb-0 text-muted">Riepilogo Ordine</h5>
                             </div>
                             <div class="card-body p-4">
-                                <div class="d-flex justify-content-between mb-4">
-                                    <span class="fw-bold">Rata Iscrizione 2026 - Gennaio</span>
-                                    <span class="fw-bold text-primary">€ 150,00</span>
+                                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    <span th:text="${error}">Errore generico</span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
+
+                                <div class="d-flex justify-content-between mb-4">
+                                    <span class="fw-bold" th:text="${dettaglio.pagamento.nome}">Nome Pagamento</span>
+                                    <span class="fw-bold text-primary"
+                                          th:text="'€ ' + ${#numbers.formatDecimal(dettaglio.pagamento.importo, 1, 2, 'POINT')}">
+                                    </span>
+                                </div>
+
                                 <h6 class="mb-3">Metodo di Pagamento</h6>
-                                <form
-                                    onsubmit="event.preventDefault(); alert('Pagamento effettuato con successo!'); window.location.href='lista_pagamenti.html';">
+
+                                <form th:action="@{/famiglia/conferma-pagamento}" method="post">
+                                    <input type="hidden" name="idPagamento" th:value="${dettaglio.pagamento.idPagamento}">
+
                                     <div class="mb-3">
                                         <label class="form-label small text-muted">Intestatario Carta</label>
-                                        <input type="text" class="form-control" placeholder="Mario Rossi" required>
+                                        <input type="text" name="intestatario" class="form-control" placeholder="Mario Rossi" required>
                                     </div>
+
                                     <div class="mb-3">
                                         <label class="form-label small text-muted">Numero Carta</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
-                                            <input type="text" class="form-control" placeholder="0000 0000 0000 0000"
-                                                required>
+                                            <input type="text" name="numeroCarta" class="form-control"
+                                                   placeholder="0000000000000000" maxlength="16" required>
                                         </div>
                                     </div>
+
                                     <div class="row">
-                                        <div class="col-6 mb-3"><label
-                                                class="form-label small text-muted">Scadenza</label><input type="text"
-                                                class="form-control" placeholder="MM/YY" required></div>
-                                        <div class="col-6 mb-3"><label
-                                                class="form-label small text-muted">CVV</label><input type="text"
-                                                class="form-control" placeholder="123" required></div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label small text-muted">Scadenza</label>
+                                            <input type="text" name="scadenza" class="form-control" placeholder="MM/YY" maxlength="5" required>
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label small text-muted">CVV</label>
+                                            <input type="text" name="cvv" class="form-control" placeholder="123" maxlength="3" required>
+                                        </div>
                                     </div>
-                                    <div class="d-grid mt-4"><button type="submit"
-                                            class="btn btn-success btn-lg shadow-sm">Paga € 150,00</button></div>
+
+                                    <div class="d-grid mt-4">
+                                        <button type="submit" class="btn btn-success btn-lg shadow-sm">
+                                            Paga <span th:text="'€ ' + ${#numbers.formatDecimal(dettaglio.pagamento.importo, 1, 2, 'POINT')}"></span>
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
                         </div>

@@ -22,42 +22,66 @@
 
 		<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
 
-			<div class="card shadow border-0">
+			<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+				<i class="fas fa-check-circle me-2"></i>
+				<span th:text="${success}"></span>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+
+			<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+				<i class="fas fa-exclamation-triangle me-2"></i>
+				<span th:text="${error}"></span>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+
+			<div class="card shadow border-0" th:if="${attivita != null}">
 				<div class="card-header bg-primary text-white p-4">
 					<div class="d-flex justify-content-between align-items-center">
-						<h2 class="h3 mb-0">Analisi Matematica 1 - Ripasso</h2>
-						<span class="badge bg-light text-primary fs-6">5 Posti Rimanenti</span>
+						<h2 class="h3 mb-0" th:text="${attivita.titolo}">Titolo Attività</h2>
+						<span class="badge bg-light text-primary fs-6">
+                    		<span th:text="${attivita.getPostiRimanenti()}">0</span> Posti Rimanenti
+                		</span>
 					</div>
 				</div>
+
 				<div class="card-body p-4">
 					<div class="row">
 						<div class="col-md-8">
 							<h5 class="text-primary fw-bold">Descrizione</h5>
-							<p>La lezione verterà sui principali teoremi del calcolo differenziale ed esercizi
-								pratici.</p>
-							<h5 class="text-primary fw-bold mt-4">Programma</h5>
-							<ul>
-								<li>Teorema di Rolle</li>
-								<li>Teorema di Lagrange</li>
-								<li>Esercitazione pratica</li>
-							</ul>
+							<p th:text="${attivita.descrizione}">Descrizione dell'attività...</p>
+
+							<h5 class="text-primary fw-bold mt-4">Materia</h5>
+							<p th:text="${attivita.materia.nome}">Nome Materia</p>
 						</div>
+
 						<div class="col-md-4">
 							<div class="card bg-light border-0">
 								<div class="card-body">
-									<h6 class="fw-bold">Dettagli Logistici</h6>
+									<h6 class="fw-bold">Dettagli</h6>
 									<hr>
-									<p class="mb-2"><i class="fas fa-calendar me-2 text-muted"></i> 15 Gennaio 2026</p>
-									<p class="mb-2"><i class="fas fa-clock me-2 text-muted"></i> 14:00 - 16:00</p>
-									<p class="mb-2"><i class="fas fa-map-marker-alt me-2 text-muted"></i> Aula F2</p>
-									<p class="mb-2"><i class="fas fa-user me-2 text-muted"></i> Prof. Rossi</p>
+									<p class="mb-2">
+										<i class="fas fa-calendar me-2 text-muted"></i>
+										<span th:text="${#temporals.format(attivita.data, 'dd MMMM yyyy')}">Data</span>
+									</p>
+									<p class="mb-2">
+										<i class="fas fa-clock me-2 text-muted"></i>
+										<span th:text="${attivita.oraInizio} + ' - ' + ${attivita.oraFine}">00:00 - 00:00</span>
+									</p>
+									<p class="mb-2">
+										<i class="fas fa-user me-2 text-muted"></i>
+										<span th:text="'Prof. ' + ${attivita.docente.nome} + ' ' + ${attivita.docente.cognome}">Docente</span>
+									</p>
 									<hr>
+
 									<div class="d-grid">
-										<button class="btn btn-success btn-lg"
-												onclick="alert('Iscrizione effettuata con successo!')">Iscriviti all'attività
-										</button>
-										<small class="text-muted text-center mt-2">*L'iscrizione richiede pagamenti
-											regolari.</small>
+										<form th:action="@{/studente/iscriviti-attivita}" method="post">
+											<input type="hidden" name="id" th:value="${attivita.idAttivita}">
+
+											<button type="submit" class="btn btn-success btn-lg w-100">
+												Iscriviti
+											</button>
+										</form>
+										<small class="text-muted text-center mt-2 d-block">*L'iscrizione richiede pagamenti regolari.</small>
 									</div>
 								</div>
 							</div>
@@ -65,8 +89,6 @@
 					</div>
 				</div>
 			</div>
-
-			<th:block th:replace="~{fragments/footer :: standardFooter}" />
 		</main>
 	</div>
 </div>

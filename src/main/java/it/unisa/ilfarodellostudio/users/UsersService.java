@@ -161,10 +161,10 @@ public class UsersService {
      */
     @Transactional
     public RegistrazioneResult creaStudente(StudenteDto dto, String emailFamiglia) {
-        // Esempio di validazione nel Service
         if (dto.getNome().length() > 50) throw new IllegalArgumentException("Il Nome supera i 50 caratteri");
         if (dto.getCodiceFiscale().length() != 16) throw new IllegalArgumentException("Il Codice Fiscale deve essere di 16 cifre");
         if (!dto.getDataNascita().isBefore(LocalDate.now())) throw new IllegalArgumentException("La Data di Nascita è futura o odierna");
+        if (studenteRepository.existsByCodiceFiscale(dto.getCodiceFiscale())) throw new RuntimeException("E' già presente uno studente con lo stesso codice fiscale!");
 
         Famiglia famiglia = famigliaRepository.findById(emailFamiglia)
                 .orElseThrow(() -> new RuntimeException("Famiglia non trovata o sessione scaduta."));
@@ -186,8 +186,6 @@ public class UsersService {
         studente.setCodiceFiscale(dto.getCodiceFiscale());
         studente.setDataNascita(dto.getDataNascita());
         studente.setFamiglia(famiglia);
-
-        studenteRepository.save(studente);
 
         studenteRepository.save(studente);
 

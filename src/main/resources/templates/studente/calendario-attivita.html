@@ -36,40 +36,35 @@
 			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
 				<h2 class="text-primary fw-bold mb-4">Calendario Attività Disponibili</h2>
 
-				<div class="row mb-4">
-					<div class="col-md-4"><input class="form-control" placeholder="Cerca per materia..." type="text">
-					</div>
-					<div class="col-md-3">
-						<select class="form-select">
-							<option selected>Tutti i Docenti</option>
-							<option>Prof. Gravino</option>
-							<option>Prof. De Lucia</option>
-						</select>
-					</div>
-					<div class="col-md-2">
-						<button class="btn btn-primary w-100">Filtra</button>
-					</div>
-				</div>
-
 				<div class="row g-4">
-					<div class="col-md-6 col-lg-4">
+					<div class="col-md-6 col-lg-4" th:each="attivita : ${listaAttivita}">
 						<div class="card lesson-card h-100">
 							<div class="card-body">
 								<div class="d-flex justify-content-between align-items-start mb-2">
-									<span class="badge bg-info text-dark">Matematica</span>
-									<span class="badge bg-success">Aperta</span>
+									<span class="badge bg-info text-dark" th:text="${attivita.materia.nome}">Materia</span>
 								</div>
-								<h5 class="card-title fw-bold">Analisi Matematica 1</h5>
-								<p class="text-muted small mb-3"><i class="fas fa-user-tie me-1"></i> Prof. Rossi</p>
-								<p class="card-text small">Ripasso sulle derivate e integrali.</p>
+
+								<h5 class="card-title fw-bold" th:text="${attivita.titolo}">Titolo Attività</h5>
+
+								<p class="text-muted small mb-3">
+									<i class="fas fa-user-tie me-1"></i>
+									<span th:text="'Prof. ' + ${attivita.docente.nome} + ' ' + ${attivita.docente.cognome}">Docente</span>
+								</p>
+
 								<div class="d-flex justify-content-between align-items-center mt-4">
-									<small class="text-muted"><i class="far fa-clock"></i> 14:00 - 16:00</small>
+									<div>
+										<div class="text-muted small mb-1">
+											<i class="far fa-calendar-alt me-1"></i>
+											<span th:text="${#temporals.format(attivita.data, 'dd MMMM yyyy')}">Data</span>
+										</div>
+										<small class="text-muted">
+											<i class="far fa-clock me-1"></i>
+											<span th:text="${attivita.oraInizio} + ' - ' + ${attivita.oraFine}">00:00 - 00:00</span>
+										</small>
+									</div>
 
 									<form class="m-0" method="get" th:action="@{/studente/dettaglio-attivita}">
-										<!--
-									<input type="hidden" name="id" th:value="${attivita.id}">
-									-->
-
+										<input type="hidden" name="id" th:value="${attivita.idAttivita}">
 										<button class="btn btn-outline-primary btn-sm" type="submit">
 											Dettagli
 										</button>
@@ -78,22 +73,9 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-6 col-lg-4">
-						<div class="card lesson-card h-100">
-							<div class="card-body">
-								<div class="d-flex justify-content-between align-items-start mb-2">
-									<span class="badge bg-warning text-dark">Informatica</span>
-									<span class="badge bg-danger">Posti Esauriti</span>
-								</div>
-								<h5 class="card-title fw-bold">Java Advanced</h5>
-								<p class="text-muted small mb-3"><i class="fas fa-user-tie me-1"></i> Prof. Gravino</p>
-								<p class="card-text small">Approfondimento su Spring Boot.</p>
-								<div class="d-flex justify-content-between align-items-center mt-4">
-									<small class="text-muted"><i class="far fa-clock"></i> 10:00 - 12:00</small>
-									<button class="btn btn-secondary btn-sm" disabled>Completo</button>
-								</div>
-							</div>
-						</div>
+
+					<div class="col-12" th:if="${#lists.isEmpty(listaAttivita)}">
+						<p class="text-center text-muted">Non ci sono attività disponibili al momento.</p>
 					</div>
 				</div>
 

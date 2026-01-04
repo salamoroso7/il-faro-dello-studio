@@ -66,18 +66,8 @@
 				<div class="content-wrapper">
 					<header class="welcome-header d-flex justify-content-between align-items-center">
 						<div>
-							<h2 class="h4 mb-1 text-primary fw-bold">Benvenuto, Mario</h2>
-							<span class="text-muted">Il tuo spazio personale di apprendimento</span>
-						</div>
-						<div class="d-flex align-items-center">
-							<span class="me-3 text-muted d-none d-md-block">Matr. 0512101234</span>
-							<button class="btn btn-light position-relative border shadow-sm rounded-circle p-2">
-								<i class="fas fa-bell text-secondary"></i>
-								<span
-									class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
-									2
-								</span>
-							</button>
+							<h2 class="h4 mb-1 text-primary fw-bold" th:text="'Benvenuto, ' + ${studente.nome}">Benvenuto</h2>
+							<span class="text-muted">La tua area riservata</span>
 						</div>
 					</header>
 
@@ -87,10 +77,19 @@
 							<div class="col-md-6 col-lg-4">
 								<div class="card stat-card text-white bg-primary h-100 overflow-hidden shadow">
 									<div class="card-body position-relative p-4">
-										<h5 class="card-title text-white-50">Prossima Lezione</h5>
-										<p class="display-6 fw-bold mb-1">14:30</p>
-										<p class="mb-0 fs-5">Ingegneria del Software</p>
-										<small class="text-white-50">Aula F2</small>
+										<h5 class="card-title text-white-50">Prossima Attività</h5>
+
+										<th:block th:if="${prossimaAttivita != null}">
+											<p class="h4 fw-bold mb-0" th:text="${#temporals.format(prossimaAttivita.data, 'dd MMMM')}">12 Gennaio</p>
+											<p class="display-6 fw-bold mb-1" th:text="${prossimaAttivita.oraInizio}">14:30</p>
+											<p class="mb-0 fs-5" th:text="${prossimaAttivita.titolo}">Titolo Attività</p>
+										</th:block>
+
+										<th:block th:unless="${prossimaAttivita != null}">
+											<p class="h4 fw-bold mb-0">Nessuna</p>
+											<p class="mb-0 fs-5">Non sei iscritto a prossime attività</p>
+										</th:block>
+
 										<i class="fas fa-clock card-icon-bg"></i>
 									</div>
 								</div>
@@ -100,22 +99,10 @@
 								<div class="card stat-card text-white bg-success h-100 overflow-hidden shadow">
 									<div class="card-body position-relative p-4">
 										<h5 class="card-title text-white-50">Feedback Inviati</h5>
-										<p class="display-6 fw-bold mb-1">12</p>
+										<p class="display-6 fw-bold mb-1" th:text="${feedbackCount}">0</p>
 										<p class="mb-0 fs-5">Contributi dati</p>
 										<small class="text-white-50">Grazie per la tua opinione!</small>
 										<i class="fas fa-smile card-icon-bg"></i>
-									</div>
-								</div>
-							</div>
-
-							<div class="col-md-6 col-lg-4">
-								<div class="card stat-card text-white bg-info h-100 overflow-hidden shadow">
-									<div class="card-body position-relative p-4">
-										<h5 class="card-title text-white-50">Media Voti</h5>
-										<p class="display-6 fw-bold mb-1">27.5</p>
-										<p class="mb-0 fs-5">Ottimo lavoro!</p>
-										<small class="text-white-50">Continua così</small>
-										<i class="fas fa-chart-line card-icon-bg"></i>
 									</div>
 								</div>
 							</div>
@@ -130,41 +117,26 @@
 								<div class="table-responsive">
 									<table class="table table-hover align-middle mb-0">
 										<thead class="table-light">
-											<tr>
-												<th class="ps-4">Corso</th>
-												<th>Docente</th>
-												<th>Data & Ora</th>
-												<th>Stato</th>
-												<th class="text-end pe-4">Azioni</th>
-											</tr>
+										<tr>
+											<th class="ps-4">Corso</th>
+											<th>Docente</th>
+											<th>Data & Ora</th>
+										</tr>
 										</thead>
 										<tbody>
-											<tr>
-												<td class="ps-4 fw-bold text-primary">Programmazione II</td>
-												<td>Prof. De Lucia</td>
-												<td>29 Dic 2025, 09:30</td>
-												<td><span class="badge bg-success rounded-pill">Conclusa</span></td>
-												<td class="text-end pe-4">
-													<button class="btn btn-sm btn-outline-primary rounded-pill px-3"
-														data-bs-target="#feedbackModal" data-bs-toggle="modal">
-														<i class="far fa-star me-1"></i> Valuta
-													</button>
-												</td>
-											</tr>
-											<tr>
-												<td class="ps-4 fw-bold text-primary">Basi di Dati</td>
-												<td>Prof. Polese</td>
-												<td>30 Dic 2025, 11:30</td>
-												<td><span class="badge bg-warning text-dark rounded-pill">In
-														Programma</span>
-												</td>
-												<td class="text-end pe-4">
-													<button class="btn btn-sm btn-light text-muted rounded-pill px-3"
-														disabled>
-														Valuta
-													</button>
-												</td>
-											</tr>
+										<tr th:each="a : ${attivitaFuture}">
+											<td class="ps-4 fw-bold text-primary" th:text="${a.titolo}">Nome Corso</td>
+											<td th:text="${a.docente.nome + ' ' + a.docente.cognome}">Docente</td>
+											<td>
+												<span th:text="${#temporals.format(a.data, 'dd MMM yyyy')}">Data</span>,
+												<span th:text="${a.oraInizio}">Ora</span>
+											</td>
+										</tr>
+										<tr th:if="${#lists.isEmpty(attivitaFuture)}">
+											<td colspan="3" class="text-center py-4 text-muted">
+												Non sei iscritto a nessuna attività futura.
+											</td>
+										</tr>
 										</tbody>
 									</table>
 								</div>
@@ -177,51 +149,6 @@
 				<th:block th:replace="~{fragments/footer :: standardFooter}" />
 
 			</main>
-		</div>
-	</div>
-
-	<div class="modal fade" id="feedbackModal" tabindex="-1">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content border-0 shadow">
-				<div class="modal-header bg-primary text-white">
-					<h5 class="modal-title"><i class="fas fa-comment-dots me-2"></i>Inserisci Feedback</h5>
-					<button class="btn-close btn-close-white" data-bs-dismiss="modal" type="button"></button>
-				</div>
-				<div class="modal-body p-4">
-					<form
-						onsubmit="event.preventDefault(); alert('Grazie! Il tuo feedback è stato registrato.'); var myModalEl = document.getElementById('feedbackModal'); var modal = bootstrap.Modal.getInstance(myModalEl); modal.hide();">
-						<div class="mb-3">
-							<label class="form-label fw-bold">Docente/Corso</label>
-							<select class="form-select bg-light">
-								<option>Prof. Gravino - Ing. Software</option>
-								<option>Prof. De Lucia - Programmazione II</option>
-							</select>
-						</div>
-						<div class="mb-3">
-							<label class="form-label fw-bold">La tua Valutazione</label>
-							<div class="d-flex justify-content-between px-2 text-warning fs-3 mb-2">
-								<i class="fas fa-star"></i>
-								<i class="fas fa-star"></i>
-								<i class="fas fa-star"></i>
-								<i class="fas fa-star-half-alt"></i>
-								<i class="far fa-star"></i>
-							</div>
-							<input class="form-range" id="ratingRange" max="5" min="1" type="range">
-							<div class="d-flex justify-content-between text-muted small">
-								<span>1</span><span>5</span>
-							</div>
-						</div>
-						<div class="mb-3">
-							<label class="form-label fw-bold">Commento</label>
-							<textarea class="form-control bg-light" placeholder="Scrivi qui la tua opinione..." required
-								rows="3"></textarea>
-						</div>
-						<div class="d-grid">
-							<button class="btn btn-primary btn-lg" type="submit">Invia Feedback</button>
-						</div>
-					</form>
-				</div>
-			</div>
 		</div>
 	</div>
 
