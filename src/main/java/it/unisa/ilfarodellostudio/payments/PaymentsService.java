@@ -15,6 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Service per la gestione dei pagamenti e delle tasse.
+ * Gestisce la creazione delle tasse globali, la registrazione dei pagamenti da parte delle famiglie e l'aggiornamento degli stati.
+ */
 @Service
 public class PaymentsService {
 
@@ -29,6 +33,10 @@ public class PaymentsService {
 
     /**
      * Crea una nuova tassa e la assegna automaticamente a TUTTE le famiglie.
+     * Crea un record 'Effettua' con stato NON_EFFETTUATO per ogni famiglia presente nel sistema.
+     *
+     * @param nuovoPagamento l'oggetto pagamento (tassa) da creare
+     * @return il pagamento salvato
      */
     @Transactional
     public Pagamento creaPagamentoGenerale(Pagamento nuovoPagamento) {
@@ -55,7 +63,13 @@ public class PaymentsService {
     }
 
     /**
-     * Registra il pagamento effettivo da parte di una famiglia.
+     * Registra il pagamento effettivo di una tassa da parte di una famiglia.
+     * Aggiorna lo stato a EFFETTUATO e imposta la data odierna.
+     *
+     * @param emailFamiglia l'email della famiglia
+     * @param idPagamento l'ID della tassa pagata
+     * @return il record aggiornato
+     * @throws RuntimeException se il pagamento non viene trovato per la famiglia
      */
     @Transactional
     public Effettua effettuaPagamento(String emailFamiglia, Long idPagamento) {
@@ -74,6 +88,10 @@ public class PaymentsService {
         return effettuaRepository.save(record);
     }
 
+    /**
+     * Aggiorna automaticamente lo stato dei pagamenti non effettuati in SCADUTO se la data di scadenza è superata.
+     * Questo metodo dovrebbe essere schedulato o chiamato periodicamente.
+     */
     @Transactional
     public void aggiornaStatiScaduti() {
         List<Effettua> nonPagati = effettuaRepository.findByStato(StatoPagamento.NON_EFFETTUATO);

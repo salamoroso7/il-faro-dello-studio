@@ -4,6 +4,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Column;
 
+/**
+ * Classe base astratta per tutti gli utenti registrati.
+ * Contiene i campi comuni come email, nome, cognome, password e stato.
+ */
 @MappedSuperclass
 public abstract class UtenteRegistrato {
 

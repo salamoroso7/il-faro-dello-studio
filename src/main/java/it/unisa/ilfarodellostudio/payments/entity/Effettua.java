@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
+/**
+ * Entity che rappresenta l'associazione tra una Famiglia e un Pagamento (Tassa).
+ * Tiene traccia dello stato del pagamento (EFFETTUATO, NON_EFFETTUATO, SCADUTO) e della data.
+ */
 @Entity
 @Table(name = "effettua")
 public class Effettua {

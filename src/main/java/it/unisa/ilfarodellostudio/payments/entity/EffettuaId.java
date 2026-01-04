@@ -5,6 +5,10 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Chiave primaria composta per l'entità Effettua.
+ * Combina l'email della famiglia e l'ID del pagamento.
+ */
 @Embeddable
 public class EffettuaId implements Serializable {
     private String emailFamiglia;

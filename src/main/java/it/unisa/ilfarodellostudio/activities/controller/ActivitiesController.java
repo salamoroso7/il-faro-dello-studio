@@ -16,6 +16,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+/**
+ * Controller per la gestione delle attività didattiche.
+ * Gestisce le richieste web relative alle attività da parte di docenti e studenti.
+ */
 @Controller
 public class ActivitiesController {
 
@@ -25,12 +29,25 @@ public class ActivitiesController {
     @Autowired
     private UsersService usersService;
 
+    /**
+     * Mostra la pagina di dettaglio generica (stub) per lo studente.
+     *
+     * @return la vista di dettaglio attività
+     */
     @GetMapping("/studente/dettaglio-attivita")
     public String mostraDettagliAttivita() {
         return "studente/dettaglio-attivita";
     }
 
     // --- LISTA ATTIVITÀ ---
+    /**
+     * Gestisce la visualizzazione della lista delle attività per il docente autenticato.
+     * Mostra solo le attività assegnate al docente corrente.
+     *
+     * @param model il modello per la vista
+     * @param principal info sull'utente autenticato
+     * @return la vista di gestione attività
+     */
     @GetMapping("/docente/gestione-attivita")
     public String gestioneAttivita(Model model, Principal principal) {
         String emailDocente = principal.getName();
@@ -42,6 +59,13 @@ public class ActivitiesController {
     }
 
     // --- FORM CREA ---
+    /**
+     * Mostra il form per la creazione di una nuova attività.
+     *
+     * @param model il modello per la vista
+     * @param principal info sull'utente autenticato
+     * @return la vista del form di creazione
+     */
     @GetMapping("/docente/crea-attivita")
     public String creaNuovaAttivita(Model model, Principal principal) {
         String emailDocente = principal.getName();
@@ -52,6 +76,20 @@ public class ActivitiesController {
     }
 
     // --- POST CREA (GESTIONE ERRORI TRAMITE CATCH) ---
+    /**
+     * Gestisce la sottomissione del form di creazione attività.
+     *
+     * @param nome titolo dell'attività
+     * @param descrizione descrizione dell'attività
+     * @param materia nome della materia
+     * @param data data dell'attività
+     * @param oraInizio ora di inizio
+     * @param oraFine ora di fine
+     * @param posti numero di posti disponibili
+     * @param principal info sull'utente autenticato
+     * @param redirectAttributes attributi per il redirect (flash attributes)
+     * @return redirect alla pagina di gestione o al form in caso di errore
+     */
     @PostMapping("/attivita/crea")
     public String creaAttivita(@RequestParam String nome,
                                @RequestParam String descrizione,
@@ -98,6 +136,15 @@ public class ActivitiesController {
     }
 
     // --- FORM MODIFICA ---
+    /**
+     * Mostra il form per la modifica di un'attività esistente.
+     * Controlla che il docente sia autorizzato a modificare l'attività.
+     *
+     * @param id ID dell'attività da modificare
+     * @param model modello per la vista
+     * @param principal info sull'utente autenticato
+     * @return vista di modifica o redirect in caso di errore
+     */
     @GetMapping("/attivita/modifica/{id}")
     public String mostraFormModifica(@PathVariable Long id, Model model, Principal principal) {
         Attivita attivita = activitiesService.visualizzaAttivita(id);
@@ -114,6 +161,21 @@ public class ActivitiesController {
     }
 
     // --- POST MODIFICA ---
+    /**
+     * Gestisce la sottomissione del form di modifica attività.
+     *
+     * @param id ID dell'attività
+     * @param nome nuovo titolo
+     * @param descrizione nuova descrizione
+     * @param materia nuova materia
+     * @param data nuova data
+     * @param oraInizio nuova ora inizio
+     * @param oraFine nuova ora fine
+     * @param posti nuovi posti
+     * @param principal info utente
+     * @param redirectAttributes attributi per redirect
+     * @return redirect alla gestione attività
+     */
     @PostMapping("/attivita/modifica")
     public String modificaAttivita(@RequestParam Long id,
                                    @RequestParam String nome,
@@ -171,6 +233,14 @@ public class ActivitiesController {
     }
 
     // --- CANCELLA ---
+    /**
+     * Elimina un'attività.
+     *
+     * @param id ID dell'attività da eliminare
+     * @param principal info utente
+     * @param redirectAttributes attributi per redirect
+     * @return redirect alla gestione attività
+     */
     @GetMapping("/attivita/cancella/{id}")
     public String cancellaAttivita(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
         try {
