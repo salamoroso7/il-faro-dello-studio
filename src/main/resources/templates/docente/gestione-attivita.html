@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -16,68 +16,79 @@
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <th:block th:replace="~{fragments/docente-sidebar :: docente-sidebar('mie_attivita')}" />
+<div class="container-fluid">
+    <div class="row">
+        <th:block th:replace="~{fragments/docente-sidebar :: docente-sidebar('mie_attivita')}" />
 
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 d-flex flex-column">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="text-primary fw-bold">Le mie Attività</h2>
-                    <a th:href="@{/docente/crea-attivita}" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Nuova
-                        Lezione</a>
-                </div>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 d-flex flex-column">
 
-                <div th:if="${success}" class="alert alert-success border-0 shadow-sm mb-4 text-center">
-                    <i class="fas fa-check-circle me-2"></i>
-                    <span th:text="${success}"></span>
-                </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-primary fw-bold">Le mie Attività</h2>
+                <a th:href="@{/docente/crea-attivita}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Nuova Lezione
+                </a>
+            </div>
 
-                <div th:if="${error}" class="alert alert-danger border-0 shadow-sm mb-4 text-center">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <span th:text="${error}"></span>
-                </div>
-                <div class="card shadow border-0">
-                    <div class="card-body p-0">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="p-3">Titolo</th>
-                                    <th>Data</th>
-                                    <th>Iscritti</th>
-                                    <th>Materia</th>
-                                    <th class="text-end p-3">Azioni</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="a : ${attivitaDocente}">
-                                    <td class="p-3 fw-bold" th:text="${a.titolo}">Ingegneria del Software</td>
-                                    <td th:text="${a.data}">29/12/2025</td>
-                                    <td th:text="${#sets.size(a.iscritti)} + '/' + ${a.posti}">25/30</td>
-                                    <td th:text="${a.materia.nome}">Materia</td>
-                                    <td class="text-end p-3">
-                                        <a th:href="@{/attivita/modifica/{id}(id=${a.idAttivita})}"
-                                            class="btn btn-sm btn-outline-primary me-1">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button class="btn btn-sm btn-outline-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr th:if="${#lists.isEmpty(attivitaDocente)}">
-                                    <td colspan="5" class="text-center p-4 text-muted"> Non hai ancora creato nessuna
-                                        attività.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <th:block th:replace="~{fragments/footer :: standardFooter}" />
+            <div th:if="${success}" class="alert alert-success border-0 shadow-sm mb-4 text-center">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${success}"></span>
+            </div>
 
-            </main>
-        </div>
+            <div th:if="${error}" class="alert alert-danger border-0 shadow-sm mb-4 text-center">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="card shadow border-0">
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                        <tr>
+                            <th class="p-3">Titolo</th>
+                            <th>Data</th>
+                            <th>Iscritti</th>
+                            <th>Materia</th>
+                            <th class="text-end p-3">Azioni</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="a : ${attivitaDocente}">
+                            <td class="p-3 fw-bold" th:text="${a.titolo}">Titolo Esempio</td>
+                            <td th:text="${a.data}">Data Esempio</td>
+                            <td th:text="${a.iscritti != null ? #sets.size(a.iscritti) : 0} + '/' + ${a.posti}">0/30</td>
+                            <td th:text="${a.materia != null ? a.materia.nome : 'N/A'}">Materia</td>
+
+                            <td class="text-end p-3">
+                                <a th:href="@{/attivita/modifica/{id}(id=${a.idAttivita})}"
+                                   class="btn btn-sm btn-outline-primary me-1" title="Modifica">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                <a th:href="@{/attivita/cancella/{id}(id=${a.idAttivita})}"
+                                   class="btn btn-sm btn-outline-danger"
+                                   title="Elimina"
+                                   onclick="return confirm('Sei sicuro di voler eliminare questa attività? L\'azione è irreversibile.');">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(attivitaDocente)}">
+                            <td colspan="5" class="text-center p-4 text-muted">
+                                Non hai ancora creato nessuna attività.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <th:block th:replace="~{fragments/footer :: standardFooter}" />
+
+        </main>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
