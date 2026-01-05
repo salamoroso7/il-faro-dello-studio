@@ -162,6 +162,7 @@ public class UsersService {
     @Transactional
     public RegistrazioneResult creaStudente(StudenteDto dto, String emailFamiglia) {
         if (dto.getNome().length() > 50) throw new IllegalArgumentException("Il Nome supera i 50 caratteri");
+        if (dto.getCognome().length() > 50) throw new IllegalArgumentException("Il Cognome supera i 50 caratteri");
         if (dto.getCodiceFiscale().length() != 16) throw new IllegalArgumentException("Il Codice Fiscale deve essere di 16 cifre");
         if (!dto.getDataNascita().isBefore(LocalDate.now())) throw new IllegalArgumentException("La Data di Nascita è futura o odierna");
         if (studenteRepository.existsByCodiceFiscale(dto.getCodiceFiscale())) throw new RuntimeException("E' già presente uno studente con lo stesso codice fiscale!");

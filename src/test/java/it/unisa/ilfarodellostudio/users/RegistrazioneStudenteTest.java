@@ -48,12 +48,29 @@ public class RegistrazioneStudenteTest {
     }
 
     @Test
-    @DisplayName("TC_GU_1_3: Codice Fiscale > 16 cifre")
+    @DisplayName("TC_GU_1_2: Cognome troppo lungo")
+    void testCognomeTroppoLungo() {
+        Famiglia famiglia = creaFamiglia("famiglia@test.com");
+
+        StudenteDto dto = new StudenteDto();
+        dto.setNome("Mario");
+        dto.setCognome("A".repeat(51)); // Stringa di 51 caratteri
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            usersService.creaStudente(dto, famiglia.getEmail());
+        });
+
+        assertEquals("Il Cognome supera i 50 caratteri", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("TC_GU_1_3: Codice Fiscale < 16 cifre")
     void testCodiceFiscaleLungo() {
         Famiglia famiglia = creaFamiglia("famiglia@test.com");
 
         StudenteDto dto = new StudenteDto();
         dto.setNome("Mario");
+        dto.setCognome("Rossi");
         dto.setCodiceFiscale("AAAAAAAAAAAAAAAAA"); // 17 cifre
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -65,12 +82,31 @@ public class RegistrazioneStudenteTest {
     }
 
     @Test
+    @DisplayName("TC_GU_1_4: Codice Fiscale > 16 cifre")
+    void testCodiceFiscaleCorto() {
+        Famiglia famiglia = creaFamiglia("famiglia@test.com");
+
+        StudenteDto dto = new StudenteDto();
+        dto.setNome("Mario");
+        dto.setCognome("Rossi");
+        dto.setCodiceFiscale("AAAAAAAAAAAAAAA"); // 15 cifre
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            usersService.creaStudente(dto, famiglia.getEmail());
+        });
+
+        assertTrue(exception.getMessage().contains("inferiore alle 16 cifre") ||
+                exception.getMessage().contains("deve essere di 16 cifre"));
+    }
+
+    @Test
     @DisplayName("TC_GU_1_5: Data di nascita futura")
     void testDataNascitaFutura() {
         Famiglia famiglia = creaFamiglia("famiglia@test.com");
 
         StudenteDto dto = new StudenteDto();
         dto.setNome("Mario");
+        dto.setCognome("Rossi");
         dto.setCodiceFiscale("AAAAAAAAAAAAAAAA");
         dto.setDataNascita(LocalDate.now().plusDays(1));
 
