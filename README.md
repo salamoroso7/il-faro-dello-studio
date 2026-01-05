@@ -23,10 +23,18 @@ Tutta la documentazione tecnica e progettuale è disponibile nella cartella [`do
 
 | Documento | Descrizione |
 | :--- | :--- |
-| 📘 **[RAD](./docs/NC15_RAD_v1.0.pdf)** | *Requirements Analysis Document*: Specifica dei requisiti, casi d'uso e attori. |
-| 📐 **[SDD](./docs/NC15_SDD_v1.0.pdf)** | *System Design Document*: Architettura del sistema e scelta relativa ai 2 **Design Patterns**. |
-| 📊 **[Traceability Matrix](./docs/NC15_Matrice_Di_Tracciabilità.xls)** | Matrice di tracciabilità tra requisiti e implementazione. |
-| 🧪 **[Testing](./docs/testing/)** | Cartella contenente il **Test Plan** e le **Test Case Specifications**. |
+| 📘 **[RAD](./docs/NC15_RAD_v2.0.pdf)** | *Requirements Analysis Document*: Specifica dei requisiti, casi d'uso e attori. |
+| 📐 **[SDD](./docs/NC15_SDD_v2.0.pdf)** | *System Design Document*: Architettura del sistema e design pattern. |
+| 📊 **[Matrice di Tracciabilità](./docs/NC15_Matrice_Di_Tracciabilità_v2.0.pdf)** | Matrice di tracciabilità tra requisiti e implementazione. |
+
+### 🧪 Testing
+I dettagli relativi alle attività di test sono disponibili nella sottocartella [`docs/testing/`](./docs/testing/):
+
+* **[Test Plan (TP)](./docs/testing/NC15_TP_v2.0.pdf)**: Strategia e piano di test.
+* **[Test Case Specifications (TCS)](./docs/testing/NC15_TCS_v2.0.pdf)**: Definizione dei casi di test.
+* **[Test Incident Report (TIR)](./docs/testing/NC15_TIR_v1.0.pdf)**: Documentazione degli incidenti emersi.
+* **[Test Incident Report Tracking (TIRT)](./docs/testing/NC15_TIRT_v1.0.pdf)**: Tracciamento della risoluzione bug.
+* **[Test Summary Report (TSR)](./docs/testing/NC15_TSR_v1.0.pdf)**: Risultati finali della fase di test.
 
 ---
 
@@ -48,7 +56,7 @@ Tutta la documentazione tecnica e progettuale è disponibile nella cartella [`do
 ### Avvio
 1.  Clona la repository:
     ```bash
-    git clone [https://github.com/tuo-username/il-faro-dello-studio.git](https://github.com/tuo-username/il-faro-dello-studio.git)
+    git clone [https://github.com/salamoroso7/il-faro-dello-studio.git](https://github.com/salamoroso7/il-faro-dello-studio.git)
     cd il-faro-dello-studio
     ```
 2.  Compila il progetto:
