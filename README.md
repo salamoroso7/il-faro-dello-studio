@@ -30,11 +30,11 @@ Tutta la documentazione tecnica e progettuale è disponibile nella cartella [`do
 ### 🧪 Testing
 I dettagli relativi alle attività di test sono disponibili nella sottocartella [`docs/testing/`](./docs/testing/):
 
-* **[Test Plan (TP)](./docs/testing/NC15_TP_v2.0.pdf)**: Strategia e piano di test.
-* **[Test Case Specifications (TCS)](./docs/testing/NC15_TCS_v2.0.pdf)**: Definizione dei casi di test.
-* **[Test Incident Report (TIR)](./docs/testing/NC15_TIR_v1.0.pdf)**: Documentazione degli incidenti emersi.
-* **[Test Incident Report Tracking (TIRT)](./docs/testing/NC15_TIRT_v1.0.pdf)**: Tracciamento della risoluzione bug.
-* **[Test Summary Report (TSR)](./docs/testing/NC15_TSR_v1.0.pdf)**: Risultati finali della fase di test.
+* **[Test Plan (TP)](./docs/testing/NC15_TP_v2.0.pdf)**
+* **[Test Case Specifications (TCS)](./docs/testing/NC15_TCS_v2.0.pdf)**
+* **[Test Incident Report (TIR)](./docs/testing/NC15_TIR_v1.0.pdf)**
+* **[Test Incident Report Tracking (TIRT)](./docs/testing/NC15_TIRT_v1.0.pdf)**
+* **[Test Summary Report (TSR)](./docs/testing/NC15_TSR_v1.0.pdf)**
 
 ---
 
