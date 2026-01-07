@@ -126,7 +126,7 @@ public class ActivitiesService {
      * @return lista delle attività future del docente
      */
     public List<Attivita> dammiTutteLeAttivita(Docente docente) {
-        return attivitaRepository.findAllByDocenteAndDataAfter(docente, LocalDate.now());
+        return attivitaRepository.findAllByDocenteAndDataGreaterThanEqual(docente, LocalDate.now());
     }
 
     /**

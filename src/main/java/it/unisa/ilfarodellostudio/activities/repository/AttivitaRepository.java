@@ -62,20 +62,22 @@ public interface AttivitaRepository extends JpaRepository<Attivita, Long> {
      * @param data la data di partenza
      * @return lista di attività
      */
-     List<Attivita> findAllByDocenteAndDataAfter(Docente docente, LocalDate data);
-
+     List<Attivita> findAllByDocenteAndDataGreaterThanEqual(Docente docente, LocalDate data);
 
     @Query("SELECT a FROM Attivita a JOIN a.iscritti s " +
             "WHERE s.email = :email " +
-            "AND (a.data > :oggi OR (a.data = :oggi AND a.oraInizio > :ora)) " +
+            "AND (" +
+            "   a.data > :oggi " +            // Caso 1: Lezioni da domani in poi
+            "   OR " +
+            "   (a.data = :oggi AND a.oraInizio >= :ora) " + // Caso 2: Lezioni di oggi, ma solo future
+            ") " +
             "ORDER BY a.data ASC, a.oraInizio ASC")
     List<Attivita> findUpcomingByStudenteEmail(@Param("email") String email,
                                                @Param("oggi") LocalDate oggi,
                                                @Param("ora") LocalTime ora);
 
-
     @Query("SELECT a FROM Attivita a " +
-            "WHERE (a.data > :oggi OR (a.data = :oggi AND a.oraInizio > :ora)) " +
+            "WHERE (a.data >= :oggi OR (a.data = :oggi AND a.oraInizio >= :ora)) " +
             "AND NOT EXISTS (SELECT s FROM a.iscritti s WHERE s.email = :emailStudente) " +
             "ORDER BY a.data ASC, a.oraInizio ASC")
     List<Attivita> findDisponibiliUpcoming(@Param("emailStudente") String email,
