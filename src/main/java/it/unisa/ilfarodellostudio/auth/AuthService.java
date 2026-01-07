@@ -8,6 +8,7 @@ import it.unisa.ilfarodellostudio.users.repository.DocenteRepository;
 import it.unisa.ilfarodellostudio.users.repository.FamigliaRepository;
 import it.unisa.ilfarodellostudio.users.repository.StudenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -45,10 +46,15 @@ public class AuthService implements UserDetailsService {
      * viene trovato, viene convertito in un oggetto {@link UserDetails} compatibile
      * con il framework.
      * </p>
+     * <p>
+     * <strong>Validazione dello stato dell'account:</strong> Se l'utente è stato disattivato
+     * (isAttivo = false), il login viene impedito lanciando una {@link DisabledException}.
+     * </p>
      *
      * @param username Lo username inserito nel form di login.
      * @return Un oggetto {@link UserDetails} che contiene username, password e ruoli dell'utente.
      * @throws UsernameNotFoundException Se lo username non è presente in nessuna delle tre repository.
+     * @throws DisabledException Se l'account è stato disattivato dall'amministratore.
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -58,6 +64,11 @@ public class AuthService implements UserDetailsService {
         // Se l'utente non esiste in nessuna tabella, lancia l'eccezione di sicurezza
         UtenteRegistrato u = utente.orElseThrow(() ->
                 new UsernameNotFoundException("Utente non trovato con: " + username));
+
+        // Verifica che l'account sia attivo
+        if (!u.isAttivo()) {
+            throw new DisabledException("Account disattivato. Contattare l'amministratore.");
+        }
 
         // Costruisce l'oggetto User di Spring Security mappando i dati della nostra entità
         return User.builder()
