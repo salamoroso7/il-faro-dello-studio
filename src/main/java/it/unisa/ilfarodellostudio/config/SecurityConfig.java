@@ -20,6 +20,9 @@ public class SecurityConfig {
     @Autowired
     private CustomSuccessHandler successHandler;
 
+    @Autowired
+    private CustomAuthenticationFailureHandler failureHandler;
+
     /**
      * Definisce la catena di filtri di sicurezza.
      * Configura le regole di accesso URL-based, il login form e il logout.
@@ -42,7 +45,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .loginProcessingUrl("/login") // Spring intercetta il POST qui
                         .successHandler(successHandler)
-                        .failureUrl("/login?error=true") // Se sbaglia credenziali
+                        .failureHandler(failureHandler) // Gestisce errori con messaggi personalizzati
                         .permitAll()
                 )
                 .logout(logout -> logout
