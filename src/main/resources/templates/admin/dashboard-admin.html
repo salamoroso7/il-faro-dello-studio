@@ -92,7 +92,7 @@
                                     <tr>
                                         <th class="ps-4">Utente</th>
                                         <th>Ruolo</th>
-                                        <th class="pe-4">Data Registrazione</th>
+                                        <th class="pe-4">Email</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -104,11 +104,11 @@
                                             </span>
                                             <th:block th:unless="${u.isAdmin}">
                                                 <span class="badge bg-warning text-dark"
-                                                    th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Docente)}">Docente</span>
+                                                    th:if="${u instanceof T(it.unisa.ilfarodellostudio.gestione_utenze.dao.entity.Docente)}">Docente</span>
                                                 <span class="badge bg-info text-dark"
-                                                    th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Famiglia)}">Famiglia</span>
+                                                    th:if="${u instanceof T(it.unisa.ilfarodellostudio.gestione_utenze.dao.entity.Famiglia)}">Famiglia</span>
                                                 <span class="badge bg-primary"
-                                                    th:if="${u instanceof T(it.unisa.ilfarodellostudio.users.entity.Studente)}">Studente</span>
+                                                    th:if="${u instanceof T(it.unisa.ilfarodellostudio.gestione_utenze.dao.entity.Studente)}">Studente</span>
                                             </th:block>
                                         </td>
                                         <td class="pe-4" th:text="${u.email}">email@esempio.it</td>
